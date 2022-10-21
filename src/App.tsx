@@ -10,7 +10,7 @@ import {
 
 import Grid from "@mui/material/Grid";
 
-import MainMap from "./components/MainMapGl";
+import MainMapSMD from "./components/MainMapSMD";
 import AppSocketError from "./AppSocketError";
 import {
   SoobErrorCreateWay,
@@ -248,8 +248,7 @@ const App = () => {
     <Grid container sx={{ height: "100vh", width: "100%", bgcolor: "#E9F5D8" }}>
       <Grid item xs>
         {openSetErr && <AppSocketError sErr={soob} setOpen={setOpenSetErr} />}
-        {/* <MainMapSMD */}
-        <MainMap
+        <MainMapSMD
           ws={WS}
           region={homeRegion}
           sErr={soob}

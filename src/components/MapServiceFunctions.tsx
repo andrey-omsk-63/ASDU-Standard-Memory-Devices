@@ -137,40 +137,42 @@ export const getPointData = (
 
 export const getPointOptions = (
   index: number,
-  pointAaIndex: number,
-  pointBbIndex: number,
-  massdk: any,
-  massroute: any,
-  coordStart: any,
-  coordStop: any
+  massMem: Array<number>,
+  // pointAaIndex: number,
+  // pointBbIndex: number,
+  // massdk: any,
+  // massroute: any,
+  // coordStart: any,
+  // coordStop: any
 ) => {
   let colorBalloon = "islands#violetCircleDotIcon";
-  if (massroute.vertexes[index].area === 0) {
-    colorBalloon = "islands#violetCircleIcon";
-    if (massdk[index].newCoordinates > 0)
-      colorBalloon = "islands#darkOrangeCircleIcon";
-  } else {
-    if (massdk[index].newCoordinates > 0)
-      colorBalloon = "islands#darkOrangeCircleDotIcon";
-  }
-  for (let i = 0; i < coordStart.length; i++) {
-    if (
-      massdk[index].coordinates[0] === coordStart[i][0] &&
-      massdk[index].coordinates[1] === coordStart[i][1]
-    ) {
-      colorBalloon = "islands#grayStretchyIcon";
-    }
-  }
-  for (let i = 0; i < coordStop.length; i++) {
-    if (
-      massdk[index].coordinates[0] === coordStop[i][0] &&
-      massdk[index].coordinates[1] === coordStop[i][1]
-    ) {
-      colorBalloon = "islands#grayStretchyIcon";
-    }
-  }
-  if (index === pointAaIndex) colorBalloon = "islands#redStretchyIcon";
-  if (index === pointBbIndex) colorBalloon = "islands#darkBlueStretchyIcon";
+  if (massMem.includes(index)) colorBalloon = "islands#redCircleDotIcon";
+  // if (massroute.vertexes[index].area === 0) {
+  //   colorBalloon = "islands#violetCircleIcon";
+  //   if (massdk[index].newCoordinates > 0)
+  //     colorBalloon = "islands#darkOrangeCircleIcon";
+  // } else {
+  //   if (massdk[index].newCoordinates > 0)
+  //     colorBalloon = "islands#darkOrangeCircleDotIcon";
+  // }
+  // for (let i = 0; i < coordStart.length; i++) {
+  //   if (
+  //     massdk[index].coordinates[0] === coordStart[i][0] &&
+  //     massdk[index].coordinates[1] === coordStart[i][1]
+  //   ) {
+  //     colorBalloon = "islands#grayStretchyIcon";
+  //   }
+  // }
+  // for (let i = 0; i < coordStop.length; i++) {
+  //   if (
+  //     massdk[index].coordinates[0] === coordStop[i][0] &&
+  //     massdk[index].coordinates[1] === coordStop[i][1]
+  //   ) {
+  //     colorBalloon = "islands#grayStretchyIcon";
+  //   }
+  // }
+  //if (index === pointAaIndex) colorBalloon = "islands#redStretchyIcon";
+  //if (index === pointBbIndex) colorBalloon = "islands#darkBlueStretchyIcon";
 
   return {
     preset: colorBalloon,

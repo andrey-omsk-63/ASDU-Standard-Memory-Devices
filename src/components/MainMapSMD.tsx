@@ -86,7 +86,9 @@ let toCross: any = {
   pointBcod: "",
 };
 
-const MainMap = (props: {
+let massMem: Array<number> = [];
+
+const MainMapSMD = (props: {
   ws: WebSocket;
   region: any;
   sErr: string;
@@ -352,48 +354,62 @@ const MainMap = (props: {
   };
 
   const OnPlacemarkClickPoint = (index: number) => {
-    if (pointAa === 0) {
-      pointAaIndex = index; // начальная точка
-      pointAa = [massdk[index].coordinates[0], massdk[index].coordinates[1]];
-      fromCross.pointAaRegin = massdk[index].region.toString();
-      fromCross.pointAaArea = massdk[index].area.toString();
-      fromCross.pointAaID = massdk[index].ID;
-      MakeСollectionRoute();
-      setFlagPusk(true);
+    let nomInMass = massMem.indexOf(index)
+    if (nomInMass < 0 ) {
+      massMem.push(index)
     } else {
-      if (pointBb === 0) {
-        if (pointAaIndex === index) {
-          SoobOpenSetEr("Начальная и конечная точки совпадают");
-        } else {
-          pointBbIndex = index; // конечная точка
-          if (
-            massroute.vertexes[pointAaIndex].area === 0 &&
-            massroute.vertexes[pointBbIndex].area === 0
-          ) {
-            pointBbIndex = 0; // конечная точка
-            SoobOpenSetEr("Связь между двумя точками создовать нельзя");
-          } else {
-            pointBb = [
-              massdk[index].coordinates[0],
-              massdk[index].coordinates[1],
-            ];
-            toCross.pointBbRegin = massdk[index].region.toString();
-            toCross.pointBbArea = massdk[index].area.toString();
-            toCross.pointBbID = massdk[index].ID;
-            if (DoublRoute(massroute.ways, pointAa, pointBb)) {
-              SoobOpenSetEr("Дубликатная связь");
-              ZeroRoute(false);
-            } else {
-              setFlagRoute(true);
-              ymaps && addRoute(ymaps); // перерисовка связей
-            }
-          }
-        }
-      } else {
-        indexPoint = index;
-        setOpenSet(true); // переход в меню работы с точками
-      }
+      massMem.splice(nomInMass, 1);
     }
+    console.log('1massMem:',massMem)
+    if (massMem.length) {
+      massMem.sort(function(a, b) {
+        return a - b;
+      });
+    }
+    console.log('2massMem:',massMem)
+    setFlagPusk(!flagPusk);
+    // if (pointAa === 0) {
+    //   pointAaIndex = index; // начальная точка
+    //   pointAa = [massdk[index].coordinates[0], massdk[index].coordinates[1]];
+    //   fromCross.pointAaRegin = massdk[index].region.toString();
+    //   fromCross.pointAaArea = massdk[index].area.toString();
+    //   fromCross.pointAaID = massdk[index].ID;
+    //   MakeСollectionRoute();
+    //   setFlagPusk(true);
+    // } else {
+    //   if (pointBb === 0) {
+    //     if (pointAaIndex === index) {
+    //       SoobOpenSetEr("Начальная и конечная точки совпадают");
+    //     } else {
+    //       pointBbIndex = index; // конечная точка
+    //       if (
+    //         massroute.vertexes[pointAaIndex].area === 0 &&
+    //         massroute.vertexes[pointBbIndex].area === 0
+    //       ) {
+    //         pointBbIndex = 0; // конечная точка
+    //         SoobOpenSetEr("Связь между двумя точками создовать нельзя");
+    //       } else {
+    //         pointBb = [
+    //           massdk[index].coordinates[0],
+    //           massdk[index].coordinates[1],
+    //         ];
+    //         toCross.pointBbRegin = massdk[index].region.toString();
+    //         toCross.pointBbArea = massdk[index].area.toString();
+    //         toCross.pointBbID = massdk[index].ID;
+    //         if (DoublRoute(massroute.ways, pointAa, pointBb)) {
+    //           SoobOpenSetEr("Дубликатная связь");
+    //           ZeroRoute(false);
+    //         } else {
+    //           setFlagRoute(true);
+    //           ymaps && addRoute(ymaps); // перерисовка связей
+    //         }
+    //       }
+    //     }
+    //   } else {
+    //     indexPoint = index;
+    //     setOpenSet(true); // переход в меню работы с точками
+    //   }
+    // }
   };
 
   const ModalPressBalloon = () => {
@@ -575,12 +591,13 @@ const MainMap = (props: {
             properties={getPointData(props.idx, pAaI, pBbI, massdk)}
             options={getPointOptions(
               props.idx,
-              pAaI,
-              pBbI,
-              massdk,
-              massroute,
-              coordStartIn,
-              coordStop
+              massMem,
+              // pAaI,
+              // pBbI,
+              // massdk,
+              // massroute,
+              // coordStartIn,
+              // coordStop
             )}
             modules={["geoObject.addon.balloon", "geoObject.addon.hint"]}
             onClick={() => OnPlacemarkClickPoint(props.idx)}
@@ -604,12 +621,12 @@ const MainMap = (props: {
   const InstanceRefDo = (ref: React.Ref<any>) => {
     if (ref) {
       mapp.current = ref;
-      mapp.current.events.add("contextmenu", function (e: any) {
-        if (mapp.current.hint) {
-          newPointCoord = e.get("coords"); // нажата правая кнопка мыши (созд-е новой точки)
-          setOpenSetCreate(true);
-        }
-      });
+      // mapp.current.events.add("contextmenu", function (e: any) {
+      //   if (mapp.current.hint) {
+      //     newPointCoord = e.get("coords"); // нажата правая кнопка мыши (созд-е новой точки)
+      //     setOpenSetCreate(true);
+      //   }
+      // });
       mapp.current.events.add("mousedown", function (e: any) {
         pointCenter = mapp.current.getCenter(); // нажата левая/правая кнопка мыши 0, 1 или 2 в зависимости от того, какая кнопка мыши нажата (В IE значение может быть от 0 до 7).
       });
@@ -620,27 +637,25 @@ const MainMap = (props: {
     }
   };
   //=== инициализация ======================================
-  if (!flagOpen && Object.keys(massroute).length) {
-    console.log("massroute:", massroute);
+  if (!flagOpen && Object.keys(map.dateMap.tflight).length) {
+    console.log("map:", map);
     if (props.region) homeRegion = props.region;
-    if (!props.region && massroute.vertexes.length)
-      homeRegion = massroute.vertexes[0].region;
-    for (let i = 0; i < massroute.points.length; i++) {
-      massroute.vertexes.push(massroute.points[i]);
-    }
-    for (let i = 0; i < massroute.vertexes.length; i++) {
+    if (!props.region && map.dateMap.tflight.length)
+      homeRegion = map.dateMap.tflight[0].region.num;
+    
+    for (let i = 0; i < map.dateMap.tflight.length; i++) {
       let masskPoint = MasskPoint();
-      masskPoint.ID = massroute.vertexes[i].id;
-      masskPoint.coordinates = DecodingCoord(massroute.vertexes[i].dgis);
-      masskPoint.nameCoordinates = massroute.vertexes[i].name;
-      masskPoint.region = massroute.vertexes[i].region;
-      masskPoint.area = massroute.vertexes[i].area;
+      masskPoint.ID = map.dateMap.tflight[i].ID;
+      masskPoint.coordinates[0] = map.dateMap.tflight[i].points.Y;
+      masskPoint.coordinates[1] = map.dateMap.tflight[i].points.X;
+      masskPoint.nameCoordinates = map.dateMap.tflight[i].description;
+      masskPoint.region = Number(map.dateMap.tflight[i].region.num);
+      masskPoint.area = Number(map.dateMap.tflight[i].area.num);
       masskPoint.newCoordinates = 0;
       massdk.push(masskPoint);
-      coordinates.push(DecodingCoord(massroute.vertexes[i].dgis));
+      coordinates.push(masskPoint.coordinates);
     }
     dispatch(massdkCreate(massdk));
-    dispatch(massrouteCreate(massroute));
     dispatch(coordinatesCreate(coordinates));
     pointCenter = CenterCoord(
       map.dateMap.boxPoint.point0.Y,
@@ -674,7 +689,10 @@ const MainMap = (props: {
 
   return (
     <Grid container sx={{ border: 0, height: "99.9vh" }}>
-      {makeRevers && needRevers === 0 && <>{PressButton(35)}</>}
+      {StrokaMenuGlob("Управление картой", PressButton, 41)}
+      {StrokaMenuGlob("Выбор ЗУ", PressButton, 42)}
+      {StrokaMenuGlob("Создать режим", PressButton, 43)}
+      {/* {makeRevers && needRevers === 0 && <>{PressButton(35)}</>}
       {makeRevers && needRevers === 1 && <>{PressButton(36)}</>}
       {makeRevers && needRevers === 2 && <>{PressButton(37)}</>}
       {flagPusk && !flagBind && (
@@ -696,8 +714,8 @@ const MainMap = (props: {
       )}
       {!flagDemo && <>{StrokaMenuGlob("Demo сети", PressButton, 3)}</>}
       {flagDemo && <>{StrokaMenuGlob("Откл Demo", PressButton, 6)}</>}
-      {flagPro && <>{StrokaMenuGlob("Протокол", PressButton, 24)}</>}
-      {Object.keys(massroute).length && (
+      {flagPro && <>{StrokaMenuGlob("Протокол", PressButton, 24)}</>} */}
+      {Object.keys(map.dateMap.tflight).length && (
         <YMaps
           query={{
             apikey: "65162f5f-2d15-41d1-a881-6c1acf34cfa1",
@@ -781,4 +799,4 @@ const MainMap = (props: {
   );
 };
 
-export default MainMap;
+export default MainMapSMD;
