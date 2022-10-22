@@ -14,15 +14,19 @@ import { GeolocationControl, YMapsApi } from "react-yandex-maps";
 import { RulerControl, SearchControl } from "react-yandex-maps";
 import { TrafficControl, TypeSelector, ZoomControl } from "react-yandex-maps";
 
-import MapRouteInfo from "./MapComponents/MapRouteInfo";
+//import MapRouteInfo from "./MapComponents/MapRouteInfo";
 import MapChangeAdress from "./MapComponents/MapChangeAdress";
 import MapPointDataError from "./MapComponents/MapPointDataError";
-import MapRouteBind from "./MapComponents/MapRouteBind";
-import MapCreatePointVertex from "./MapComponents/MapCreatePointVertex";
-import MapRouteProtokol from "./MapComponents/MapRouteProtokol";
-import MapReversRoute from "./MapComponents/MapReversRoute";
+// import MapRouteBind from "./MapComponents/MapRouteBind";
+// import MapCreatePointVertex from "./MapComponents/MapCreatePointVertex";
+// import MapRouteProtokol from "./MapComponents/MapRouteProtokol";
+// import MapReversRoute from "./MapComponents/MapReversRoute";
 
-import { RecordMassRoute } from "./MapServiceFunctions";
+import SmdSelectMD from "./SmdComponents/SmdSelectMD";
+import SmdMakeMode from "./SmdComponents/SmdMakeMode";
+import SmdSetPhase from "./SmdComponents/SmdSetPhase";
+
+//import { RecordMassRoute } from "./MapServiceFunctions";
 import { DecodingCoord, CodingCoord } from "./MapServiceFunctions";
 import { getMultiRouteOptions, DoublRoute } from "./MapServiceFunctions";
 import { getReferencePoints, CenterCoord } from "./MapServiceFunctions";
@@ -37,9 +41,9 @@ import { SendSocketCreatePoint, SocketDeleteWay } from "./MapSocketFunctions";
 import { SendSocketCreateVertex } from "./MapSocketFunctions";
 import { SendSocketDeletePoint } from "./MapSocketFunctions";
 import { SendSocketDeleteVertex } from "./MapSocketFunctions";
-import { SendSocketCreateWay, SendSocketGetSvg } from "./MapSocketFunctions";
-import { SendSocketCreateWayFromPoint } from "./MapSocketFunctions";
-import { SendSocketCreateWayToPoint } from "./MapSocketFunctions";
+// import { SendSocketCreateWay, SendSocketGetSvg } from "./MapSocketFunctions";
+// import { SendSocketCreateWayFromPoint } from "./MapSocketFunctions";
+// import { SendSocketCreateWayToPoint } from "./MapSocketFunctions";
 
 import { styleSetPoint, styleTypography, searchControl } from "./MainMapStyle";
 import { styleModalEndMapGl } from "./MainMapStyle";
@@ -53,11 +57,11 @@ let masSvg: any = ["", ""];
 
 let debugging = false;
 let flagOpen = false;
-let flagBind = false;
-let flagRevers = false;
-let needLinkBind = false;
+//let flagBind = false;
+//let flagRevers = false;
+//let needLinkBind = false;
 let activeRoute: any = null;
-let newPointCoord: any = 0;
+//let newPointCoord: any = 0;
 let soobError = "";
 let oldsErr = "";
 let zoom = 10;
@@ -106,10 +110,10 @@ const MainMapSMD = (props: {
     const { massrouteReducer } = state;
     return massrouteReducer.massroute;
   });
-  let massroutepro = useSelector((state: any) => {
-    const { massrouteproReducer } = state;
-    return massrouteproReducer.massroutepro;
-  });
+  // let massroutepro = useSelector((state: any) => {
+  //   const { massrouteproReducer } = state;
+  //   return massrouteproReducer.massroutepro;
+  // });
   let coordinates = useSelector((state: any) => {
     const { coordinatesReducer } = state;
     return coordinatesReducer.coordinates;
@@ -120,21 +124,26 @@ const MainMapSMD = (props: {
   });
   const dispatch = useDispatch();
   //===========================================================
-  const [openSetInf, setOpenSetInf] = React.useState(false);
-  const [openSetPro, setOpenSetPro] = React.useState(false);
+  // const [openSetInf, setOpenSetInf] = React.useState(false);
+  // const [openSetPro, setOpenSetPro] = React.useState(false);
   const [openSetEr, setOpenSetEr] = React.useState(false);
-  const [openSetBind, setOpenSetBind] = React.useState(false);
+  //const [openSetBind, setOpenSetBind] = React.useState(false);
   const [flagDemo, setFlagDemo] = React.useState(false);
-  const [flagPro, setFlagPro] = React.useState(false);
+  //const [flagPro, setFlagPro] = React.useState(false);
   const [flagPusk, setFlagPusk] = React.useState(false);
   const [flagRoute, setFlagRoute] = React.useState(false);
   const [revers, setRevers] = React.useState(false);
   const [openSet, setOpenSet] = React.useState(false);
   const [openSetCreate, setOpenSetCreate] = React.useState(false);
   const [openSetAdress, setOpenSetAdress] = React.useState(false);
-  const [openSetRevers, setOpenSetRevers] = React.useState(false);
-  const [makeRevers, setMakeRevers] = React.useState(false);
-  const [needRevers, setNeedRevers] = React.useState(0);
+  //const [openSetRevers, setOpenSetRevers] = React.useState(false);
+  //const [makeRevers, setMakeRevers] = React.useState(false);
+  //const [needRevers, setNeedRevers] = React.useState(0);
+
+  const [selectMD, setSelectMD] = React.useState(false);
+  const [makeMode, setMakeMode] = React.useState(false);
+  const [setPhase, setSetPhase] = React.useState(false);
+
   const [ymaps, setYmaps] = React.useState<YMapsApi | null>(null);
   const mapp = React.useRef<any>(null);
 
@@ -151,7 +160,7 @@ const MainMapSMD = (props: {
     pointAaIndex = -1;
     pointBbIndex = -1;
     DelCollectionRoutes();
-    flagBind = false;
+    //flagBind = false;
     setFlagRoute(false);
     setFlagPusk(mode);
     ymaps && addRoute(ymaps); // перерисовка связей
@@ -162,38 +171,38 @@ const MainMapSMD = (props: {
     setOpenSetEr(true);
   };
 
-  const MakeRecordMassRoute = (mode: boolean, mass: any) => {
-    let aRou = reqRoute;
-    let debug = debugging;
-    fromCross.pointAcod = CodingCoord(pointAa);
-    toCross.pointBcod = CodingCoord(pointBb);
-    if (DoublRoute(massroute.ways, pointAa, pointBb)) {
-      SoobOpenSetEr("Дубликатная связь");
-    } else {
-      let mask = RecordMassRoute(fromCross, toCross, mass, aRou);
-      massroute.ways.push(mask);
-      massroutepro.ways.push(mask);
-      dispatch(massrouteCreate(massroute));
-      dispatch(massrouteproCreate(massroutepro));
-      if (massroute.vertexes[pointAaIndex].area === 0) {
-        SendSocketCreateWayFromPoint(debug, WS, fromCross, toCross, mass, aRou);
-      } else {
-        if (massroute.vertexes[pointBbIndex].area === 0) {
-          SendSocketCreateWayToPoint(debug, WS, fromCross, toCross, mass, aRou);
-        } else {
-          SendSocketCreateWay(debug, WS, fromCross, toCross, mass, aRou);
-        }
-      }
-      setFlagPro(true); //включение протокола
-    }
-    if (flagRevers && needRevers !== 3) {
-      setOpenSetRevers(true);
-      flagRevers = false;
-    } else {
-      ZeroRoute(mode);
-    }
-    setNeedRevers(0);
-  };
+  // const MakeRecordMassRoute = (mode: boolean, mass: any) => {
+  //   let aRou = reqRoute;
+  //   let debug = debugging;
+  //   fromCross.pointAcod = CodingCoord(pointAa);
+  //   toCross.pointBcod = CodingCoord(pointBb);
+  //   if (DoublRoute(massroute.ways, pointAa, pointBb)) {
+  //     SoobOpenSetEr("Дубликатная связь");
+  //   } else {
+  //     let mask = RecordMassRoute(fromCross, toCross, mass, aRou);
+  //     massroute.ways.push(mask);
+  //     massroutepro.ways.push(mask);
+  //     dispatch(massrouteCreate(massroute));
+  //     dispatch(massrouteproCreate(massroutepro));
+  //     if (massroute.vertexes[pointAaIndex].area === 0) {
+  //       SendSocketCreateWayFromPoint(debug, WS, fromCross, toCross, mass, aRou);
+  //     } else {
+  //       if (massroute.vertexes[pointBbIndex].area === 0) {
+  //         SendSocketCreateWayToPoint(debug, WS, fromCross, toCross, mass, aRou);
+  //       } else {
+  //         SendSocketCreateWay(debug, WS, fromCross, toCross, mass, aRou);
+  //       }
+  //     }
+  //     setFlagPro(true); //включение протокола
+  //   }
+  //   if (flagRevers && needRevers !== 3) {
+  //     setOpenSetRevers(true);
+  //     flagRevers = false;
+  //   } else {
+  //     ZeroRoute(mode);
+  //   }
+  //   setNeedRevers(0);
+  // };
 
   const MakeСollectionRoute = () => {
     DelCollectionRoutes();
@@ -210,87 +219,46 @@ const MainMapSMD = (props: {
     ymaps && addRoute(ymaps); // перерисовка связей
   };
 
-  const ReversRoute = () => {
-    let noDoublRoute = true;
-    let pa = pointAa;
-    pointAa = pointBb;
-    pointBb = pa;
-    pa = pointAaIndex;
-    pointAaIndex = pointBbIndex;
-    pointBbIndex = pa;
-    ChangeCrossFunc(fromCross, toCross); // поменялось внутри func через ссылки React
-    if (DoublRoute(massroute.ways, pointAa, pointBb)) {
-      SoobOpenSetEr("Дубликатная связь");
-      ZeroRoute(false);
-      noDoublRoute = false;
-    } else {
-      MakeСollectionRoute();
-      setRevers(!revers);
-    }
-    return noDoublRoute;
-  };
+  // const ReversRoute = () => {
+  //   let noDoublRoute = true;
+  //   let pa = pointAa;
+  //   pointAa = pointBb;
+  //   pointBb = pa;
+  //   pa = pointAaIndex;
+  //   pointAaIndex = pointBbIndex;
+  //   pointBbIndex = pa;
+  //   ChangeCrossFunc(fromCross, toCross); // поменялось внутри func через ссылки React
+  //   if (DoublRoute(massroute.ways, pointAa, pointBb)) {
+  //     SoobOpenSetEr("Дубликатная связь");
+  //     ZeroRoute(false);
+  //     noDoublRoute = false;
+  //   } else {
+  //     MakeСollectionRoute();
+  //     setRevers(!revers);
+  //   }
+  //   return noDoublRoute;
+  // };
 
-  const LinkBind = () => {
-    let arIn = massroute.vertexes[pointAaIndex].area;
-    let idIn = massroute.vertexes[pointAaIndex].id;
-    let arOn = massroute.vertexes[pointBbIndex].area;
-    let idOn = massroute.vertexes[pointBbIndex].id;
-    SendSocketGetSvg(debugging, WS, homeRegion, arIn, idIn, arOn, idOn);
-    flagBind = true;
-    setOpenSetBind(true);
-  };
+  // const LinkBind = () => {
+  //   let arIn = massroute.vertexes[pointAaIndex].area;
+  //   let idIn = massroute.vertexes[pointAaIndex].id;
+  //   let arOn = massroute.vertexes[pointBbIndex].area;
+  //   let idOn = massroute.vertexes[pointBbIndex].id;
+  //   SendSocketGetSvg(debugging, WS, homeRegion, arIn, idIn, arOn, idOn);
+  //   //flagBind = true;
+  //   setOpenSetBind(true);
+  // };
 
   const PressButton = (mode: number) => {
     switch (mode) {
-      case 3: // режим включения Demo сети связей
-        massRoute = massroute.ways;
-        setFlagDemo(true);
-        ymaps && addRoute(ymaps); // перерисовка связей
+      case 42: // выбор ЗУ
+        setSelectMD(true);
         break;
-      case 6: // режим отмены Demo сети связей
-        massRoute = [];
-        setFlagDemo(false);
-        ymaps && addRoute(ymaps); // перерисовка связей
+      case 43: // создать режим
+        setMakeMode(true);
         break;
-      case 12: // реверс связи
-        ReversRoute();
-        break;
-      case 24: // вывод протокола
-        setOpenSetPro(true);
-        break;
-      case 33: // привязка направлений + сохранение связи
-        LinkBind();
-        flagRevers = true;
-        break;
-      case 35: // отказ от создания реверсной связи
-        flagRevers = false;
-        setMakeRevers(false);
-        ZeroRoute(false);
-        break;
-      case 36: // реверс связи + привязка направлений + сохранение связи
-        if (ReversRoute()) LinkBind();
-        setMakeRevers(false);
-        break;
-      case 37: // реверс связи + редактирование
-        if (ReversRoute()) {
-          const ReadyRoute = () => {
-            if (activeRoute) {
-              needLinkBind = true;
-              setOpenSetInf(true);
-            } else {
-              setTimeout(() => {
-                ReadyRoute();
-              }, 100);
-            }
-          };
-          ReadyRoute();
-        }
-        setMakeRevers(false);
-        setNeedRevers(3);
-        break;
-      case 69: // редактирование связи
-        setOpenSetInf(true);
-        setNeedRevers(0);
+      case 44: // назначит фазы
+        setSetPhase(true);
         break;
       case 77: // удаление связи / отмена назначений
         ZeroRoute(false);
@@ -343,30 +311,30 @@ const MainMapSMD = (props: {
     });
   };
 
-  const SetReqRoute = (mode: any, need: boolean) => {
-    reqRoute = JSON.parse(JSON.stringify(mode));
-    if (need) LinkBind();
-    needLinkBind = false;
-  };
+  // const SetReqRoute = (mode: any, need: boolean) => {
+  //   reqRoute = JSON.parse(JSON.stringify(mode));
+  //   if (need) LinkBind();
+  //   //needLinkBind = false;
+  // };
 
   const UpdateAddRoute = () => {
     ymaps && addRoute(ymaps); // перерисовка связей
   };
 
   const OnPlacemarkClickPoint = (index: number) => {
-    let nomInMass = massMem.indexOf(index)
-    if (nomInMass < 0 ) {
-      massMem.push(index)
+    let nomInMass = massMem.indexOf(index);
+    if (nomInMass < 0) {
+      massMem.push(index);
     } else {
       massMem.splice(nomInMass, 1);
     }
-    console.log('1massMem:',massMem)
+    console.log("1massMem:", massMem);
     if (massMem.length) {
-      massMem.sort(function(a, b) {
+      massMem.sort(function (a, b) {
         return a - b;
       });
     }
-    console.log('2massMem:',massMem)
+    console.log("2massMem:", massMem);
     setFlagPusk(!flagPusk);
     // if (pointAa === 0) {
     //   pointAaIndex = index; // начальная точка
@@ -563,20 +531,20 @@ const MainMapSMD = (props: {
     );
   };
 
-  const MakeNewPoint = (coords: any) => {
-    let coor: string = CodingCoord(coords);
-    let areaV = massroute.vertexes[massroute.vertexes.length - 1].area;
-    let idV = massroute.vertexes[massroute.vertexes.length - 1].id;
-    let adress = massroute.vertexes[massroute.vertexes.length - 1].name;
-    coordinates.push(coords);
-    dispatch(coordinatesCreate(coordinates));
-    if (areaV) {
-      SendSocketCreateVertex(debugging, WS, homeRegion, areaV, idV);
-    } else {
-      SendSocketCreatePoint(debugging, WS, coor, adress);
-    }
-    setOpenSetCreate(false);
-  };
+  // const MakeNewPoint = (coords: any) => {
+  //   let coor: string = CodingCoord(coords);
+  //   let areaV = massroute.vertexes[massroute.vertexes.length - 1].area;
+  //   let idV = massroute.vertexes[massroute.vertexes.length - 1].id;
+  //   let adress = massroute.vertexes[massroute.vertexes.length - 1].name;
+  //   coordinates.push(coords);
+  //   dispatch(coordinatesCreate(coordinates));
+  //   if (areaV) {
+  //     SendSocketCreateVertex(debugging, WS, homeRegion, areaV, idV);
+  //   } else {
+  //     SendSocketCreatePoint(debugging, WS, coor, adress);
+  //   }
+  //   setOpenSetCreate(false);
+  // };
 
   const PlacemarkDo = () => {
     let pAaI = pointAaIndex;
@@ -589,16 +557,7 @@ const MainMapSMD = (props: {
             key={props.idx}
             geometry={props.coordinate}
             properties={getPointData(props.idx, pAaI, pBbI, massdk)}
-            options={getPointOptions(
-              props.idx,
-              massMem,
-              // pAaI,
-              // pBbI,
-              // massdk,
-              // massroute,
-              // coordStartIn,
-              // coordStop
-            )}
+            options={getPointOptions(props.idx, massMem)}
             modules={["geoObject.addon.balloon", "geoObject.addon.hint"]}
             onClick={() => OnPlacemarkClickPoint(props.idx)}
           />
@@ -642,7 +601,7 @@ const MainMapSMD = (props: {
     if (props.region) homeRegion = props.region;
     if (!props.region && map.dateMap.tflight.length)
       homeRegion = map.dateMap.tflight[0].region.num;
-    
+
     for (let i = 0; i < map.dateMap.tflight.length; i++) {
       let masskPoint = MasskPoint();
       masskPoint.ID = map.dateMap.tflight[i].ID;
@@ -692,6 +651,9 @@ const MainMapSMD = (props: {
       {StrokaMenuGlob("Управление картой", PressButton, 41)}
       {StrokaMenuGlob("Выбор ЗУ", PressButton, 42)}
       {StrokaMenuGlob("Создать режим", PressButton, 43)}
+      {massMem.length > 0 && (
+        <>{StrokaMenuGlob("Назначить фазы", PressButton, 44)}</>
+      )}
       {/* {makeRevers && needRevers === 0 && <>{PressButton(35)}</>}
       {makeRevers && needRevers === 1 && <>{PressButton(36)}</>}
       {makeRevers && needRevers === 2 && <>{PressButton(37)}</>}
@@ -743,7 +705,10 @@ const MainMapSMD = (props: {
             {/* служебные компоненты */}
             <PlacemarkDo />
             <ModalPressBalloon />
-            {openSetPro && <MapRouteProtokol setOpen={setOpenSetPro} />}
+            {selectMD && <SmdSelectMD setOpen={setSelectMD} />}
+            {makeMode && <SmdMakeMode setOpen={setMakeMode} />}
+            {setPhase && <SmdSetPhase setOpen={setSetPhase} massMem={massMem} />}
+            {/* {openSetPro && <MapRouteProtokol setOpen={setOpenSetPro} />}
             {openSetEr && (
               <MapPointDataError
                 sErr={soobError}
@@ -791,7 +756,7 @@ const MainMapSMD = (props: {
                 makeRevers={setMakeRevers}
                 needRevers={setNeedRevers}
               />
-            )}
+            )} */}
           </Map>
         </YMaps>
       )}
