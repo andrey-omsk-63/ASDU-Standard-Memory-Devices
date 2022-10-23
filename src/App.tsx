@@ -1,31 +1,31 @@
-import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   mapCreate,
-  massrouteCreate,
-  massrouteproCreate,
-  coordinatesCreate,
-  massdkCreate,
-} from "./redux/actions";
+  // massrouteCreate,
+  // massrouteproCreate,
+  // coordinatesCreate,
+  // massdkCreate,
+} from './redux/actions';
 
-import Grid from "@mui/material/Grid";
+import Grid from '@mui/material/Grid';
 
-import MainMapSMD from "./components/MainMapSMD";
-import AppSocketError from "./AppSocketError";
-import {
-  SoobErrorCreateWay,
-  SoobErrorDeleteWay,
-  SoobErrorCreateWayToPoint,
-  SoobErrorDeleteWayToPoint,
-  SoobErrorCreateWayFromPoint,
-  SoobErrorDeleteWayFromPoint,
-} from "./components/MapSocketFunctions";
+import MainMapSMD from './components/MainMapSMD';
+import AppSocketError from './AppSocketError';
+// import {
+//   SoobErrorCreateWay,
+//   SoobErrorDeleteWay,
+//   SoobErrorCreateWayToPoint,
+//   SoobErrorDeleteWayToPoint,
+//   SoobErrorCreateWayFromPoint,
+//   SoobErrorDeleteWayFromPoint,
+// } from "./components/MapSocketFunctions";
 
 //import { DateMAP } from './interfaceMAP.d';
 //import { DateRoute } from "./interfaceRoute.d";
 //import { Tflight } from "./interfaceMAP.d";
-import { dataMap } from "./otladkaMaps";
-import { dataRoute } from "./otladkaRoutes";
+import { dataMap } from './otladkaMaps';
+//import { dataRoute } from "./otladkaRoutes";
 
 export let dateMapGl: any;
 export let dateRouteGl: any;
@@ -61,8 +61,8 @@ export let Coordinates: Array<Array<number>> = []; // массив коорди�
 let flagOpen = true;
 let flagOpenWS = true;
 let WS: any = null;
-let homeRegion: any = "";
-let soob = "";
+let homeRegion: any = '';
+let soob = '';
 
 const App = () => {
   //== Piece of Redux ======================================
@@ -79,11 +79,7 @@ const App = () => {
   const dispatch = useDispatch();
   //========================================================
   const host =
-    "wss://" +
-    window.location.host +
-    window.location.pathname +
-    "W" +
-    window.location.search;
+    'wss://' + window.location.host + window.location.pathname + 'W' + window.location.search;
 
   const [openSetErr, setOpenSetErr] = React.useState(false);
   const [svg, setSvg] = React.useState<any>(null);
@@ -92,28 +88,28 @@ const App = () => {
     WS = new WebSocket(host);
     flagOpenWS = false;
     let pageUrl = new URL(window.location.href);
-    homeRegion = Number(pageUrl.searchParams.get("Region"));
+    homeRegion = Number(pageUrl.searchParams.get('Region'));
   }
 
   React.useEffect(() => {
     WS.onopen = function (event: any) {
-      console.log("WS.current.onopen:", event);
+      console.log('WS.current.onopen:', event);
     };
 
     WS.onclose = function (event: any) {
-      console.log("WS.current.onclose:", event);
+      console.log('WS.current.onclose:', event);
     };
 
     WS.onerror = function (event: any) {
-      console.log("WS.current.onerror:", event);
+      console.log('WS.current.onerror:', event);
     };
 
     WS.onmessage = function (event: any) {
       let allData = JSON.parse(event.data);
       let data = allData.data;
-      console.log("пришло:", allData.type, data);
+      console.log('пришло:', allData.type, data);
       switch (allData.type) {
-        case "mapInfo":
+        case 'mapInfo':
           dateMapGl = data;
           dispatch(mapCreate(dateMapGl));
           break;
@@ -225,13 +221,13 @@ const App = () => {
         //   }
         //   break;
         default:
-          console.log("data_default:", data);
+          console.log('data_default:', data);
       }
     };
   }, [dispatch, massdk, coordinates, svg]);
 
-  if (WS.url === "wss://localhost:3000/W" && flagOpen) {
-    console.log("РЕЖИМ ОТЛАДКИ!!!");
+  if (WS.url === 'wss://localhost:3000/W' && flagOpen) {
+    console.log('РЕЖИМ ОТЛАДКИ!!!');
     dateMapGl = { ...dataMap };
     dispatch(mapCreate(dateMapGl));
     // dateRouteGl = { ...dataRoute.data };
@@ -245,16 +241,10 @@ const App = () => {
   }
 
   return (
-    <Grid container sx={{ height: "100vh", width: "100%", bgcolor: "#E9F5D8" }}>
+    <Grid container sx={{ height: '100vh', width: '100%', bgcolor: '#E9F5D8' }}>
       <Grid item xs>
         {openSetErr && <AppSocketError sErr={soob} setOpen={setOpenSetErr} />}
-        <MainMapSMD
-          ws={WS}
-          region={homeRegion}
-          sErr={soob}
-          svg={svg}
-          setSvg={setSvg}
-        />
+        <MainMapSMD ws={WS} region={homeRegion} sErr={soob} svg={svg} setSvg={setSvg} />
       </Grid>
     </Grid>
   );

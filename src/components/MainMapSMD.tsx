@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { massdkCreate, massrouteCreate } from './../redux/actions';
-import { coordinatesCreate, massrouteproCreate } from './../redux/actions';
+import { coordinatesCreate } from './../redux/actions';
 
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -34,11 +34,11 @@ import { getMassPolyRouteOptions } from './MapServiceFunctions';
 import { getMassMultiRouteOptions } from './MapServiceFunctions';
 import { getMassMultiRouteInOptions } from './MapServiceFunctions';
 import { getPointData, getPointOptions } from './MapServiceFunctions';
-import { StrokaBalloon, ChangeCrossFunc } from './MapServiceFunctions';
+import { StrokaBalloon } from './MapServiceFunctions';
 import { RecevKeySvg, StrokaMenuGlob, MasskPoint } from './MapServiceFunctions';
 
-import { SendSocketCreatePoint, SocketDeleteWay } from './MapSocketFunctions';
-import { SendSocketCreateVertex } from './MapSocketFunctions';
+import { SocketDeleteWay } from './MapSocketFunctions';
+//import { SendSocketCreateVertex } from './MapSocketFunctions';
 import { SendSocketDeletePoint } from './MapSocketFunctions';
 import { SendSocketDeleteVertex } from './MapSocketFunctions';
 // import { SendSocketCreateWay, SendSocketGetSvg } from "./MapSocketFunctions";
@@ -126,9 +126,9 @@ const MainMapSMD = (props: { ws: WebSocket; region: any; sErr: string; svg: any;
   //const [flagPro, setFlagPro] = React.useState(false);
   const [flagPusk, setFlagPusk] = React.useState(false);
   const [flagRoute, setFlagRoute] = React.useState(false);
-  const [revers, setRevers] = React.useState(false);
+  //const [revers, setRevers] = React.useState(false);
   const [openSet, setOpenSet] = React.useState(false);
-  const [openSetCreate, setOpenSetCreate] = React.useState(false);
+  //const [openSetCreate, setOpenSetCreate] = React.useState(false);
   const [openSetAdress, setOpenSetAdress] = React.useState(false);
   //const [openSetRevers, setOpenSetRevers] = React.useState(false);
   //const [makeRevers, setMakeRevers] = React.useState(false);
@@ -310,6 +310,11 @@ const MainMapSMD = (props: { ws: WebSocket; region: any; sErr: string; svg: any;
 
   const MakeNewMassMem = (mass: any) => {
     console.log('MASS:', mass);
+    massMem = [];
+    for (let i = 0; i < mass.length; i++) {
+      massMem.push(mass[i].idx);
+    }
+    setFlagPusk(!flagPusk);
   };
 
   const OnPlacemarkClickPoint = (index: number) => {

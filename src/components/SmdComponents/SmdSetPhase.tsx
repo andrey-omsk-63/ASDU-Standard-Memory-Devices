@@ -5,7 +5,9 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
+import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import MenuItem from '@mui/material/MenuItem';
 
 import { styleModalEnd } from './../MainMapStyle';
 
@@ -13,7 +15,7 @@ let newInput = true;
 let massFaz: any = [];
 let colorRec = 'black';
 let knop = 'удалить';
-let chDel = 0;
+//let chDel = 0;
 
 const SmdSetPhase = (props: { setOpen: any; massMem: Array<number>; func: any }) => {
   //== Piece of Redux =======================================
@@ -59,15 +61,35 @@ const SmdSetPhase = (props: { setOpen: any; massMem: Array<number>; func: any })
     color: 'black',
   };
 
+  const styleSetFaza = {
+    position: 'relative',
+    left: '37%',
+    width: '12px',
+    maxHeight: '3px',
+    minHeight: '3px',
+    bgcolor: '#FFFBE5',
+    boxShadow: 3,
+    p: 1.5,
+  };
+
+  const styleBoxFormFaza = {
+    '& > :not(style)': {
+      marginTop: '-10px',
+      marginLeft: '-12px',
+      width: '36px',
+    },
+  };
+
   const [openSetMode, setOpenSetMode] = React.useState(true);
   const [trigger, setTrigger] = React.useState(true);
+  const [chDel, setChDel] = React.useState(0);
 
   if (newInput) {
     massFaz = [];
     for (let i = 0; i < props.massMem.length; i++) {
       let maskFaz = {
         idx: 0,
-        faza: 0,
+        faza: 1,
         name: '',
         delRec: false,
       };
@@ -76,7 +98,7 @@ const SmdSetPhase = (props: { setOpen: any; massMem: Array<number>; func: any })
       massFaz.push(maskFaz);
     }
     newInput = false;
-    chDel = 0;
+    setChDel(0);
     console.log('massFaz:', massFaz);
   }
 
@@ -87,13 +109,9 @@ const SmdSetPhase = (props: { setOpen: any; massMem: Array<number>; func: any })
   };
 
   const ClickKnop = (idx: number) => {
-    if (!massFaz[idx].delRec) {
-      massFaz[idx].delRec = true;
-      chDel++;
-    } else {
-      massFaz[idx].delRec = false;
-      chDel--;
-    }
+    massFaz[idx].delRec = !massFaz[idx].delRec;
+    if (massFaz[idx].delRec) setChDel(chDel + 1);
+    if (!massFaz[idx].delRec) setChDel(chDel - 1);
     setTrigger(!trigger);
   };
 
@@ -104,12 +122,69 @@ const SmdSetPhase = (props: { setOpen: any; massMem: Array<number>; func: any })
     }
     massFaz = [];
     massFaz = massRab;
-    setTrigger(!trigger);
+    setChDel(0);
+    console.log('111:', massFaz);
+    //setTrigger(!trigger);
   };
 
   const SaveRec = () => {
+    if (chDel) DelRec();
     props.func(massFaz);
     handleCloseSetEnd();
+  };
+
+  const InputFaza = (mode: number) => {
+    const handleKey = (event: any) => {
+      if (event.key === 'Enter') event.preventDefault();
+    };
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setCurrency(Number(event.target.value));
+      massFaz[mode].faza = massDat[Number(event.target.value)];
+      //setCurrency(0);
+    };
+
+    let dat = [1, 2, 3];
+    let massKey = [];
+    let massDat: any[] = [];
+    const currencies: any = [];
+    for (let key in dat) {
+      massKey.push(key);
+      massDat.push(dat[key]);
+    }
+    for (let i = 0; i < massKey.length; i++) {
+      let maskCurrencies = {
+        value: '',
+        label: '',
+      };
+      maskCurrencies.value = massKey[i];
+      maskCurrencies.label = massDat[i];
+      currencies.push(maskCurrencies);
+    }
+
+    const [currency, setCurrency] = React.useState(0);
+
+    return (
+      <Box sx={styleSetFaza}>
+        <Box component="form" sx={styleBoxFormFaza}>
+          <TextField
+            select
+            size="small"
+            onKeyPress={handleKey} //отключение Enter
+            value={currency}
+            onChange={handleChange}
+            InputProps={{ style: { fontSize: 14 } }}
+            variant="standard"
+            color="secondary">
+            {currencies.map((option: any) => (
+              <MenuItem key={option.value} value={option.value} sx={{ fontSize: 14 }}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Box>
+      </Box>
+    );
   };
 
   const StrokaTabl = () => {
@@ -129,8 +204,8 @@ const SmdSetPhase = (props: { setOpen: any; massMem: Array<number>; func: any })
           <Grid item xs={8} sx={{ paddingLeft: 1 }}>
             {massFaz[i].name}
           </Grid>
-          <Grid item xs={2} sx={{ textAlign: 'center' }}>
-            {massFaz[i].faza}
+          <Grid item xs={2}>
+            <Box sx={{ textAlign: 'center' }}>{InputFaza(i)}</Box>
           </Grid>
           <Grid item xs={2} sx={{ textAlign: 'center' }}>
             <Button variant="contained" sx={styleSave} onClick={() => ClickKnop(i)}>
@@ -142,6 +217,8 @@ const SmdSetPhase = (props: { setOpen: any; massMem: Array<number>; func: any })
     }
     return resStr;
   };
+
+  console.log('chDel:', chDel);
 
   return (
     <Modal open={openSetMode} onClose={handleCloseSetEnd} hideBackdrop>
@@ -168,11 +245,11 @@ const SmdSetPhase = (props: { setOpen: any; massMem: Array<number>; func: any })
 
           <Box sx={{ overflowX: 'auto', height: '69vh' }}>{StrokaTabl()}</Box>
           <Box sx={{ marginTop: 0.5, textAlign: 'center' }}>
-            {chDel > 0 && (
+            {/* {chDel > 0 && (
               <Button sx={styleModalMenu} onClick={() => DelRec()}>
                 Удалить помеченные
               </Button>
-            )}
+            )} */}
             <Button sx={styleModalMenu} onClick={() => SaveRec()}>
               Сохранить
             </Button>
