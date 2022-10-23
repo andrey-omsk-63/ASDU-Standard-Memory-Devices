@@ -1,59 +1,59 @@
-import * as React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { massdkCreate, massrouteCreate } from "./../redux/actions";
-import { coordinatesCreate, massrouteproCreate } from "./../redux/actions";
+import * as React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { massdkCreate, massrouteCreate } from './../redux/actions';
+import { coordinatesCreate, massrouteproCreate } from './../redux/actions';
 
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Modal from "@mui/material/Modal";
-import Typography from "@mui/material/Typography";
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Modal from '@mui/material/Modal';
+import Typography from '@mui/material/Typography';
 
-import { YMaps, Map, Placemark, FullscreenControl } from "react-yandex-maps";
-import { GeolocationControl, YMapsApi } from "react-yandex-maps";
-import { RulerControl, SearchControl } from "react-yandex-maps";
-import { TrafficControl, TypeSelector, ZoomControl } from "react-yandex-maps";
+import { YMaps, Map, Placemark, FullscreenControl } from 'react-yandex-maps';
+import { GeolocationControl, YMapsApi } from 'react-yandex-maps';
+import { RulerControl, SearchControl } from 'react-yandex-maps';
+import { TrafficControl, TypeSelector, ZoomControl } from 'react-yandex-maps';
 
 //import MapRouteInfo from "./MapComponents/MapRouteInfo";
-import MapChangeAdress from "./MapComponents/MapChangeAdress";
-import MapPointDataError from "./MapComponents/MapPointDataError";
+import MapChangeAdress from './MapComponents/MapChangeAdress';
+import MapPointDataError from './MapComponents/MapPointDataError';
 // import MapRouteBind from "./MapComponents/MapRouteBind";
 // import MapCreatePointVertex from "./MapComponents/MapCreatePointVertex";
 // import MapRouteProtokol from "./MapComponents/MapRouteProtokol";
 // import MapReversRoute from "./MapComponents/MapReversRoute";
 
-import SmdSelectMD from "./SmdComponents/SmdSelectMD";
-import SmdMakeMode from "./SmdComponents/SmdMakeMode";
-import SmdSetPhase from "./SmdComponents/SmdSetPhase";
+import SmdSelectMD from './SmdComponents/SmdSelectMD';
+import SmdMakeMode from './SmdComponents/SmdMakeMode';
+import SmdSetPhase from './SmdComponents/SmdSetPhase';
 
 //import { RecordMassRoute } from "./MapServiceFunctions";
-import { DecodingCoord, CodingCoord } from "./MapServiceFunctions";
-import { getMultiRouteOptions, DoublRoute } from "./MapServiceFunctions";
-import { getReferencePoints, CenterCoord } from "./MapServiceFunctions";
-import { getMassPolyRouteOptions } from "./MapServiceFunctions";
-import { getMassMultiRouteOptions } from "./MapServiceFunctions";
-import { getMassMultiRouteInOptions } from "./MapServiceFunctions";
-import { getPointData, getPointOptions } from "./MapServiceFunctions";
-import { StrokaBalloon, ChangeCrossFunc } from "./MapServiceFunctions";
-import { RecevKeySvg, StrokaMenuGlob, MasskPoint } from "./MapServiceFunctions";
+import { DecodingCoord, CodingCoord } from './MapServiceFunctions';
+import { getMultiRouteOptions, DoublRoute } from './MapServiceFunctions';
+import { getReferencePoints, CenterCoord } from './MapServiceFunctions';
+import { getMassPolyRouteOptions } from './MapServiceFunctions';
+import { getMassMultiRouteOptions } from './MapServiceFunctions';
+import { getMassMultiRouteInOptions } from './MapServiceFunctions';
+import { getPointData, getPointOptions } from './MapServiceFunctions';
+import { StrokaBalloon, ChangeCrossFunc } from './MapServiceFunctions';
+import { RecevKeySvg, StrokaMenuGlob, MasskPoint } from './MapServiceFunctions';
 
-import { SendSocketCreatePoint, SocketDeleteWay } from "./MapSocketFunctions";
-import { SendSocketCreateVertex } from "./MapSocketFunctions";
-import { SendSocketDeletePoint } from "./MapSocketFunctions";
-import { SendSocketDeleteVertex } from "./MapSocketFunctions";
+import { SendSocketCreatePoint, SocketDeleteWay } from './MapSocketFunctions';
+import { SendSocketCreateVertex } from './MapSocketFunctions';
+import { SendSocketDeletePoint } from './MapSocketFunctions';
+import { SendSocketDeleteVertex } from './MapSocketFunctions';
 // import { SendSocketCreateWay, SendSocketGetSvg } from "./MapSocketFunctions";
 // import { SendSocketCreateWayFromPoint } from "./MapSocketFunctions";
 // import { SendSocketCreateWayToPoint } from "./MapSocketFunctions";
 
-import { styleSetPoint, styleTypography, searchControl } from "./MainMapStyle";
-import { styleModalEndMapGl } from "./MainMapStyle";
+import { styleSetPoint, styleTypography, searchControl } from './MainMapStyle';
+import { styleModalEndMapGl } from './MainMapStyle';
 
 let coordStart: any = []; // рабочий массив коллекции входящих связей
 let coordStop: any = []; // рабочий массив коллекции входящих связей
 let coordStartIn: any = []; // рабочий массив коллекции исходящих связей
 let coordStopIn: any = []; // рабочий массив коллекции исходящих связей
 let massRoute: any = []; // рабочий массив сети связей
-let masSvg: any = ["", ""];
+let masSvg: any = ['', ''];
 
 let debugging = false;
 let flagOpen = false;
@@ -62,8 +62,8 @@ let flagOpen = false;
 //let needLinkBind = false;
 let activeRoute: any = null;
 //let newPointCoord: any = 0;
-let soobError = "";
-let oldsErr = "";
+let soobError = '';
+let oldsErr = '';
 let zoom = 10;
 let homeRegion = 0;
 let pointCenter: any = 0;
@@ -76,31 +76,25 @@ let reqRoute: any = {
 let pointAa: any = 0;
 let pointAaIndex: number = -1;
 let fromCross: any = {
-  pointAaRegin: "",
-  pointAaArea: "",
+  pointAaRegin: '',
+  pointAaArea: '',
   pointAaID: 0,
-  pointAcod: "",
+  pointAcod: '',
 };
 let pointBb: any = 0;
 let pointBbIndex: number = -1;
 let toCross: any = {
-  pointBbRegin: "",
-  pointBbArea: "",
+  pointBbRegin: '',
+  pointBbArea: '',
   pointBbID: 0,
-  pointBcod: "",
+  pointBcod: '',
 };
 
 let massMem: Array<number> = [];
 
-const MainMapSMD = (props: {
-  ws: WebSocket;
-  region: any;
-  sErr: string;
-  svg: any;
-  setSvg: any;
-}) => {
+const MainMapSMD = (props: { ws: WebSocket; region: any; sErr: string; svg: any; setSvg: any }) => {
   const WS = props.ws;
-  if (WS.url === "wss://localhost:3000/W") debugging = true;
+  if (WS.url === 'wss://localhost:3000/W') debugging = true;
   //== Piece of Redux =======================================
   let massdk = useSelector((state: any) => {
     const { massdkReducer } = state;
@@ -257,11 +251,8 @@ const MainMapSMD = (props: {
       case 43: // создать режим
         setMakeMode(true);
         break;
-      case 44: // назначит фазы
+      case 44: // назначить фазы
         setSetPhase(true);
-        break;
-      case 77: // удаление связи / отмена назначений
-        ZeroRoute(false);
     }
   };
 
@@ -271,8 +262,8 @@ const MainMapSMD = (props: {
     for (let i = 0; i < massRoute.length; i++) {
       massPolyRoute[i] = new ymaps.Polyline(
         [DecodingCoord(massRoute[i].starts), DecodingCoord(massRoute[i].stops)],
-        { balloonContent: "Ломаная линия" },
-        getMassPolyRouteOptions()
+        { balloonContent: 'Ломаная линия' },
+        getMassPolyRouteOptions(),
       );
       mapp.current.geoObjects.add(massPolyRoute[i]);
     }
@@ -280,7 +271,7 @@ const MainMapSMD = (props: {
     for (let i = 0; i < coordStart.length; i++) {
       massMultiRoute[i] = new ymaps.multiRouter.MultiRoute(
         getReferencePoints(coordStart[i], coordStop[i]),
-        getMassMultiRouteOptions()
+        getMassMultiRouteOptions(),
       );
       mapp.current.geoObjects.add(massMultiRoute[i]);
     }
@@ -288,25 +279,21 @@ const MainMapSMD = (props: {
     for (let i = 0; i < coordStartIn.length; i++) {
       massMultiRouteIn[i] = new ymaps.multiRouter.MultiRoute(
         getReferencePoints(coordStartIn[i], coordStopIn[i]),
-        getMassMultiRouteInOptions()
+        getMassMultiRouteInOptions(),
       );
       mapp.current.geoObjects.add(massMultiRouteIn[i]);
     }
     const multiRoute = new ymaps.multiRouter.MultiRoute(
       getReferencePoints(pointAa, pointBb),
-      getMultiRouteOptions()
+      getMultiRouteOptions(),
     );
     activeRoute = null;
     mapp.current.geoObjects.add(multiRoute); // основная связь
-    multiRoute.model.events.add("requestsuccess", function () {
+    multiRoute.model.events.add('requestsuccess', function () {
       activeRoute = multiRoute.getActiveRoute();
       if (activeRoute) {
-        reqRoute.dlRoute = Math.round(
-          activeRoute.properties.get("distance").value
-        );
-        reqRoute.tmRoute = Math.round(
-          activeRoute.properties.get("duration").value
-        );
+        reqRoute.dlRoute = Math.round(activeRoute.properties.get('distance').value);
+        reqRoute.tmRoute = Math.round(activeRoute.properties.get('duration').value);
       }
     });
   };
@@ -321,6 +308,10 @@ const MainMapSMD = (props: {
     ymaps && addRoute(ymaps); // перерисовка связей
   };
 
+  const MakeNewMassMem = (mass: any) => {
+    console.log('MASS:', mass);
+  };
+
   const OnPlacemarkClickPoint = (index: number) => {
     let nomInMass = massMem.indexOf(index);
     if (nomInMass < 0) {
@@ -328,13 +319,13 @@ const MainMapSMD = (props: {
     } else {
       massMem.splice(nomInMass, 1);
     }
-    console.log("1massMem:", massMem);
+    console.log('1massMem:', massMem);
     if (massMem.length) {
       massMem.sort(function (a, b) {
         return a - b;
       });
     }
-    console.log("2massMem:", massMem);
+    console.log('2massMem:', massMem);
     setFlagPusk(!flagPusk);
     // if (pointAa === 0) {
     //   pointAaIndex = index; // начальная точка
@@ -383,22 +374,19 @@ const MainMapSMD = (props: {
   const ModalPressBalloon = () => {
     const [openSetErBall, setOpenSetErBall] = React.useState(false);
     let pointRoute: any = 0;
-    let soobDel = "Удаление точки";
+    let soobDel = 'Удаление точки';
     let areaPoint = -1;
     if (indexPoint >= 0) areaPoint = massdk[indexPoint].area;
     if (indexPoint >= 0 && indexPoint < massdk.length) {
-      if (areaPoint) soobDel = "Удаление перекрёстка";
-      pointRoute = [
-        massdk[indexPoint].coordinates[0],
-        massdk[indexPoint].coordinates[1],
-      ];
+      if (areaPoint) soobDel = 'Удаление перекрёстка';
+      pointRoute = [massdk[indexPoint].coordinates[0], massdk[indexPoint].coordinates[1]];
     }
 
     const handleClose = (param: number) => {
       switch (param) {
         case 1: // Начальная точка
           if (pointBbIndex === indexPoint) {
-            soobError = "Начальная и конечная точки совпадают";
+            soobError = 'Начальная и конечная точки совпадают';
             setOpenSetErBall(true);
           } else {
             pointAaIndex = indexPoint;
@@ -412,14 +400,14 @@ const MainMapSMD = (props: {
           break;
         case 2: // Конечная точка
           if (pointAaIndex === indexPoint) {
-            soobError = "Начальная и конечная точки совпадают";
+            soobError = 'Начальная и конечная точки совпадают';
             setOpenSetErBall(true);
           } else {
             if (
               massroute.vertexes[pointAaIndex].area === 0 &&
               massroute.vertexes[indexPoint].area === 0
             ) {
-              SoobOpenSetEr("Связь между двумя точками создовать нельзя");
+              SoobOpenSetEr('Связь между двумя точками создовать нельзя');
             } else {
               pointBbIndex = indexPoint;
               pointBb = pointRoute;
@@ -427,7 +415,7 @@ const MainMapSMD = (props: {
               toCross.pointBbArea = massdk[pointBbIndex].area.toString();
               toCross.pointBbID = massdk[pointBbIndex].ID;
               if (DoublRoute(massroute.ways, pointAa, pointBb)) {
-                SoobOpenSetEr("Дубликатная связь");
+                SoobOpenSetEr('Дубликатная связь');
                 ZeroRoute(false);
               }
               setOpenSet(false);
@@ -436,9 +424,9 @@ const MainMapSMD = (props: {
           }
           break;
         case 3: // Удаление точки/перекрёстка
-          console.log("Удаление");
+          console.log('Удаление');
           if (pointAaIndex === indexPoint || pointBbIndex === indexPoint) {
-            soobError = "Начальную и конечную точки связи удалять нельзя";
+            soobError = 'Начальную и конечную точки связи удалять нельзя';
             setOpenSetErBall(true);
           } else {
             let massRouteRab: any = []; // удаление из массива сети связей
@@ -472,7 +460,7 @@ const MainMapSMD = (props: {
               if (coordinates[i] === oldPointAa) pointAaIndex = i;
               if (coordinates[i] === oldPointBb) pointBbIndex = i;
             }
-            if (areaV === "0") {
+            if (areaV === '0') {
               SendSocketDeletePoint(debugging, WS, idPoint);
             } else {
               SendSocketDeleteVertex(debugging, WS, regionV, areaV, idPoint);
@@ -493,18 +481,16 @@ const MainMapSMD = (props: {
           <Button sx={styleModalEndMapGl} onClick={() => setOpenSet(false)}>
             <b>&#10006;</b>
           </Button>
-          <Box sx={{ marginTop: 2, textAlign: "center" }}>
+          <Box sx={{ marginTop: 2, textAlign: 'center' }}>
             {StrokaBalloon(soobDel, handleClose, 3)}
-            {!areaPoint && (
-              <>{StrokaBalloon("Редактирование адреса", handleClose, 4)}</>
-            )}
+            {!areaPoint && <>{StrokaBalloon('Редактирование адреса', handleClose, 4)}</>}
           </Box>
           <Typography variant="h6" sx={styleTypography}>
             Перестроение связи:
           </Typography>
-          <Box sx={{ marginTop: 1, textAlign: "center" }}>
-            {StrokaBalloon("Начальная точка", handleClose, 1)}
-            {StrokaBalloon("Конечная точка", handleClose, 2)}
+          <Box sx={{ marginTop: 1, textAlign: 'center' }}>
+            {StrokaBalloon('Начальная точка', handleClose, 1)}
+            {StrokaBalloon('Конечная точка', handleClose, 2)}
           </Box>
           {openSetAdress && (
             <MapChangeAdress
@@ -558,11 +544,11 @@ const MainMapSMD = (props: {
             geometry={props.coordinate}
             properties={getPointData(props.idx, pAaI, pBbI, massdk)}
             options={getPointOptions(props.idx, massMem)}
-            modules={["geoObject.addon.balloon", "geoObject.addon.hint"]}
+            modules={['geoObject.addon.balloon', 'geoObject.addon.hint']}
             onClick={() => OnPlacemarkClickPoint(props.idx)}
           />
         ),
-        [props.coordinate, props.idx]
+        [props.coordinate, props.idx],
       );
       return MemoPlacemarkDo;
     };
@@ -586,10 +572,10 @@ const MainMapSMD = (props: {
       //     setOpenSetCreate(true);
       //   }
       // });
-      mapp.current.events.add("mousedown", function (e: any) {
+      mapp.current.events.add('mousedown', function (e: any) {
         pointCenter = mapp.current.getCenter(); // нажата левая/правая кнопка мыши 0, 1 или 2 в зависимости от того, какая кнопка мыши нажата (В IE значение может быть от 0 до 7).
       });
-      mapp.current.events.add(["boundschange"], function () {
+      mapp.current.events.add(['boundschange'], function () {
         pointCenter = mapp.current.getCenter();
         zoom = mapp.current.getZoom(); // покрутили колёсико мыши
       });
@@ -597,10 +583,9 @@ const MainMapSMD = (props: {
   };
   //=== инициализация ======================================
   if (!flagOpen && Object.keys(map.dateMap.tflight).length) {
-    console.log("map:", map);
+    console.log('map:', map);
     if (props.region) homeRegion = props.region;
-    if (!props.region && map.dateMap.tflight.length)
-      homeRegion = map.dateMap.tflight[0].region.num;
+    if (!props.region && map.dateMap.tflight.length) homeRegion = map.dateMap.tflight[0].region.num;
 
     for (let i = 0; i < map.dateMap.tflight.length; i++) {
       let masskPoint = MasskPoint();
@@ -620,7 +605,7 @@ const MainMapSMD = (props: {
       map.dateMap.boxPoint.point0.Y,
       map.dateMap.boxPoint.point0.X,
       map.dateMap.boxPoint.point1.Y,
-      map.dateMap.boxPoint.point1.X
+      map.dateMap.boxPoint.point1.X,
     );
     flagOpen = true;
   }
@@ -636,7 +621,7 @@ const MainMapSMD = (props: {
     oldsErr = props.sErr;
   }
 
-  masSvg = ["", ""];
+  masSvg = ['', ''];
   if (!debugging) {
     if (props.svg) {
       masSvg[0] = props.svg[RecevKeySvg(massroute.vertexes[pointAaIndex])];
@@ -647,13 +632,11 @@ const MainMapSMD = (props: {
   }
 
   return (
-    <Grid container sx={{ border: 0, height: "99.9vh" }}>
-      {StrokaMenuGlob("Управление картой", PressButton, 41)}
-      {StrokaMenuGlob("Выбор ЗУ", PressButton, 42)}
-      {StrokaMenuGlob("Создать режим", PressButton, 43)}
-      {massMem.length > 0 && (
-        <>{StrokaMenuGlob("Назначить фазы", PressButton, 44)}</>
-      )}
+    <Grid container sx={{ border: 0, height: '99.9vh' }}>
+      {StrokaMenuGlob('Управление картой', PressButton, 41)}
+      {StrokaMenuGlob('Выбор ЗУ', PressButton, 42)}
+      {StrokaMenuGlob('Создать режим', PressButton, 43)}
+      {massMem.length > 0 && <>{StrokaMenuGlob('Назначить фазы', PressButton, 44)}</>}
       {/* {makeRevers && needRevers === 0 && <>{PressButton(35)}</>}
       {makeRevers && needRevers === 1 && <>{PressButton(36)}</>}
       {makeRevers && needRevers === 2 && <>{PressButton(37)}</>}
@@ -680,34 +663,34 @@ const MainMapSMD = (props: {
       {Object.keys(map.dateMap.tflight).length && (
         <YMaps
           query={{
-            apikey: "65162f5f-2d15-41d1-a881-6c1acf34cfa1",
-            lang: "ru_RU",
-          }}
-        >
+            apikey: '65162f5f-2d15-41d1-a881-6c1acf34cfa1',
+            lang: 'ru_RU',
+          }}>
           <Map
-            modules={["multiRouter.MultiRoute", "Polyline"]}
+            modules={['multiRouter.MultiRoute', 'Polyline']}
             state={mapState}
             instanceRef={(ref) => InstanceRefDo(ref)}
             onLoad={(ref) => {
               ref && setYmaps(ref);
             }}
-            width={"99.8%"}
-            height={"97%"}
-          >
+            width={'99.8%'}
+            height={'97%'}>
             {/* сервисы Яндекса */}
             <FullscreenControl />
-            <GeolocationControl options={{ float: "left" }} />
-            <RulerControl options={{ float: "right" }} />
+            <GeolocationControl options={{ float: 'left' }} />
+            <RulerControl options={{ float: 'right' }} />
             <SearchControl options={searchControl} />
-            <TrafficControl options={{ float: "right" }} />
-            <TypeSelector options={{ float: "right" }} />
-            <ZoomControl options={{ float: "right" }} />
+            <TrafficControl options={{ float: 'right' }} />
+            <TypeSelector options={{ float: 'right' }} />
+            <ZoomControl options={{ float: 'right' }} />
             {/* служебные компоненты */}
             <PlacemarkDo />
             <ModalPressBalloon />
             {selectMD && <SmdSelectMD setOpen={setSelectMD} />}
             {makeMode && <SmdMakeMode setOpen={setMakeMode} />}
-            {setPhase && <SmdSetPhase setOpen={setSetPhase} massMem={massMem} />}
+            {setPhase && (
+              <SmdSetPhase setOpen={setSetPhase} massMem={massMem} func={MakeNewMassMem} />
+            )}
             {/* {openSetPro && <MapRouteProtokol setOpen={setOpenSetPro} />}
             {openSetEr && (
               <MapPointDataError
