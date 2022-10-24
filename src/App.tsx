@@ -1,30 +1,18 @@
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  mapCreate,
-  // massrouteCreate,
-  // massrouteproCreate,
-  // coordinatesCreate,
-  // massdkCreate,
-} from './redux/actions';
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { mapCreate } from "./redux/actions";
 
-import Grid from '@mui/material/Grid';
+import Grid from "@mui/material/Grid";
 
-import MainMapSMD from './components/MainMapSMD';
-import AppSocketError from './AppSocketError';
-// import {
-//   SoobErrorCreateWay,
-//   SoobErrorDeleteWay,
-//   SoobErrorCreateWayToPoint,
-//   SoobErrorDeleteWayToPoint,
-//   SoobErrorCreateWayFromPoint,
-//   SoobErrorDeleteWayFromPoint,
-// } from "./components/MapSocketFunctions";
+//import axios from "axios";
+
+import MainMapSMD from "./components/MainMapSMD";
+import AppSocketError from "./AppSocketError";
 
 //import { DateMAP } from './interfaceMAP.d';
 //import { DateRoute } from "./interfaceRoute.d";
 //import { Tflight } from "./interfaceMAP.d";
-import { dataMap } from './otladkaMaps';
+import { dataMap } from "./otladkaMaps";
 //import { dataRoute } from "./otladkaRoutes";
 
 export let dateMapGl: any;
@@ -61,8 +49,8 @@ export let Coordinates: Array<Array<number>> = []; // массив коорди�
 let flagOpen = true;
 let flagOpenWS = true;
 let WS: any = null;
-let homeRegion: any = '';
-let soob = '';
+let homeRegion: any = "";
+let soob = "";
 
 const App = () => {
   //== Piece of Redux ======================================
@@ -79,7 +67,11 @@ const App = () => {
   const dispatch = useDispatch();
   //========================================================
   const host =
-    'wss://' + window.location.host + window.location.pathname + 'W' + window.location.search;
+    "wss://" +
+    window.location.host +
+    window.location.pathname +
+    "W" +
+    window.location.search;
 
   const [openSetErr, setOpenSetErr] = React.useState(false);
   const [svg, setSvg] = React.useState<any>(null);
@@ -88,163 +80,61 @@ const App = () => {
     WS = new WebSocket(host);
     flagOpenWS = false;
     let pageUrl = new URL(window.location.href);
-    homeRegion = Number(pageUrl.searchParams.get('Region'));
+    homeRegion = Number(pageUrl.searchParams.get("Region"));
   }
 
   React.useEffect(() => {
     WS.onopen = function (event: any) {
-      console.log('WS.current.onopen:', event);
+      console.log("WS.current.onopen:", event);
     };
 
     WS.onclose = function (event: any) {
-      console.log('WS.current.onclose:', event);
+      console.log("WS.current.onclose:", event);
     };
 
     WS.onerror = function (event: any) {
-      console.log('WS.current.onerror:', event);
+      console.log("WS.current.onerror:", event);
     };
 
     WS.onmessage = function (event: any) {
       let allData = JSON.parse(event.data);
       let data = allData.data;
-      console.log('пришло:', allData.type, data);
+      console.log("пришло:", allData.type, data);
       switch (allData.type) {
-        case 'mapInfo':
+        case "mapInfo":
           dateMapGl = data;
           dispatch(mapCreate(dateMapGl));
           break;
-        // case "graphInfo":
-        //   let pointRab = JSON.parse(JSON.stringify(data));
-        //   pointRab.points = []; // массив протоколов
-        //   pointRab.vertexes = [];
-        //   pointRab.ways = [];
-        //   dateRouteGl = JSON.parse(JSON.stringify(data));
-        //   dateRouteProGl = JSON.parse(JSON.stringify(pointRab));
-        //   dispatch(massrouteCreate(dateRouteGl));
-        //   dispatch(massrouteproCreate(dateRouteProGl));
-        //   break;
-        // case "createPoint":
-        //   if (data.status) {
-        //     dateRouteGl.vertexes[dateRouteGl.vertexes.length - 1].id = data.id;
-        //     massdk[massdk.length - 1].ID = data.id;
-        //   } else {
-        //     dateRouteGl.vertexes.splice(dateRouteGl.vertexes.length - 1, 1);
-        //     massdk.splice(massdk.length - 1, 1);
-        //     coordinates.splice(coordinates.length - 1, 1);
-        //     soob = "Произошла ошибка при создании точки";
-        //     setOpenSetErr(true);
-        //     dispatch(coordinatesCreate(coordinates));
-        //   }
-        //   dispatch(massrouteCreate(dateRouteGl));
-        //   dispatch(massdkCreate(massdk));
-        //   break;
-        // case "deletePoint":
-        //   if (!data.status) {
-        //     soob = "Произошла ошибка при удалении точки";
-        //     setOpenSetErr(true);
-        //   }
-        //   break;
-        // case "createVertex":
-        //   if (!data.status) {
-        //     dateRouteGl.vertexes.splice(dateRouteGl.vertexes.length - 1, 1);
-        //     massdk.splice(massdk.length - 1, 1);
-        //     coordinates.splice(coordinates.length - 1, 1);
-        //     soob = "Произошла ошибка при создании перекрёстка";
-        //     setOpenSetErr(true);
-        //     dispatch(coordinatesCreate(coordinates));
-        //     dispatch(massrouteCreate(dateRouteGl));
-        //     dispatch(massdkCreate(massdk));
-        //   }
-        //   break;
-        // case "deleteVertex":
-        //   if (!data.status) {
-        //     soob = "Произошла ошибка при удалении перекрёстка";
-        //     setOpenSetErr(true);
-        //   }
-        //   break;
-        // case "createWay":
-        //   if (!data.status) {
-        //     soob = SoobErrorCreateWay(data);
-        //     dateRouteGl.ways.splice(dateRouteGl.ways.length - 1, 1);
-        //     dateRouteProGl.ways.splice(dateRouteGl.ways.length - 1, 1);
-        //     dispatch(massrouteproCreate(dateRouteProGl));
-        //     dispatch(massrouteCreate(dateRouteGl));
-        //     setOpenSetErr(true);
-        //   }
-        //   break;
-        // case "deleteWay":
-        //   if (!data.status) {
-        //     soob = SoobErrorDeleteWay(data);
-        //     setOpenSetErr(true);
-        //   }
-        //   break;
-        // case "createWayToPoint":
-        //   if (!data.status) {
-        //     soob = SoobErrorCreateWayToPoint(data);
-        //     dateRouteGl.ways.splice(dateRouteGl.ways.length - 1, 1);
-        //     dispatch(massrouteCreate(dateRouteGl));
-        //     dateRouteProGl.ways.splice(dateRouteGl.ways.length - 1, 1);
-        //     dispatch(massrouteproCreate(dateRouteProGl));
-        //     setOpenSetErr(true);
-        //   }
-        //   break;
-        // case "deleteWayToPoint":
-        //   if (!data.status) {
-        //     soob = SoobErrorDeleteWayToPoint(data);
-        //     setOpenSetErr(true);
-        //   }
-        //   break;
-        // case "createWayFromPoint":
-        //   if (!data.status) {
-        //     soob = SoobErrorCreateWayFromPoint(data);
-        //     console.log("soob:", soob);
-        //     dateRouteGl.ways.splice(dateRouteGl.ways.length - 1, 1);
-        //     dispatch(massrouteCreate(dateRouteGl));
-        //     dateRouteProGl.ways.splice(dateRouteGl.ways.length - 1, 1);
-        //     dispatch(massrouteproCreate(dateRouteProGl));
-        //     setOpenSetErr(true);
-        //   }
-        //   break;
-        // case "deleteWayFromPoint":
-        //   if (!data.status) {
-        //     soob = SoobErrorDeleteWayFromPoint(data);
-        //     setOpenSetErr(true);
-        //   }
-        //   break;
-        // case "getSvg":
-        //   if (!data.status) {
-        //     soob = "Ошибка при получении изображений перекрёстков";
-        //     setOpenSetErr(true);
-        //     setSvg(0);
-        //   } else {
-        //     setSvg(data.svg);
-        //   }
-        //   break;
         default:
-          console.log('data_default:', data);
+          console.log("data_default:", data);
       }
     };
   }, [dispatch, massdk, coordinates, svg]);
 
-  if (WS.url === 'wss://localhost:3000/W' && flagOpen) {
-    console.log('РЕЖИМ ОТЛАДКИ!!!');
+  if (WS.url === "wss://localhost:3000/W" && flagOpen) {
+    console.log("РЕЖИМ ОТЛАДКИ!!!");
+    // axios.get("http://localhost:3000/otladkaMapInfo.json").then(({ data }) => {
+    //   console.log("1DATA", data);
+    //   // setPointsTfl(data.data.tflight);
+    //   // setIsOpenDev(true);
+    // });
     dateMapGl = { ...dataMap };
     dispatch(mapCreate(dateMapGl));
-    // dateRouteGl = { ...dataRoute.data };
-    // dateRouteProGl = { ...dataRoute.data };
-    // dateRouteProGl.points = []; // массив протоколов
-    // dateRouteProGl.vertexes = [];
-    // dateRouteProGl.ways = [];
+
     flagOpen = false;
-    // dispatch(massrouteCreate(dateRouteGl));
-    // dispatch(massrouteproCreate(dateRouteProGl));
   }
 
   return (
-    <Grid container sx={{ height: '100vh', width: '100%', bgcolor: '#E9F5D8' }}>
+    <Grid container sx={{ height: "100vh", width: "100%", bgcolor: "#E9F5D8" }}>
       <Grid item xs>
         {openSetErr && <AppSocketError sErr={soob} setOpen={setOpenSetErr} />}
-        <MainMapSMD ws={WS} region={homeRegion} sErr={soob} svg={svg} setSvg={setSvg} />
+        <MainMapSMD
+          ws={WS}
+          region={homeRegion}
+          sErr={soob}
+          svg={svg}
+          setSvg={setSvg}
+        />
       </Grid>
     </Grid>
   );
