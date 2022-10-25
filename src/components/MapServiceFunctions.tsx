@@ -137,7 +137,7 @@ export const getPointData = (
 
 export const getPointOptions = (
   index: number,
-  massMem: Array<number>,
+  massMem: Array<number>
   // pointAaIndex: number,
   // pointBbIndex: number,
   // massdk: any,
@@ -146,7 +146,15 @@ export const getPointOptions = (
   // coordStop: any
 ) => {
   let colorBalloon = "islands#violetCircleDotIcon";
-  if (massMem.includes(index)) colorBalloon = "islands#redCircleDotIcon";
+  let aaa = massMem.indexOf(index);
+  // if (massMem.includes(index)) {
+  if (aaa >= 0) {
+    colorBalloon = "islands#redCircleDotIcon";
+    if (massMem.length === aaa + 1 && massMem.length > 1)
+      colorBalloon = "islands#redDotIcon";
+    console.log("!!!!!!", index, massMem, massMem.indexOf(index));
+  }
+
   // if (massroute.vertexes[index].area === 0) {
   //   colorBalloon = "islands#violetCircleIcon";
   //   if (massdk[index].newCoordinates > 0)
@@ -189,7 +197,7 @@ export const getReferencePoints = (pointA: any, pointB: any) => {
 
 export const getMultiRouteOptions = () => {
   return {
-    routeActiveStrokeWidth: 5,
+    routeActiveStrokeWidth: 4,
     //routeActiveStrokeColor: "#224E1F",
     routeStrokeWidth: 1.5,
   };

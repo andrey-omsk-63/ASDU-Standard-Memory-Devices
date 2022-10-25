@@ -1,104 +1,54 @@
-import * as React from 'react';
-import { useSelector } from 'react-redux';
+import * as React from "react";
+import { useSelector } from "react-redux";
 
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
-import Modal from '@mui/material/Modal';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import MenuItem from '@mui/material/MenuItem';
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
+import Modal from "@mui/material/Modal";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import MenuItem from "@mui/material/MenuItem";
 
-import { styleModalEnd } from './../MainMapStyle';
+import { styleModalEnd } from "./../MainMapStyle";
 
-import { styleSetInf, styleModalMenu } from './SmdSetPhaseStyle';
-import { styleSetFaza, styleBoxFormFaza } from './SmdSetPhaseStyle';
-import { styleSet, styleBoxFormName } from './SmdSetPhaseStyle';
+import { styleSetInf, styleModalMenu } from "./SmdSetPhaseStyle";
+import { styleSetFaza, styleBoxFormFaza } from "./SmdSetPhaseStyle";
+import { styleSet, styleBoxFormName } from "./SmdSetPhaseStyle";
 
 let newInput = true;
 let massFaz: any = [];
-let colorRec = 'black';
-let knop = 'удалить';
-//let fSize = 15;
-//let chDel = 0;
+let colorRec = "black";
+let knop = "удалить";
+let nameMode = "";
 
-const SmdSetPhase = (props: { setOpen: any; massMem: Array<number>; func: any }) => {
-  //== Piece of Redux =======================================
+const SmdSetPhase = (props: {
+  setOpen: any;
+  massMem: Array<number>;
+  func: any;
+}) => {
+  //== Piece of Redux ======================================
   const map = useSelector((state: any) => {
     const { mapReducer } = state;
     return mapReducer.map.dateMap;
   });
-  //===========================================================
-  // const styleSetInf = {
-  //   position: 'relative',
-  //   marginTop: 4,
-  //   marginLeft: 'auto',
-  //   marginRight: 69,
-  //   width: 777,
-  //   bgcolor: 'background.paper',
-  //   border: '3px solid #000',
-  //   borderColor: 'primary.main',
-  //   borderRadius: 2,
-  //   boxShadow: 24,
-  //   p: 1.5,
-  // };
-
-  // const styleModalMenu = {
-  //   marginTop: 0.5,
-  //   marginRight: 1,
-  //   backgroundColor: '#E6F5D6',
-  //   textTransform: 'unset !important',
-  //   color: 'black',
-  // };
-
-  // const styleSetFaza = {
-  //   position: 'relative',
-  //   left: '37%',
-  //   width: '12px',
-  //   maxHeight: '3px',
-  //   minHeight: '3px',
-  //   bgcolor: '#FFFBE5',
-  //   boxShadow: 3,
-  //   p: 1.5,
-  // };
-
-  // const styleBoxFormFaza = {
-  //   '& > :not(style)': {
-  //     marginTop: '-10px',
-  //     marginLeft: '-12px',
-  //     width: '36px',
-  //   },
-  // };
-
-  // const styleSet = {
-  //   width: '512px',
-  //   maxHeight: '4px',
-  //   minHeight: '4px',
-  //   bgcolor: '#FFFBE5',
-  //   boxShadow: 3,
-  //   textAlign: 'center',
-  //   p: 1,
-  // };
-
-  // const styleBoxFormName = {
-  //   '& > :not(style)': {
-  //     marginTop: '-9px',
-  //     marginLeft: '-8px',
-  //     width: '530px',
-  //   },
-  // };
-
+  //========================================================
   const [openSetMode, setOpenSetMode] = React.useState(true);
   const [trigger, setTrigger] = React.useState(true);
   const [chDel, setChDel] = React.useState(0);
-
+  //=== инициализация ======================================
   if (newInput) {
     massFaz = [];
+    nameMode =
+      "Новое ЗУ " +
+      new Date().toLocaleDateString() +
+      " " +
+      new Date().toLocaleTimeString().slice(0, -3);
+
     for (let i = 0; i < props.massMem.length; i++) {
       let maskFaz = {
         idx: 0,
         faza: 1,
-        name: '',
+        name: "",
         delRec: false,
       };
       maskFaz.idx = props.massMem[i];
@@ -107,13 +57,42 @@ const SmdSetPhase = (props: { setOpen: any; massMem: Array<number>; func: any })
     }
     newInput = false;
     setChDel(0);
-    console.log('massFaz:', massFaz);
+    console.log("1massFaz:", massFaz);
+  } else {
+    if (massFaz.length !== props.massMem.length) {
+      let massRab: any = [];
+      for (let i = 0; i < props.massMem.length; i++) {
+        let flagHave = false;
+        for (let j = 0; j < massFaz.length; j++) {
+          if (massFaz[j].idx === props.massMem[i]) {
+            massRab.push(massFaz[j]);
+            flagHave = true;
+            break;
+          }
+        }
+        if (!flagHave) {
+          let maskFaz = {
+            idx: 0,
+            faza: 1,
+            name: "",
+            delRec: false,
+          };
+          maskFaz.idx = props.massMem[i];
+          maskFaz.name = map.tflight[maskFaz.idx].description;
+          massRab.push(maskFaz);
+        }
+      }
+      massFaz = [];
+      massFaz = massRab;
+      console.log("21massFaz:", massRab);
+    }
   }
-
+  //========================================================
   const handleCloseSetEnd = () => {
+    if (chDel) DelRec();
+    props.func(massFaz);
     props.setOpen(false);
     setOpenSetMode(false);
-    newInput = true;
   };
 
   const ClickKnop = (idx: number) => {
@@ -131,18 +110,23 @@ const SmdSetPhase = (props: { setOpen: any; massMem: Array<number>; func: any })
     massFaz = [];
     massFaz = massRab;
     setChDel(0);
-    console.log('111:', massFaz);
+    console.log("111:", massFaz);
     //setTrigger(!trigger);
   };
 
-  const SaveRec = () => {
-    if (chDel) DelRec();
-    props.func(massFaz);
+  const SaveRec = (mode: number) => {
+    //if (mode) massFaz = []; // очистить
+    if (!mode) {
+      if (chDel) DelRec(); // сохранить
+      console.log("Здесь будет сохранение");
+    }
+    massFaz = [];
     handleCloseSetEnd();
+    newInput = true;
   };
 
   const handleKey = (event: any) => {
-    if (event.key === 'Enter') event.preventDefault();
+    if (event.key === "Enter") event.preventDefault();
   };
 
   const InputFaza = (mode: number) => {
@@ -161,15 +145,17 @@ const SmdSetPhase = (props: { setOpen: any; massMem: Array<number>; func: any })
     }
     for (let i = 0; i < massKey.length; i++) {
       let maskCurrencies = {
-        value: '',
-        label: '',
+        value: "",
+        label: "",
       };
       maskCurrencies.value = massKey[i];
       maskCurrencies.label = massDat[i];
       currencies.push(maskCurrencies);
     }
 
-    const [currency, setCurrency] = React.useState(0);
+    const [currency, setCurrency] = React.useState(
+      dat.indexOf(massFaz[mode].faza)
+    );
 
     return (
       <Box sx={styleSetFaza}>
@@ -183,9 +169,14 @@ const SmdSetPhase = (props: { setOpen: any; massMem: Array<number>; func: any })
               onChange={handleChange}
               InputProps={{ style: { fontSize: 14 } }}
               variant="standard"
-              color="secondary">
+              color="secondary"
+            >
               {currencies.map((option: any) => (
-                <MenuItem key={option.value} value={option.value} sx={{ fontSize: 14 }}>
+                <MenuItem
+                  key={option.value}
+                  value={option.value}
+                  sx={{ fontSize: 14 }}
+                >
                   {option.label}
                 </MenuItem>
               ))}
@@ -200,43 +191,51 @@ const SmdSetPhase = (props: { setOpen: any; massMem: Array<number>; func: any })
     let resStr = [];
 
     for (let i = 0; i < massFaz.length; i++) {
-      knop = 'удалить';
+      knop = "удалить";
       let fSize = 15;
-      colorRec = 'black';
+      colorRec = "black";
       if (massFaz[i].delRec) {
-        knop = 'восстановить';
+        knop = "восстановить";
         fSize = 12.9;
-        colorRec = 'red';
+        colorRec = "red";
       }
       const styleSave = {
         fontSize: fSize,
         marginRight: 0.1,
-        border: '2px solid #000',
-        bgcolor: '#E6F5D6',
-        minWidth: '110px',
-        maxWidth: '110px',
-        maxHeight: '20px',
-        minHeight: '20px',
-        borderColor: '#E6F5D6',
+        border: "2px solid #000",
+        bgcolor: "#E6F5D6",
+        minWidth: "110px",
+        maxWidth: "110px",
+        maxHeight: "20px",
+        minHeight: "20px",
+        borderColor: "#E6F5D6",
         borderRadius: 2,
         color: colorRec,
-        textTransform: 'unset !important',
+        textTransform: "unset !important",
       };
 
       resStr.push(
-        <Grid key={i} container sx={{ marginTop: 1, color: colorRec, fontSize: fSize }}>
+        <Grid
+          key={i}
+          container
+          sx={{ marginTop: 1, color: colorRec, fontSize: fSize }}
+        >
           <Grid item xs={8} sx={{ paddingLeft: 1 }}>
             {massFaz[i].name}
           </Grid>
           <Grid item xs={2}>
-            <Box sx={{ textAlign: 'center' }}>{InputFaza(i)}</Box>
+            <Box sx={{ textAlign: "center" }}>{InputFaza(i)}</Box>
           </Grid>
-          <Grid item xs={2} sx={{ textAlign: 'center' }}>
-            <Button variant="contained" sx={styleSave} onClick={() => ClickKnop(i)}>
+          <Grid item xs={2} sx={{ textAlign: "center" }}>
+            <Button
+              variant="contained"
+              sx={styleSave}
+              onClick={() => ClickKnop(i)}
+            >
               {knop}
             </Button>
           </Grid>
-        </Grid>,
+        </Grid>
       );
     }
     return resStr;
@@ -244,14 +243,10 @@ const SmdSetPhase = (props: { setOpen: any; massMem: Array<number>; func: any })
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValuen(event.target.value.trimStart()); // удаление пробелов в начале строки
+    nameMode = event.target.value.trimStart();
   };
 
-  const [valuen, setValuen] = React.useState(
-    'Новое ЗУ ' +
-      new Date().toLocaleDateString() +
-      ' ' +
-      new Date().toLocaleTimeString().slice(0, -3),
-  );
+  const [valuen, setValuen] = React.useState(nameMode);
 
   return (
     <Modal open={openSetMode} onClose={handleCloseSetEnd} hideBackdrop>
@@ -261,10 +256,10 @@ const SmdSetPhase = (props: { setOpen: any; massMem: Array<number>; func: any })
         </Button>
 
         <Grid container sx={{ marginTop: 1 }}>
-          <Grid item xs={3.7} sx={{ border: 0, textAlign: 'center' }}>
+          <Grid item xs={3.7} sx={{ border: 0, textAlign: "center" }}>
             <b>Введите название нового ЗУ:</b>
           </Grid>
-          <Grid item xs sx={{ border: 0, textAlign: 'center' }}>
+          <Grid item xs sx={{ border: 0, textAlign: "center" }}>
             <Box sx={styleSet}>
               <Box component="form" sx={styleBoxFormName}>
                 <TextField
@@ -280,34 +275,36 @@ const SmdSetPhase = (props: { setOpen: any; massMem: Array<number>; func: any })
           </Grid>
         </Grid>
 
-        <Typography variant="h6" sx={{ marginTop: 1, textAlign: 'center' }}>
+        <Typography variant="h6" sx={{ marginTop: 1, textAlign: "center" }}>
           Таблица фаз
         </Typography>
         <Box sx={{ marginTop: 0.5 }}>
-          <Grid container sx={{ bgcolor: '#C0E2C3' }}>
-            <Grid item xs={8} sx={{ border: 0, textAlign: 'center' }}>
+          <Grid container sx={{ bgcolor: "#C0E2C3" }}>
+            <Grid item xs={8} sx={{ border: 0, textAlign: "center" }}>
               <b>Описание</b>
             </Grid>
-            <Grid item xs={2} sx={{ border: 0, textAlign: 'center' }}>
+            <Grid item xs={2} sx={{ border: 0, textAlign: "center" }}>
               <b>Фаза</b>
             </Grid>
-            <Grid item xs={2} sx={{ border: 0, textAlign: 'center' }}>
+            <Grid item xs={2} sx={{ border: 0, textAlign: "center" }}>
               <b>Действие</b>
             </Grid>
           </Grid>
 
-          <Box sx={{ overflowX: 'auto', height: '69vh' }}>{StrokaTabl()}</Box>
+          <Box sx={{ overflowX: "auto", height: "69vh" }}>{StrokaTabl()}</Box>
 
-          <Box sx={{ marginTop: 0.5, textAlign: 'center' }}>
+          <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
             {/* {chDel > 0 && (
               <Button sx={styleModalMenu} onClick={() => DelRec()}>
                 Удалить помеченные
               </Button>
             )} */}
-            <Button sx={styleModalMenu} onClick={() => SaveRec()}>
+            <Button sx={styleModalMenu} onClick={() => SaveRec(0)}>
               Сохранить
             </Button>
-            <Button sx={styleModalMenu}>Очистить</Button>
+            <Button sx={styleModalMenu} onClick={() => SaveRec(1)}>
+              Очистить
+            </Button>
           </Box>
         </Box>
       </Box>
