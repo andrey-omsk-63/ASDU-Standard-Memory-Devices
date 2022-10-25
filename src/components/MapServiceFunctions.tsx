@@ -1,21 +1,21 @@
-import Button from "@mui/material/Button";
+import Button from '@mui/material/Button';
 
-import { Pointer, Router } from "./../App";
-import { Vertex } from "./../interfaceRoute";
+import { Pointer, Router } from './../App';
+import { Vertex } from './../interfaceRoute';
 
-import { styleModalMenu } from "./MainMapStyle";
+import { styleModalMenu } from './MainMapStyle';
 
 export const MapssdkNewPoint = (
   homeRegion: number,
   coords: any,
   name: string,
   area: number,
-  id: number
+  id: number,
 ) => {
   let masskPoint: Pointer = {
     ID: 0,
     coordinates: [],
-    nameCoordinates: "",
+    nameCoordinates: '',
     region: 0,
     area: 0,
     newCoordinates: 0,
@@ -35,17 +35,17 @@ export const MassrouteNewPoint = (
   coords: any,
   name: string,
   area: number,
-  id: number
+  id: number,
 ) => {
   let masskPoint: Vertex = {
     region: 0,
     area: 0,
     id: 0,
-    dgis: "",
+    dgis: '',
     scale: 0,
     lin: [],
     lout: [],
-    name: "",
+    name: '',
   };
 
   masskPoint.region = homeRegion;
@@ -61,7 +61,7 @@ export const RecordMassRoute = (
   fromCross: any,
   toCross: any,
   massBind: Array<number>,
-  reqRoute: any
+  reqRoute: any,
 ) => {
   let masskRoute: Router = {
     region: 0,
@@ -71,8 +71,8 @@ export const RecordMassRoute = (
     targetID: 0,
     lsource: 0,
     ltarget: 0,
-    starts: "",
-    stops: "",
+    starts: '',
+    stops: '',
     lenght: 0,
     time: 0,
   };
@@ -93,11 +93,11 @@ export const RecordMassRoute = (
 };
 
 export const DecodingCoord = (coord: string) => {
-  return coord.split(",").map(Number);
+  return coord.split(',').map(Number);
 };
 
 export const CodingCoord = (coord: Array<number>) => {
-  return String(coord[0]) + "," + String(coord[1]);
+  return String(coord[0]) + ',' + String(coord[1]);
 };
 
 export const DoublRoute = (massroute: any, pointA: any, pointB: any) => {
@@ -105,8 +105,7 @@ export const DoublRoute = (massroute: any, pointA: any, pointB: any) => {
   let pointAcod = CodingCoord(pointA);
   let pointBcod = CodingCoord(pointB);
   for (let i = 0; i < massroute.length; i++) {
-    if (massroute[i].starts === pointAcod && massroute[i].stops === pointBcod)
-      flDubl = true;
+    if (massroute[i].starts === pointAcod && massroute[i].stops === pointBcod) flDubl = true;
   }
   return flDubl;
 };
@@ -124,64 +123,24 @@ export const getPointData = (
   index: number,
   pointAaIndex: number,
   pointBbIndex: number,
-  massdk: any
+  massdk: any,
 ) => {
-  let textBalloon = "";
-  if (index === pointAaIndex) textBalloon = "Начало";
-  if (index === pointBbIndex) textBalloon = "Конец";
+  let textBalloon = '';
+  if (index === pointAaIndex) textBalloon = 'Начало';
+  if (index === pointBbIndex) textBalloon = 'Конец';
   return {
-    hintContent: "ID:" + massdk[index].ID + " " + massdk[index].nameCoordinates, //balloonContent: PressBalloon(index), iconCaption: textBalloon,
+    hintContent: 'ID:' + massdk[index].ID + ' ' + massdk[index].nameCoordinates, //balloonContent: PressBalloon(index), iconCaption: textBalloon,
     iconContent: textBalloon,
   };
 };
 
-export const getPointOptions = (
-  index: number,
-  massMem: Array<number>
-  // pointAaIndex: number,
-  // pointBbIndex: number,
-  // massdk: any,
-  // massroute: any,
-  // coordStart: any,
-  // coordStop: any
-) => {
-  let colorBalloon = "islands#violetCircleDotIcon";
+export const getPointOptions = (index: number, massMem: Array<number>) => {
+  let colorBalloon = 'islands#violetCircleDotIcon';
   let aaa = massMem.indexOf(index);
-  // if (massMem.includes(index)) {
   if (aaa >= 0) {
-    colorBalloon = "islands#redCircleDotIcon";
-    if (massMem.length === aaa + 1 && massMem.length > 1)
-      colorBalloon = "islands#redDotIcon";
-    console.log("!!!!!!", index, massMem, massMem.indexOf(index));
+    colorBalloon = 'islands#redCircleDotIcon';
+    if (massMem.length === aaa + 1 && massMem.length > 1) colorBalloon = 'islands#redDotIcon';
   }
-
-  // if (massroute.vertexes[index].area === 0) {
-  //   colorBalloon = "islands#violetCircleIcon";
-  //   if (massdk[index].newCoordinates > 0)
-  //     colorBalloon = "islands#darkOrangeCircleIcon";
-  // } else {
-  //   if (massdk[index].newCoordinates > 0)
-  //     colorBalloon = "islands#darkOrangeCircleDotIcon";
-  // }
-  // for (let i = 0; i < coordStart.length; i++) {
-  //   if (
-  //     massdk[index].coordinates[0] === coordStart[i][0] &&
-  //     massdk[index].coordinates[1] === coordStart[i][1]
-  //   ) {
-  //     colorBalloon = "islands#grayStretchyIcon";
-  //   }
-  // }
-  // for (let i = 0; i < coordStop.length; i++) {
-  //   if (
-  //     massdk[index].coordinates[0] === coordStop[i][0] &&
-  //     massdk[index].coordinates[1] === coordStop[i][1]
-  //   ) {
-  //     colorBalloon = "islands#grayStretchyIcon";
-  //   }
-  // }
-  //if (index === pointAaIndex) colorBalloon = "islands#redStretchyIcon";
-  //if (index === pointBbIndex) colorBalloon = "islands#darkBlueStretchyIcon";
-
   return {
     preset: colorBalloon,
   };
@@ -206,7 +165,7 @@ export const getMultiRouteOptions = () => {
 export const getMassPolyRouteOptions = () => {
   return {
     balloonCloseButton: false,
-    strokeColor: "#1A9165",
+    strokeColor: '#1A9165',
     strokeWidth: 1,
   };
 };
@@ -214,8 +173,8 @@ export const getMassPolyRouteOptions = () => {
 export const getMassMultiRouteOptions = () => {
   return {
     balloonCloseButton: false,
-    routeStrokeStyle: "dot",
-    strokeColor: "#1A9165",
+    routeStrokeStyle: 'dot',
+    strokeColor: '#1A9165',
     routeActiveStrokeWidth: 2,
     routeStrokeWidth: 0,
   };
@@ -224,8 +183,8 @@ export const getMassMultiRouteOptions = () => {
 export const getMassMultiRouteInOptions = () => {
   return {
     routeActiveStrokeWidth: 2,
-    routeStrokeStyle: "dot",
-    routeActiveStrokeColor: "#E91427",
+    routeStrokeStyle: 'dot',
+    routeActiveStrokeColor: '#E91427',
     routeStrokeWidth: 0,
   };
 };
@@ -234,9 +193,9 @@ export const getMassMultiRouteInOptions = () => {
 export const RecevKeySvg = (recMassroute: any) => {
   let keySvg =
     recMassroute.region.toString() +
-    "-" +
+    '-' +
     recMassroute.area.toString() +
-    "-" +
+    '-' +
     recMassroute.id.toString();
   return keySvg;
 };
@@ -246,11 +205,11 @@ export const StrokaMenuGlob = (soob: string, func: any, mode: number) => {
     fontSize: 14,
     marginRight: 0.1,
     width: (soob.length + 7) * 6.5,
-    maxHeight: "21px",
-    minHeight: "21px",
-    backgroundColor: "#D7F1C0",
-    color: "black",
-    textTransform: "unset !important",
+    maxHeight: '21px',
+    minHeight: '21px',
+    backgroundColor: '#D7F1C0',
+    color: 'black',
+    textTransform: 'unset !important',
   };
 
   return (
@@ -272,7 +231,7 @@ export const MasskPoint = () => {
   let masskPoint: Pointer = {
     ID: -1,
     coordinates: [],
-    nameCoordinates: "",
+    nameCoordinates: '',
     region: 0,
     area: 0,
     newCoordinates: 0,
@@ -282,10 +241,10 @@ export const MasskPoint = () => {
 
 export const ChangeCrossFunc = (fromCross: any, toCross: any) => {
   let cross: any = {
-    Region: "",
-    Area: "",
+    Region: '',
+    Area: '',
     ID: 0,
-    Cod: "",
+    Cod: '',
   };
   cross.Region = fromCross.pointAaRegin;
   cross.Area = fromCross.pointAaArea;
