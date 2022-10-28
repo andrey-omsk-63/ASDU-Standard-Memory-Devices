@@ -1,5 +1,6 @@
 import * as React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { mapCreate } from "./../../redux/actions";
 
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -22,6 +23,7 @@ let knop = "удалить";
 let nameMode = "";
 
 const SmdSetPhase = (props: {
+  region: string;
   setOpen: any;
   massMem: Array<number>;
   func: any;
@@ -31,33 +33,28 @@ const SmdSetPhase = (props: {
     const { mapReducer } = state;
     return mapReducer.map.dateMap;
   });
+  const dispatch = useDispatch();
   //========================================================
   const [openSetMode, setOpenSetMode] = React.useState(true);
   const [trigger, setTrigger] = React.useState(true);
   const [chDel, setChDel] = React.useState(0);
   //=== инициализация ======================================
 
-  //  let downloadLink = ''
-  //  let a: any
-  //  window.URL.revokeObjectURL(downloadLink)
-  //  console.log('1downloadLink:',downloadLink)
-  //  const data = new Blob(a, { type: 'text/plain' })
-  // downloadLink = window.URL.createObjectURL(data)
-  // console.log('2downloadLink:',downloadLink)
+  const MakeMaskFaz = (i: number) => {
+    let maskFaz = {
+      idx: 0,
+      faza: 1,
+      phases: [],
+      name: "",
+      delRec: false,
+    };
+    maskFaz.idx = props.massMem[i];
+    maskFaz.name = map.tflight[maskFaz.idx].description;
+    maskFaz.phases = map.tflight[maskFaz.idx].phases;
+    return maskFaz;
+  };
 
   if (newInput) {
-    
-    const element = document.createElement("a");
-    //let b: any;
-    let b = '2;01.06.2020;441;0;30;7;;24'
-    //const file = new Blob([document.getElementById("myInput").value], { type: "text/plain" });
-    const file = new Blob([b], { type: "text/plain" });
-    element.href = URL.createObjectURL(file);
-    element.download = "myFile3.csv";
-    document.body.appendChild(element); // Required for this to work in FireFox
-    console.log("3downloadLink:", element.href, "!!!", element.download);
-    element.click();
-
     massFaz = [];
     nameMode =
       "Новое ЗУ " +
@@ -66,15 +63,7 @@ const SmdSetPhase = (props: {
       new Date().toLocaleTimeString().slice(0, -3);
 
     for (let i = 0; i < props.massMem.length; i++) {
-      let maskFaz = {
-        idx: 0,
-        faza: 1,
-        name: "",
-        delRec: false,
-      };
-      maskFaz.idx = props.massMem[i];
-      maskFaz.name = map.tflight[maskFaz.idx].description;
-      massFaz.push(maskFaz);
+      massFaz.push(MakeMaskFaz(i));
     }
     newInput = false;
     setChDel(0);
@@ -89,17 +78,7 @@ const SmdSetPhase = (props: {
           break;
         }
       }
-      if (!flagHave) {
-        let maskFaz = {
-          idx: 0,
-          faza: 1,
-          name: "",
-          delRec: false,
-        };
-        maskFaz.idx = props.massMem[i];
-        maskFaz.name = map.tflight[maskFaz.idx].description;
-        massRab.push(maskFaz);
-      }
+      if (!flagHave) massRab.push(MakeMaskFaz(i));
     }
     massFaz = [];
     massFaz = massRab;
@@ -130,10 +109,42 @@ const SmdSetPhase = (props: {
   };
 
   const SaveRec = (mode: number) => {
-    //if (mode) massFaz = []; // очистить
     if (!mode) {
       if (chDel) DelRec(); // сохранить
-      console.log("Здесь будет сохранение");
+
+      let maskRoutes = {
+        region: props.region,
+        description: nameMode,
+        box: {
+          point0: {
+            Y: -1,
+            X: -1,
+          },
+        },
+        listTL: [{}],
+      };
+      for (let i = 0; i < massFaz.length; i++) {
+        let maskListTL = {
+          num: i,
+          description: massFaz[i].name,
+          phase: massFaz[i].faza,
+          point: map.tflight[massFaz[i].idx].points,
+          pos: {
+            region: map.tflight[massFaz[i].idx].region.num,
+            area: map.tflight[massFaz[i].idx].area.num,
+            id: map.tflight[massFaz[i].idx].ID,
+          },
+        };
+        if (i) {
+          maskRoutes.listTL.push(maskListTL);
+        } else {
+          maskRoutes.listTL[0] = maskListTL;
+        }
+      }
+      //console.log("Здесь будет сохранение", maskRoutes);
+      map.routes.push(maskRoutes);
+      dispatch(mapCreate(map));
+      console.log("MAP", map);
     }
     massFaz = [];
     handleCloseSetEnd();
@@ -150,7 +161,8 @@ const SmdSetPhase = (props: {
       massFaz[mode].faza = massDat[Number(event.target.value)];
     };
 
-    let dat = [1, 2, 3];
+    //let dat = [1, 2, 3];
+    let dat = massFaz[mode].phases;
     let massKey = [];
     let massDat: any[] = [];
     const currencies: any = [];

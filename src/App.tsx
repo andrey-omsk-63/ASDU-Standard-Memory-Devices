@@ -49,7 +49,7 @@ export let Coordinates: Array<Array<number>> = []; // массив коорди�
 let flagOpen = true;
 let flagOpenWS = true;
 let WS: any = null;
-let homeRegion: any = "";
+let homeRegion: string = "0";
 let soob = "";
 
 const App = () => {
@@ -79,8 +79,6 @@ const App = () => {
   if (flagOpenWS) {
     WS = new WebSocket(host);
     flagOpenWS = false;
-    let pageUrl = new URL(window.location.href);
-    homeRegion = Number(pageUrl.searchParams.get("Region"));
   }
 
   React.useEffect(() => {
@@ -104,6 +102,11 @@ const App = () => {
         case "mapInfo":
           dateMapGl = data;
           dispatch(mapCreate(dateMapGl));
+          let massRegion = [];
+          for (let key in dateMapGl.regionInfo) {
+            if (!isNaN(Number(key))) massRegion.push(Number(key));
+          }
+          homeRegion = String(massRegion[0]);
           break;
         default:
           console.log("data_default:", data);
@@ -120,7 +123,11 @@ const App = () => {
     // });
     dateMapGl = { ...dataMap };
     dispatch(mapCreate(dateMapGl));
-
+    let massRegion = [];
+    for (let key in dateMapGl.regionInfo) {
+      if (!isNaN(Number(key))) massRegion.push(Number(key));
+    }
+    homeRegion = String(massRegion[0]);
     flagOpen = false;
   }
 
