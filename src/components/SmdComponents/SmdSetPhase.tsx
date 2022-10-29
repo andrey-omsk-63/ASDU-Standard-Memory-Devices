@@ -39,7 +39,6 @@ const SmdSetPhase = (props: {
   const [trigger, setTrigger] = React.useState(true);
   const [chDel, setChDel] = React.useState(0);
   //=== инициализация ======================================
-
   const MakeMaskFaz = (i: number) => {
     let maskFaz = {
       idx: 0,
@@ -80,7 +79,7 @@ const SmdSetPhase = (props: {
       }
       if (!flagHave) massRab.push(MakeMaskFaz(i));
     }
-    massFaz = [];
+    // massFaz = [];
     massFaz = massRab;
   }
   //========================================================
@@ -161,7 +160,6 @@ const SmdSetPhase = (props: {
       massFaz[mode].faza = massDat[Number(event.target.value)];
     };
 
-    //let dat = [1, 2, 3];
     let dat = massFaz[mode].phases;
     let massKey = [];
     let massDat: any[] = [];
@@ -321,11 +319,6 @@ const SmdSetPhase = (props: {
           <Box sx={{ overflowX: "auto", height: "69vh" }}>{StrokaTabl()}</Box>
 
           <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
-            {/* {chDel > 0 && (
-              <Button sx={styleModalMenu} onClick={() => DelRec()}>
-                Удалить помеченные
-              </Button>
-            )} */}
             <Button sx={styleModalMenu} onClick={() => SaveRec(0)}>
               Сохранить
             </Button>
