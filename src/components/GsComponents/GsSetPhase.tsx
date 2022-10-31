@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { mapCreate } from "./../../redux/actions";
+import { mapCreate } from "../../redux/actions";
 
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -10,11 +10,11 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import MenuItem from "@mui/material/MenuItem";
 
-import { styleModalEnd } from "./../MainMapStyle";
+import { styleModalEnd } from "../MainMapStyle";
 
-import { styleSetInf, styleModalMenu } from "./SmdSetPhaseStyle";
-import { styleSetFaza, styleBoxFormFaza } from "./SmdSetPhaseStyle";
-import { styleSet, styleBoxFormName } from "./SmdSetPhaseStyle";
+import { styleSetInf, styleModalMenu } from "./GsSetPhaseStyle";
+import { styleSetFaza, styleBoxFormFaza } from "./GsSetPhaseStyle";
+import { styleSet, styleBoxFormName } from "./GsSetPhaseStyle";
 
 let newInput = true;
 let massFaz: any = [];
@@ -22,7 +22,7 @@ let colorRec = "black";
 let knop = "удалить";
 let nameMode = "";
 
-const SmdSetPhase = (props: {
+const GsSetPhase = (props: {
   region: string;
   setOpen: any;
   massMem: Array<number>;
@@ -56,7 +56,7 @@ const SmdSetPhase = (props: {
   if (newInput) {
     massFaz = [];
     nameMode =
-      "Новое ЗУ " +
+      "Новый ЗУ " +
       new Date().toLocaleDateString() +
       " " +
       new Date().toLocaleTimeString().slice(0, -3);
@@ -79,7 +79,6 @@ const SmdSetPhase = (props: {
       }
       if (!flagHave) massRab.push(MakeMaskFaz(i));
     }
-    // massFaz = [];
     massFaz = massRab;
   }
   //========================================================
@@ -140,7 +139,6 @@ const SmdSetPhase = (props: {
           maskRoutes.listTL[0] = maskListTL;
         }
       }
-      //console.log("Здесь будет сохранение", maskRoutes);
       map.routes.push(maskRoutes);
       dispatch(mapCreate(map));
       console.log("MAP", map);
@@ -161,6 +159,8 @@ const SmdSetPhase = (props: {
     };
 
     let dat = massFaz[mode].phases;
+    console.log("DAT", dat, dat.length);
+    if (!dat.length) dat = [1, 2, 3];
     let massKey = [];
     let massDat: any[] = [];
     const currencies: any = [];
@@ -332,4 +332,4 @@ const SmdSetPhase = (props: {
   );
 };
 
-export default SmdSetPhase;
+export default GsSetPhase;

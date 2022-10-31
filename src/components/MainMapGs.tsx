@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { massdkCreate } from "./../redux/actions";
-import { coordinatesCreate } from "./../redux/actions";
+import { massdkCreate } from "../redux/actions";
+import { coordinatesCreate } from "../redux/actions";
 
 import Grid from "@mui/material/Grid";
 // import Box from "@mui/material/Box";
@@ -14,9 +14,9 @@ import { GeolocationControl, YMapsApi } from "react-yandex-maps";
 import { RulerControl, SearchControl } from "react-yandex-maps";
 import { TrafficControl, TypeSelector, ZoomControl } from "react-yandex-maps";
 
-import SmdSelectMD from "./SmdComponents/SmdSelectMD";
-import SmdMakeMode from "./SmdComponents/SmdMakeMode";
-import SmdSetPhase from "./SmdComponents/SmdSetPhase";
+import GsSelectMD from "./GsComponents/GsSelectMD";
+import GsMakeMode from "./GsComponents/GsMakeMode";
+import GsSetPhase from "./GsComponents/GsSetPhase";
 
 // import { DecodingCoord } from "./MapServiceFunctions";
 import { getMultiRouteOptions } from "./MapServiceFunctions";
@@ -30,14 +30,18 @@ import { StrokaMenuGlob, MasskPoint } from "./MapServiceFunctions";
 
 import { searchControl } from "./MainMapStyle";
 
-//let debugging = false;
 let flagOpen = false;
 
-let zoom = 10;
+const zoomStart = 10;
+let zoomMake = false;
+let pointCenterStart: any = 0;
+
+let zoom = zoomStart;
 let pointCenter: any = 0;
 
 let massMem: Array<number> = [];
 let massCoord: any = [];
+let editMode = false;
 
 const MainMapSMD = (props: {
   ws: WebSocket;
@@ -70,20 +74,79 @@ const MainMapSMD = (props: {
   const [ymaps, setYmaps] = React.useState<YMapsApi | null>(null);
   const mapp = React.useRef<any>(null);
 
-  const PressButton = (mode: number) => {
-    switch (mode) {
-      case 42: // выбор ЗУ
-        setSelectMD(true);
-        break;
-      case 43: // создать режим
-        setMakeMode(true);
-        break;
-      case 44: // назначить фазы
-        setSetPhase(true);
+  // let mapState: any = {
+  //   center: pointCenter,
+  //   zoom,
+  // };
+
+  // const PressButton = (mode: number) => {
+  //   switch (mode) {
+  //     case 42: // выбор ЗУ
+  //       if (massMem.length) {
+  //         massMem = [];
+  //         massCoord = [];
+  //         ymaps && addRoute(ymaps, false); // перерисовка связей
+  //         setFlagPusk(!flagPusk);
+  //       }
+  //       setSelectMD(true);
+  //       break;
+  //     case 43: // создать режим
+  //       massMem = [];
+  //       editMode = false;
+  //       massCoord = [];
+  //       console.log("111", mapState);
+  //       pointCenter = pointCenterStart;
+  //       //mapState.center = pointCenter,
+  //       //mapState.zoom = zoomStart + 1;
+  //       console.log('222',mapState)
+  //       ymaps && addRoute(ymaps, false); // перерисовка связей
+  //       setFlagPusk(!flagPusk);
+  //       zoom = zoomStart
+  //       ymaps && addRoute(ymaps, false); // перерисовка связей
+  //       setFlagPusk(!flagPusk);
+  //       break;
+  //     case 44: // назначить фазы
+  //       setSetPhase(true);
+  //   }
+  // };
+
+  const ReceiveIdxGs = (mode: number) => {
+    console.log("@@@", map.routes[mode].listTL);
+    for (let i = 0; i < map.routes[mode].listTL.length; i++) {
+      console.log("map.routes[mode].listTL", i, map.routes[mode].listTL[i].pos);
+      let idx = -1;
+      for (let j = 0; j < map.tflight.length; j++) {
+        if (
+          map.routes[mode].listTL[i].pos.region === map.tflight[j].region.num &&
+          map.routes[mode].listTL[i].pos.area === map.tflight[j].area.num &&
+          map.routes[mode].listTL[i].pos.id === map.tflight[j].ID
+        ) {
+          idx = j;
+          break;
+        }
+      }
+      if (idx < 0) {
+        alert(
+          "Не существует светофор: Регион " +
+            map.routes[mode].listTL[i].pos.region +
+            " Район " +
+            map.routes[mode].listTL[i].pos.area +
+            " ID " +
+            map.routes[mode].listTL[i].pos.id +
+            ". Устройство будет проигнорировано"
+        );
+      } else {
+        massMem.push(idx);
+        massCoord.push(coordinates[idx]);
+      }
     }
+    console.log("IDX", massMem);
+    ymaps && addRoute(ymaps, true); // перерисовка связей
+    setFlagPusk(!flagPusk);
   };
 
-  const addRoute = (ymaps: any) => {
+  const addRoute = (ymaps: any, bound: boolean) => {
+    console.log("bound", bound);
     mapp.current.geoObjects.removeAll(); // удаление старой коллекции связей
     if (massCoord.length > 1) {
       let multiRoute: any = [];
@@ -101,8 +164,8 @@ const MainMapSMD = (props: {
           {
             referencePoints: massCoord,
             params: { viaIndexes: between },
-          }
-          //{ boundsAutoApply: true }
+          },
+          { boundsAutoApply: bound, wayPointVisible: false }
         );
       }
       mapp.current.geoObjects.add(multiRoute);
@@ -118,7 +181,7 @@ const MainMapSMD = (props: {
     }
     massCoord = [];
     massCoord = masRab;
-    ymaps && addRoute(ymaps); // перерисовка связей
+    ymaps && addRoute(ymaps, false); // перерисовка связей
     setFlagPusk(!flagPusk);
   };
 
@@ -134,7 +197,7 @@ const MainMapSMD = (props: {
       massMem.splice(nomInMass, 1);
       massCoord.splice(nomInMass, 1);
     }
-    ymaps && addRoute(ymaps); // перерисовка связей
+    ymaps && addRoute(ymaps, false); // перерисовка связей
     setFlagPusk(!flagPusk);
   };
 
@@ -189,6 +252,13 @@ const MainMapSMD = (props: {
         pointCenter = mapp.current.getCenter();
         zoom = mapp.current.getZoom(); // покрутили колёсико мыши
       });
+      // console.log("444",zoomMake, mapState);
+      // if (zoomMake) {
+      //   mapState.zoom = zoomStart;
+      //   zoomMake = false;
+      //   setFlagPusk(!flagPusk);
+      // }
+      // console.log("333",zoomMake, mapState);
     }
   };
   //=== инициализация ======================================
@@ -215,6 +285,7 @@ const MainMapSMD = (props: {
       map.boxPoint.point1.Y,
       map.boxPoint.point1.X
     );
+    pointCenterStart = pointCenter;
     flagOpen = true;
   }
   //========================================================
@@ -223,13 +294,60 @@ const MainMapSMD = (props: {
     zoom,
   };
 
+  const PressButton = (mode: number) => {
+    switch (mode) {
+      case 42: // выбор ЗУ
+        if (massMem.length) {
+          massMem = [];
+          massCoord = [];
+          ymaps && addRoute(ymaps, false); // перерисовка связей
+          setFlagPusk(!flagPusk);
+        }
+        setSelectMD(true);
+        break;
+      case 43: // создать режим
+        massMem = [];
+        editMode = false;
+        massCoord = [];
+
+        //mapState.zoom = zoomStart + 1;
+        zoom = zoomStart + 1;
+        //pointCenter = pointCenterStart;
+        //mapState.center = 0;
+        //mapState.zoom = zoomStart;
+        //zoomMake = true;
+        console.log("111", mapState);
+        ymaps && addRoute(ymaps, false); // перерисовка связей
+        setFlagPusk(!flagPusk);
+        //mapState.zoom = zoomStart;
+        mapState.zoom = zoom+2;
+        //mapState.center = pointCenterStart;
+        //zoom = zoom-1;
+        ymaps && addRoute(ymaps, false); // перерисовка связей
+        setFlagPusk(!flagPusk);
+        console.log("222", mapState);
+        break;
+      case 44: // назначить фазы
+        setSetPhase(true);
+    }
+  };
+
   return (
     <Grid container sx={{ border: 0, height: "99.9vh" }}>
       {StrokaMenuGlob("Управление картой", PressButton, 41)}
       {StrokaMenuGlob("Выбор ЗУ", PressButton, 42)}
       {/* {StrokaMenuGlob("Создать режим", PressButton, 43)} */}
       {massMem.length > 1 && (
-        <>{StrokaMenuGlob("Создать режим", PressButton, 44)}</>
+        <>
+          {editMode && <>{StrokaMenuGlob("Создать режим", PressButton, 44)}</>}
+          {!editMode && (
+            <>
+              {StrokaMenuGlob("Создать новый режим", PressButton, 43)}
+              {StrokaMenuGlob("Редактировать режим", PressButton, 44)}
+              {StrokaMenuGlob("Выполнить режим", PressButton, 44)}
+            </>
+          )}
+        </>
       )}
       {Object.keys(map.tflight).length && (
         <YMaps
@@ -259,10 +377,12 @@ const MainMapSMD = (props: {
             {/* служебные компоненты */}
             <PlacemarkDo />
             {/* <ModalPressBalloon /> */}
-            {selectMD && <SmdSelectMD setOpen={setSelectMD} />}
-            {makeMode && <SmdMakeMode setOpen={setMakeMode} />}
+            {selectMD && (
+              <GsSelectMD setOpen={setSelectMD} idx={ReceiveIdxGs} />
+            )}
+            {makeMode && <GsMakeMode setOpen={setMakeMode} />}
             {setPhase && (
-              <SmdSetPhase
+              <GsSetPhase
                 region={props.region}
                 setOpen={setSetPhase}
                 massMem={massMem}

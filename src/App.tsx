@@ -6,7 +6,7 @@ import Grid from "@mui/material/Grid";
 
 //import axios from "axios";
 
-import MainMapSMD from "./components/MainMapSMD";
+import MainMapSMD from "./components/MainMapGs";
 import AppSocketError from "./AppSocketError";
 
 //import { DateMAP } from './interfaceMAP.d';

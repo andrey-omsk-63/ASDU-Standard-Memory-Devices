@@ -7,9 +7,9 @@ import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
 
-import { styleModalEnd, styleSetInf } from "./../MainMapStyle";
+import { styleModalEnd, styleSetInf } from "../MainMapStyle";
 
-const SmdMakeMode = (props: { setOpen: any }) => {
+const GsMakeMode = (props: { setOpen: any }) => {
   const [openSetMode, setOpenSetMode] = React.useState(true);
 
   const handleCloseSetEnd = () => {
@@ -32,4 +32,4 @@ const SmdMakeMode = (props: { setOpen: any }) => {
   );
 };
 
-export default SmdMakeMode;
+export default GsMakeMode;

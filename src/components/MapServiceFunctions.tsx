@@ -163,7 +163,8 @@ export const getMultiRouteOptions = () => {
   return {
     routeActiveStrokeWidth: 4,
     //routeActiveStrokeColor: "#224E1F",
-    routeStrokeWidth: 1.5,
+    routeStrokeWidth: 0,
+    wayPointVisible: false
   };
 };
 
@@ -206,10 +207,12 @@ export const getMultiRouteOptions = () => {
 // };
 
 export const StrokaMenuGlob = (soob: string, func: any, mode: number) => {
+  let dlSoob = (soob.length + 5) * 7.5;
   const styleApp01 = {
     fontSize: 14,
     marginRight: 0.1,
-    width: (soob.length + 7) * 6.5,
+    maxWidth: dlSoob,
+    minWidth: dlSoob,
     maxHeight: "21px",
     minHeight: "21px",
     backgroundColor: "#D7F1C0",

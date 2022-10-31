@@ -7,14 +7,14 @@ import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
 
-import { styleModalEnd } from "./../MainMapStyle";
+import { styleModalEnd } from "../MainMapStyle";
 
 let massName: any = [];
 let flagBegin = true;
 let knop2 = "удалить";
 let dlRoute = 0;
 
-const SmdSelectMD = (props: { setOpen: any }) => {
+const GsSelectMD = (props: { setOpen: any; idx: any }) => {
   //== Piece of Redux =======================================
   const map = useSelector((state: any) => {
     const { mapReducer } = state;
@@ -23,7 +23,7 @@ const SmdSelectMD = (props: { setOpen: any }) => {
   //===========================================================
   const [trigger, setTrigger] = React.useState(true);
   const [chDel, setChDel] = React.useState(0);
-  const [editMode, setEditMode] = React.useState(false);
+  //const [editMode, setEditMode] = React.useState(false);
 
   const styleSetInf = {
     position: "relative",
@@ -71,7 +71,9 @@ const SmdSelectMD = (props: { setOpen: any }) => {
   };
 
   const ClickKnop1 = (idx: number) => {
-    setEditMode(true);
+    props.idx(idx)
+    props.setOpen(false);
+    setOpenSetMode(false);
   };
 
   const ClickKnop2 = (idx: number) => {
@@ -161,9 +163,9 @@ const SmdSelectMD = (props: { setOpen: any }) => {
     return resStr;
   };
 
-  const EditMode = () => {
-    return <h1>Ku-Ku</h1>;
-  };
+  // const EditMode = () => {
+  //   return <h1>Ku-Ku</h1>;
+  // };
 
   return (
     <Modal open={openSetMode} onClose={handleCloseSetEnd} hideBackdrop>
@@ -183,10 +185,10 @@ const SmdSelectMD = (props: { setOpen: any }) => {
             </Button>
           </Box>
         )}
-        {editMode && <EditMode />}
+        {/* {editMode && <EditMode />} */}
       </Box>
     </Modal>
   );
 };
 
-export default SmdSelectMD;
+export default GsSelectMD;
