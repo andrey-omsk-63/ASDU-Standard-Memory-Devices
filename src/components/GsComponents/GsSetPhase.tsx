@@ -13,7 +13,7 @@ import MenuItem from "@mui/material/MenuItem";
 import { styleModalEnd } from "../MainMapStyle";
 
 import { styleSetInf, styleModalMenu } from "./GsSetPhaseStyle";
-import { styleSetFaza, styleBoxFormFaza } from "./GsSetPhaseStyle";
+import { styleBoxFormFaza } from "./GsSetPhaseStyle";
 import { styleSet, styleBoxFormName } from "./GsSetPhaseStyle";
 
 let newInput = true;
@@ -21,10 +21,12 @@ let massFaz: any = [];
 let colorRec = "black";
 let knop = "удалить";
 let nameMode = "";
+let chFaz = 0;
 
 const GsSetPhase = (props: {
   region: string;
   setOpen: any;
+  newMode: number;
   massMem: Array<number>;
   func: any;
 }) => {
@@ -50,6 +52,10 @@ const GsSetPhase = (props: {
     maskFaz.idx = props.massMem[i];
     maskFaz.name = map.tflight[maskFaz.idx].description;
     maskFaz.phases = map.tflight[maskFaz.idx].phases;
+
+    if (props.newMode >= 0) {
+      maskFaz.faza = map.routes[props.newMode].listTL[i].phase;
+    }
     return maskFaz;
   };
 
@@ -59,7 +65,7 @@ const GsSetPhase = (props: {
       "Новый ЗУ " +
       new Date().toLocaleDateString() +
       " " +
-      new Date().toLocaleTimeString().slice(0, -3);
+      new Date().toLocaleTimeString();
 
     for (let i = 0; i < props.massMem.length; i++) {
       massFaz.push(MakeMaskFaz(i));
@@ -101,47 +107,69 @@ const GsSetPhase = (props: {
     for (let i = 0; i < massFaz.length; i++) {
       if (!massFaz[i].delRec) massRab.push(massFaz[i]);
     }
-    massFaz = [];
     massFaz = massRab;
     setChDel(0);
+  };
+
+  const SaveFaz = () => {
+    for (let i = 0; i < massFaz.length; i++) {
+      map.routes[props.newMode].listTL[i].phase = massFaz[i].faza;
+    }
+    dispatch(mapCreate(map));
+    chFaz = 0;
+    handleCloseSetEnd();
+    newInput = true;
   };
 
   const SaveRec = (mode: number) => {
     if (!mode) {
       if (chDel) DelRec(); // сохранить
-
-      let maskRoutes = {
-        region: props.region,
-        description: nameMode,
-        box: {
-          point0: {
-            Y: -1,
-            X: -1,
-          },
-        },
-        listTL: [{}],
-      };
-      for (let i = 0; i < massFaz.length; i++) {
-        let maskListTL = {
-          num: i,
-          description: massFaz[i].name,
-          phase: massFaz[i].faza,
-          point: map.tflight[massFaz[i].idx].points,
-          pos: {
-            region: map.tflight[massFaz[i].idx].region.num,
-            area: map.tflight[massFaz[i].idx].area.num,
-            id: map.tflight[massFaz[i].idx].ID,
-          },
-        };
-        if (i) {
-          maskRoutes.listTL.push(maskListTL);
-        } else {
-          maskRoutes.listTL[0] = maskListTL;
+      if (massFaz.length < 2) {
+        alert("Некорректный режим. Количество светофоров меньше двух");
+      } else {
+        for (let i = 0; i < map.routes.length; i++) {
+          if (nameMode === map.routes[i].description) {
+            nameMode +=
+              "(" +
+              new Date().toLocaleDateString() +
+              " " +
+              new Date().toLocaleTimeString() +
+              ")";
+          }
         }
+        let maskRoutes = {
+          region: props.region,
+          description: nameMode,
+          box: {
+            point0: {
+              Y: -1,
+              X: -1,
+            },
+          },
+          listTL: [{}],
+        };
+        for (let i = 0; i < massFaz.length; i++) {
+          let maskListTL = {
+            num: i,
+            description: massFaz[i].name,
+            phase: massFaz[i].faza,
+            point: map.tflight[massFaz[i].idx].points,
+            pos: {
+              region: map.tflight[massFaz[i].idx].region.num,
+              area: map.tflight[massFaz[i].idx].area.num,
+              id: map.tflight[massFaz[i].idx].ID,
+            },
+          };
+          if (i) {
+            maskRoutes.listTL.push(maskListTL);
+          } else {
+            maskRoutes.listTL[0] = maskListTL;
+          }
+        }
+        map.routes.push(maskRoutes);
+        dispatch(mapCreate(map));
+        console.log("Запрос на создание режима", map);
       }
-      map.routes.push(maskRoutes);
-      dispatch(mapCreate(map));
-      console.log("MAP", map);
     }
     massFaz = [];
     handleCloseSetEnd();
@@ -153,13 +181,26 @@ const GsSetPhase = (props: {
   };
 
   const InputFaza = (mode: number) => {
+    let mesto = "43%";
+    if (props.newMode < 0) mesto = "37%";
+    const styleSetFaza = {
+      position: "relative",
+      left: mesto,
+      width: "12px",
+      maxHeight: "3px",
+      minHeight: "3px",
+      bgcolor: "#FFFBE5",
+      boxShadow: 3,
+      p: 1.5,
+    };
+
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      chFaz++;
       setCurrency(Number(event.target.value));
       massFaz[mode].faza = massDat[Number(event.target.value)];
     };
 
     let dat = massFaz[mode].phases;
-    console.log("DAT", dat, dat.length);
     if (!dat.length) dat = [1, 2, 3];
     let massKey = [];
     let massDat: any[] = [];
@@ -248,17 +289,21 @@ const GsSetPhase = (props: {
           <Grid item xs={8} sx={{ paddingLeft: 1 }}>
             {massFaz[i].name}
           </Grid>
-          <Grid item xs={2}>
+
+          {props.newMode < 0 && (
+            <Grid item xs={2} sx={{ textAlign: "center" }}>
+              <Button
+                variant="contained"
+                sx={styleSave}
+                onClick={() => ClickKnop(i)}
+              >
+                {knop}
+              </Button>
+            </Grid>
+          )}
+
+          <Grid item xs>
             <Box sx={{ textAlign: "center" }}>{InputFaza(i)}</Box>
-          </Grid>
-          <Grid item xs={2} sx={{ textAlign: "center" }}>
-            <Button
-              variant="contained"
-              sx={styleSave}
-              onClick={() => ClickKnop(i)}
-            >
-              {knop}
-            </Button>
           </Grid>
         </Grid>
       );
@@ -267,8 +312,10 @@ const GsSetPhase = (props: {
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValuen(event.target.value.trimStart()); // удаление пробелов в начале строки
-    nameMode = event.target.value.trimStart();
+    if (event.target.value) {
+      setValuen(event.target.value.trimStart()); // удаление пробелов в начале строки
+      nameMode = event.target.value.trimStart();
+    }
   };
 
   const [valuen, setValuen] = React.useState(nameMode);
@@ -280,25 +327,35 @@ const GsSetPhase = (props: {
           <b>&#10006;</b>
         </Button>
 
-        <Grid container sx={{ marginTop: 1 }}>
-          <Grid item xs={3.7} sx={{ border: 0, textAlign: "center" }}>
-            <b>Введите название нового ЗУ:</b>
-          </Grid>
-          <Grid item xs sx={{ border: 0, textAlign: "center" }}>
-            <Box sx={styleSet}>
-              <Box component="form" sx={styleBoxFormName}>
-                <TextField
-                  size="small"
-                  onKeyPress={handleKey} //отключение Enter
-                  inputProps={{ style: { fontSize: 14 } }}
-                  value={valuen}
-                  onChange={handleChange}
-                  variant="standard"
-                />
+        {props.newMode < 0 && (
+          <Grid container sx={{ marginTop: 1 }}>
+            <Grid item xs={3.7} sx={{ border: 0, textAlign: "center" }}>
+              <b>Введите название нового ЗУ:</b>
+            </Grid>
+            <Grid item xs sx={{ border: 0, textAlign: "center" }}>
+              <Box sx={styleSet}>
+                <Box component="form" sx={styleBoxFormName}>
+                  <TextField
+                    size="small"
+                    onKeyPress={handleKey} //отключение Enter
+                    inputProps={{ style: { fontSize: 14 } }}
+                    value={valuen}
+                    onChange={handleChange}
+                    variant="standard"
+                  />
+                </Box>
               </Box>
-            </Box>
+            </Grid>
           </Grid>
-        </Grid>
+        )}
+
+        {props.newMode >= 0 && (
+          <Grid container sx={{ marginTop: 1 }}>
+            <Grid item xs sx={{ fontSize: 18, textAlign: "center" }}>
+              Режим: <b>{map.routes[props.newMode].description}</b>
+            </Grid>
+          </Grid>
+        )}
 
         <Typography variant="h6" sx={{ marginTop: 1, textAlign: "center" }}>
           Таблица фаз
@@ -308,24 +365,39 @@ const GsSetPhase = (props: {
             <Grid item xs={8} sx={{ border: 0, textAlign: "center" }}>
               <b>Описание</b>
             </Grid>
-            <Grid item xs={2} sx={{ border: 0, textAlign: "center" }}>
+
+            {props.newMode < 0 && (
+              <Grid item xs={2} sx={{ border: 0, textAlign: "center" }}>
+                <b>Действие</b>
+              </Grid>
+            )}
+
+            <Grid item xs sx={{ border: 0, textAlign: "center" }}>
               <b>Фаза</b>
-            </Grid>
-            <Grid item xs={2} sx={{ border: 0, textAlign: "center" }}>
-              <b>Действие</b>
             </Grid>
           </Grid>
 
           <Box sx={{ overflowX: "auto", height: "69vh" }}>{StrokaTabl()}</Box>
 
-          <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
-            <Button sx={styleModalMenu} onClick={() => SaveRec(0)}>
-              Сохранить
-            </Button>
-            <Button sx={styleModalMenu} onClick={() => SaveRec(1)}>
-              Очистить
-            </Button>
-          </Box>
+          {props.newMode < 0 && (
+            <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
+              <Button sx={styleModalMenu} onClick={() => SaveRec(0)}>
+                Сохранить
+              </Button>
+
+              <Button sx={styleModalMenu} onClick={() => SaveRec(1)}>
+                Очистить
+              </Button>
+            </Box>
+          )}
+
+          {props.newMode >= 0 && chFaz > 0 && (
+            <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
+              <Button sx={styleModalMenu} onClick={() => SaveFaz()}>
+                Сохранить
+              </Button>
+            </Box>
+          )}
         </Box>
       </Box>
     </Modal>
