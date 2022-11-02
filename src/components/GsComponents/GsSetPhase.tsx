@@ -22,6 +22,7 @@ let colorRec = "black";
 let knop = "удалить";
 let nameMode = "";
 let chFaz = 0;
+let xsFaza = 2;
 
 const GsSetPhase = (props: {
   region: string;
@@ -62,10 +63,11 @@ const GsSetPhase = (props: {
   if (newInput) {
     massFaz = [];
     nameMode =
-      "Новый ЗУ " +
+      "Новый режим ЗУ(" +
       new Date().toLocaleDateString() +
       " " +
-      new Date().toLocaleTimeString();
+      new Date().toLocaleTimeString() +
+      ")";
 
     for (let i = 0; i < props.massMem.length; i++) {
       massFaz.push(MakeMaskFaz(i));
@@ -270,8 +272,7 @@ const GsSetPhase = (props: {
         marginRight: 0.1,
         border: "2px solid #000",
         bgcolor: "#E6F5D6",
-        minWidth: "110px",
-        maxWidth: "110px",
+        width: "110px",
         maxHeight: "20px",
         minHeight: "20px",
         borderColor: "#E6F5D6",
@@ -320,6 +321,9 @@ const GsSetPhase = (props: {
 
   const [valuen, setValuen] = React.useState(nameMode);
 
+  xsFaza = 4;
+  if (props.newMode < 0) xsFaza = 2;
+
   return (
     <Modal open={openSetMode} onClose={handleCloseSetEnd} hideBackdrop>
       <Box sx={styleSetInf}>
@@ -366,15 +370,15 @@ const GsSetPhase = (props: {
               <b>Описание</b>
             </Grid>
 
+            <Grid item xs={xsFaza} sx={{ border: 0, textAlign: "center" }}>
+              <b>Фаза</b>
+            </Grid>
+
             {props.newMode < 0 && (
               <Grid item xs={2} sx={{ border: 0, textAlign: "center" }}>
                 <b>Действие</b>
               </Grid>
             )}
-
-            <Grid item xs sx={{ border: 0, textAlign: "center" }}>
-              <b>Фаза</b>
-            </Grid>
           </Grid>
 
           <Box sx={{ overflowX: "auto", height: "69vh" }}>{StrokaTabl()}</Box>
@@ -382,11 +386,11 @@ const GsSetPhase = (props: {
           {props.newMode < 0 && (
             <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
               <Button sx={styleModalMenu} onClick={() => SaveRec(0)}>
-                Сохранить
+                Сохранить режим
               </Button>
 
               <Button sx={styleModalMenu} onClick={() => SaveRec(1)}>
-                Очистить
+                Очистить таблицу
               </Button>
             </Box>
           )}
@@ -394,7 +398,7 @@ const GsSetPhase = (props: {
           {props.newMode >= 0 && chFaz > 0 && (
             <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
               <Button sx={styleModalMenu} onClick={() => SaveFaz()}>
-                Сохранить
+                Сохранить изменения
               </Button>
             </Box>
           )}

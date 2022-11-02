@@ -58,7 +58,6 @@ const GsSelectMD = (props: { setOpen: any; idx: any }) => {
       };
       massName.push(maskName);
     }
-    console.log("massName:", massName);
     flagBegin = false;
     dlRoute = map.routes.length;
   }
@@ -114,8 +113,7 @@ const GsSelectMD = (props: { setOpen: any; idx: any }) => {
         marginTop: 1,
         border: "2px solid #000",
         bgcolor: "#E6F5D6",
-        minWidth: "300px",
-        maxWidth: "300px",
+        width: "320px",
         maxHeight: "20px",
         minHeight: "20px",
         borderColor: "#E6F5D6",
@@ -128,8 +126,7 @@ const GsSelectMD = (props: { setOpen: any; idx: any }) => {
         marginTop: 1,
         border: "2px solid #000",
         bgcolor: "#E6F5D6",
-        minWidth: "12px",
-        maxWidth: "120px",
+        width: "105px",
         maxHeight: "20px",
         minHeight: "20px",
         borderColor: "#E6F5D6",
@@ -139,7 +136,7 @@ const GsSelectMD = (props: { setOpen: any; idx: any }) => {
       };
       resStr.push(
         <Grid key={i} container>
-          <Grid item xs={8.7} sx={{ border: 0, textAlign: "center" }}>
+          <Grid item xs={8.9} sx={{ border: 0, textAlign: "center" }}>
             <Button
               variant="contained"
               sx={styleBut01}
@@ -148,7 +145,7 @@ const GsSelectMD = (props: { setOpen: any; idx: any }) => {
               {massName[i].name}
             </Button>
           </Grid>
-          <Grid item xs={3.3} sx={{ border: 0, textAlign: "center" }}>
+          <Grid item xs sx={{ border: 0, textAlign: "center" }}>
             <Button
               variant="contained"
               sx={styleBut02}
@@ -162,10 +159,6 @@ const GsSelectMD = (props: { setOpen: any; idx: any }) => {
     }
     return resStr;
   };
-
-  // const EditMode = () => {
-  //   return <h1>Ku-Ku</h1>;
-  // };
 
   return (
     <Modal open={openSetMode} onClose={handleCloseSetEnd} hideBackdrop>

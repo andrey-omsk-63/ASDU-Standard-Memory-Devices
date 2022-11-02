@@ -13,10 +13,12 @@ import { TrafficControl, TypeSelector, ZoomControl } from "react-yandex-maps";
 import GsSelectMD from "./GsComponents/GsSelectMD";
 import GsMakeMode from "./GsComponents/GsMakeMode";
 import GsSetPhase from "./GsComponents/GsSetPhase";
+import GsToDoMode from "./GsComponents/GsToDoMode";
 
 import { getMultiRouteOptions } from "./MapServiceFunctions";
 import { getReferencePoints, CenterCoord } from "./MapServiceFunctions";
-import { getPointData, getPointOptions } from "./MapServiceFunctions";
+import { getPointData, getPointOptions1 } from "./MapServiceFunctions";
+import { getPointOptions2 } from "./MapServiceFunctions";
 import { StrokaMenuGlob, MasskPoint } from "./MapServiceFunctions";
 
 import { searchControl } from "./MainMapStyle";
@@ -58,15 +60,14 @@ const MainMapSMD = (props: {
   const [selectMD, setSelectMD] = React.useState(false);
   const [makeMode, setMakeMode] = React.useState(false);
   const [setPhase, setSetPhase] = React.useState(false);
+  const [toDoMode, setToDoMode] = React.useState(false);
 
   const [ymaps, setYmaps] = React.useState<YMapsApi | null>(null);
   const mapp = React.useRef<any>(null);
 
   const ReceiveIdxGs = (mode: number) => {
-    console.log("@@@", map.routes[mode].listTL);
     let massErrRec = [];
     for (let i = 0; i < map.routes[mode].listTL.length; i++) {
-      console.log("map.routes[mode].listTL", i, map.routes[mode].listTL[i].pos);
       let idx = -1;
       for (let j = 0; j < map.tflight.length; j++) {
         if (
@@ -151,7 +152,6 @@ const MainMapSMD = (props: {
   };
 
   const MakeNewMassMem = (mass: any) => {
-    console.log("Пришло MASS:", mass);
     if (mass.length) {
       massMem = [];
       let masRab = [];
@@ -170,7 +170,7 @@ const MainMapSMD = (props: {
 
   const OnPlacemarkClickPoint = (index: number) => {
     if (newMode < 0) {
-      let nomInMass = massMem.indexOf(index);  // процесс создания нового режима
+      let nomInMass = massMem.indexOf(index); // процесс создания нового режима
       if (nomInMass < 0) {
         massMem.push(index);
         let masscoord: any = [];
@@ -189,24 +189,30 @@ const MainMapSMD = (props: {
   const PlacemarkDo = () => {
     let pAaI = -1;
     let pBbI = -1;
-    if (massMem.length > 1) {
+    if (massMem.length >= 1) {
       pAaI = massMem[0];
       pBbI = massMem[massMem.length - 1];
     }
 
     const DoPlacemarkDo = (props: { coordinate: any; idx: number }) => {
+      let aaa = massMem.indexOf(props.idx);
       const MemoPlacemarkDo = React.useMemo(
         () => (
           <Placemark
             key={props.idx}
             geometry={props.coordinate}
             properties={getPointData(props.idx, pAaI, pBbI, massdk)}
-            options={getPointOptions(props.idx, massMem)}
+            options={
+              (massMem.length === aaa + 1 && massMem.length) ||
+              (!aaa && massMem.length > 1)
+                ? getPointOptions2(props.idx, massMem)
+                : getPointOptions1()
+            }
             modules={["geoObject.addon.balloon", "geoObject.addon.hint"]}
             onClick={() => OnPlacemarkClickPoint(props.idx)}
           />
         ),
-        [props.coordinate, props.idx]
+        [props.coordinate, props.idx, aaa]
       );
       return MemoPlacemarkDo;
     };
@@ -289,21 +295,26 @@ const MainMapSMD = (props: {
         break;
       case 44: // назначить фазы
         setSetPhase(true);
+        break;
+      case 45: // выполнить режим
+        setToDoMode(true);
     }
   };
 
   return (
     <Grid container sx={{ border: 0, height: "99.9vh" }}>
-      {StrokaMenuGlob("Управление картой", PressButton, 41)}
-      {StrokaMenuGlob("Выбор ЗУ", PressButton, 42)}
-      {/* {StrokaMenuGlob("Создать режим", PressButton, 43)} */}
+      {/* {StrokaMenuGlob("Управление картой", PressButton, 41)} */}
+      {StrokaMenuGlob("Выбор режима ЗУ", PressButton, 42)}
       {massMem.length > 1 && (
         <>
-          {StrokaMenuGlob("Редактировать режим", PressButton, 44)}
+          {newMode < 0 && (
+            <>{StrokaMenuGlob("Редактировать режим", PressButton, 44)}</>
+          )}
           {newMode >= 0 && (
             <>
-              {StrokaMenuGlob("Выполнить режим", PressButton, 45)}
               {StrokaMenuGlob("Создать новый режим", PressButton, 43)}
+              {StrokaMenuGlob("Редактирование фаз", PressButton, 44)}
+              {StrokaMenuGlob("Выполнить режим", PressButton, 45)}
             </>
           )}
         </>
@@ -340,6 +351,15 @@ const MainMapSMD = (props: {
               <GsSelectMD setOpen={setSelectMD} idx={ReceiveIdxGs} />
             )}
             {makeMode && <GsMakeMode setOpen={setMakeMode} />}
+            {toDoMode && (
+              <GsToDoMode
+                region={props.region}
+                setOpen={setToDoMode}
+                newMode={newMode}
+                massMem={massMem}
+                func={MakeNewMassMem}
+              />
+            )}
             {setPhase && (
               <GsSetPhase
                 region={props.region}

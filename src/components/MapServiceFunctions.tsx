@@ -128,24 +128,37 @@ export const getPointData = (
   massdk: any
 ) => {
   let textBalloon = "";
-  if (index === pointAaIndex) textBalloon = "Начало";
   if (index === pointBbIndex) textBalloon = "Конец";
+  if (index === pointAaIndex) textBalloon = "Начало";
   return {
     hintContent: "ID:" + massdk[index].ID + " " + massdk[index].nameCoordinates, //balloonContent: PressBalloon(index), iconCaption: textBalloon,
     iconContent: textBalloon,
   };
 };
 
-export const getPointOptions = (index: number, massMem: Array<number>) => {
+export const getPointOptions1 = () => {
+  return {
+    iconLayout: "default#image",
+    iconImageHref: "https://localhost:3000/18.svg",
+    iconImageSize: [30, 38],
+    iconImageOffset: [-15, -38],
+  };
+};
+
+export const getPointOptions2 = (index: number, massMem: Array<number>) => {
   let colorBalloon = "islands#violetCircleDotIcon";
   let aaa = massMem.indexOf(index);
+
   if (aaa >= 0) {
     colorBalloon = "islands#redCircleDotIcon";
-
-    if (massMem.length === aaa + 1 && massMem.length > 1)
+    if (massMem.length === aaa + 1 && massMem.length) {
       colorBalloon = "islands#darkBlueStretchyIcon";
-    if (!aaa && massMem.length > 1) colorBalloon = "islands#redStretchyIcon";
+    }
+    if (!aaa && massMem.length) {
+      colorBalloon = "islands#redStretchyIcon";
+    }
   }
+
   return {
     preset: colorBalloon,
   };
@@ -164,7 +177,7 @@ export const getMultiRouteOptions = () => {
     routeActiveStrokeWidth: 4,
     //routeActiveStrokeColor: "#224E1F",
     routeStrokeWidth: 0,
-    wayPointVisible: false
+    wayPointVisible: false,
   };
 };
 
