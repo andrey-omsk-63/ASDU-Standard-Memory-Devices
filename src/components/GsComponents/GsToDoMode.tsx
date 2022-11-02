@@ -1,29 +1,24 @@
-import * as React from "react";
-import { useDispatch, useSelector } from "react-redux";
-//import { mapCreate } from "../../redux/actions";
+import * as React from 'react';
+import { useSelector } from 'react-redux';
 
-import axios from "axios";
+//import axios from 'axios';
 
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
-import Modal from "@mui/material/Modal";
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
+import Modal from '@mui/material/Modal';
+import CardMedia from '@mui/material/CardMedia';
 //import TextField from "@mui/material/TextField";
 //import Typography from "@mui/material/Typography";
 //import MenuItem from "@mui/material/MenuItem";
 
-import { styleModalEnd } from "../MainMapStyle";
-import { styleModalMenu } from "./GsSetPhaseStyle";
-//import { styleSet, styleBoxFormName } from "./GsSetPhaseStyle";
+import { styleModalEnd } from '../MainMapStyle';
+import { styleModalMenu } from './GsSetPhaseStyle';
 
 let newInput = true;
 let massFaz: any = [];
-let nameMode = "";
-let chFaz = 0;
 
 let toDoMode = false;
-let heightImg = window.innerWidth / 21;
-let widthHeight = heightImg.toString();
 
 const GsToDoMode = (props: {
   region: string;
@@ -37,24 +32,24 @@ const GsToDoMode = (props: {
     const { mapReducer } = state;
     return mapReducer.map.dateMap;
   });
-  const dispatch = useDispatch();
+  //const dispatch = useDispatch();
   //========================================================
   const [openSetMode, setOpenSetMode] = React.useState(true);
-  const [imgSvg, setImgSvg] = React.useState<any>(null);
+  //const [imgSvg, setImgSvg] = React.useState<any>(null);
   const [trigger, setTrigger] = React.useState(true);
 
   const [chDel, setChDel] = React.useState(0);
 
   //=== инициализация ======================================
   const styleSetInf = {
-    position: "relative",
+    position: 'relative',
     marginTop: 3,
-    marginLeft: "auto",
+    marginLeft: 'auto',
     marginRight: 3,
     width: 777,
-    bgcolor: "background.paper",
-    border: "3px solid #000",
-    borderColor: "primary.main",
+    bgcolor: 'background.paper',
+    border: '3px solid #000',
+    borderColor: 'primary.main',
     borderRadius: 2,
     boxShadow: 24,
     p: 1.5,
@@ -65,7 +60,7 @@ const GsToDoMode = (props: {
       idx: 0,
       faza: 1,
       phases: [],
-      name: "",
+      name: '',
       delRec: false,
     };
     maskFaz.idx = props.massMem[i];
@@ -78,37 +73,12 @@ const GsToDoMode = (props: {
     return maskFaz;
   };
 
-  const ReplaceInSvg = (svg: any) => {
-    let ch = "";
-    let svgPipa = svg;
-    svgPipa = svgPipa.replace('173.85001','70')
-    svgPipa = svgPipa.replace('173.85001','70')
-    svgPipa = svgPipa.replace('173.84599','70')
-    svgPipa = svgPipa.replace('173.84599','70')
-    // let vxod = svg.indexOf("width=");
-    // for (let i = 0; i < 100; i++) {
-    //   if (isNaN(Number(svgPipa[vxod + 7 + i]))) break;
-    //   ch = ch + svgPipa[vxod + 7 + i];
-    // }
-    // for (let i = 0; i < 6; i++) {
-    //   svgPipa = svgPipa.replace(ch, widthHeight);
-    // }
-    console.log("Pipa:",svgPipa)
-    return svgPipa;
-  };
-
   if (newInput) {
-    axios.get("https://localhost:3000/18.svg").then(({ data }) => {
-      setImgSvg(ReplaceInSvg(data));
-      console.log("data:", data);
-    });
+    // axios.get('https://localhost:3000/18.svg').then(({ data }) => {
+    //   setImgSvg(data);
+    //   //console.log('data:', data);
+    // });
     massFaz = [];
-    nameMode =
-      "Новый режим ЗУ(" +
-      new Date().toLocaleDateString() +
-      " " +
-      new Date().toLocaleTimeString() +
-      ")";
 
     for (let i = 0; i < props.massMem.length; i++) {
       massFaz.push(MakeMaskFaz(i));
@@ -152,37 +122,33 @@ const GsToDoMode = (props: {
     setTrigger(!trigger);
   };
 
-  const ExampleComponent = (idx: number) => {
-    return (
-      <div>
-        <div
-          dangerouslySetInnerHTML={{ __html: imgSvg }}
-        />
-      </div>
-    );
-  };
-
   const StrokaTabl = () => {
     let resStr = [];
     for (let i = 0; i < massFaz.length; i++) {
       resStr.push(
         <Grid key={i} container sx={{ marginTop: 1 }}>
-          <Grid item xs={1} sx={{ textAlign: "center" }}>
+          <Grid item xs={1} sx={{ paddingTop: 2, textAlign: 'center' }}>
             {i + 1}
           </Grid>
 
-          <Grid item xs={4} sx={{ textAlign: "center" }}>
-            {ExampleComponent(0)}
+          <Grid item xs={1.7} sx={{ border: 0 }}></Grid>
+          <Grid item xs={2.3} sx={{ border: 0 }}>
+            <CardMedia
+              component="img"
+              sx={{ textAlign: 'center', height: 60, width: 40 }}
+              image="https://localhost:3000/18.svg"
+              // image={imgSvg}
+            />
           </Grid>
 
-          <Grid item xs sx={{ textAlign: "center" }}>
+          <Grid item xs sx={{ textAlign: 'center' }}>
             --
           </Grid>
 
           <Grid item xs={5}>
             {massFaz[i].name}
           </Grid>
-        </Grid>
+        </Grid>,
       );
     }
     return resStr;
@@ -196,34 +162,34 @@ const GsToDoMode = (props: {
         </Button>
 
         <Grid container sx={{ marginTop: 0 }}>
-          <Grid item xs sx={{ fontSize: 18, textAlign: "center" }}>
+          <Grid item xs sx={{ fontSize: 18, textAlign: 'center' }}>
             Режим: <b>{map.routes[props.newMode].description}</b>
           </Grid>
         </Grid>
 
         <Box sx={{ marginTop: 1 }}>
-          <Grid container sx={{ bgcolor: "#C0E2C3" }}>
-            <Grid item xs={1} sx={{ border: 0, textAlign: "center" }}>
+          <Grid container sx={{ bgcolor: '#C0E2C3' }}>
+            <Grid item xs={1} sx={{ border: 0, textAlign: 'center' }}>
               <b>Номер</b>
             </Grid>
 
-            <Grid item xs={4} sx={{ border: 0, textAlign: "center" }}>
+            <Grid item xs={4} sx={{ border: 0, textAlign: 'center' }}>
               <b>Состояние</b>
             </Grid>
 
-            <Grid item xs={2} sx={{ border: 0, textAlign: "center" }}>
+            <Grid item xs={2} sx={{ border: 0, textAlign: 'center' }}>
               <b>Фаза</b>
             </Grid>
 
-            <Grid item xs={5} sx={{ border: 0, textAlign: "center" }}>
+            <Grid item xs={5} sx={{ border: 0, textAlign: 'center' }}>
               <b>ДК</b>
             </Grid>
           </Grid>
 
-          <Box sx={{ overflowX: "auto", height: "77vh" }}>{StrokaTabl()}</Box>
+          <Box sx={{ overflowX: 'auto', height: '77vh' }}>{StrokaTabl()}</Box>
 
           {!toDoMode && (
-            <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
+            <Box sx={{ marginTop: 0.5, textAlign: 'center' }}>
               <Button sx={styleModalMenu} onClick={() => ToDoMode(0)}>
                 Начать исполнение
               </Button>
@@ -231,7 +197,7 @@ const GsToDoMode = (props: {
           )}
 
           {toDoMode && (
-            <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
+            <Box sx={{ marginTop: 0.5, textAlign: 'center' }}>
               <Button sx={styleModalMenu} onClick={() => ToDoMode(1)}>
                 Закончить исполнение
               </Button>
