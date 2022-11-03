@@ -1,26 +1,26 @@
-import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { mapCreate } from '../../redux/actions';
+import * as React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { mapCreate } from "../../redux/actions";
 
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
-import Modal from '@mui/material/Modal';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import MenuItem from '@mui/material/MenuItem';
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
+import Modal from "@mui/material/Modal";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import MenuItem from "@mui/material/MenuItem";
 
-import { styleModalEnd } from '../MainMapStyle';
+import { styleModalEnd } from "../MainMapStyle";
 
-import { styleSetInf, styleModalMenu } from './GsSetPhaseStyle';
-import { styleBoxFormFaza } from './GsSetPhaseStyle';
-import { styleSet, styleBoxFormName } from './GsSetPhaseStyle';
+import { styleSetInf, styleModalMenu } from "./GsSetPhaseStyle";
+import { styleBoxFormFaza } from "./GsSetPhaseStyle";
+import { styleSet, styleBoxFormName } from "./GsSetPhaseStyle";
 
 let newInput = true;
 let massFaz: any = [];
-let colorRec = 'black';
-let knop = 'удалить';
-let nameMode = '';
+let colorRec = "black";
+let knop = "удалить";
+let nameMode = "";
 let chFaz = 0;
 let xsFaza = 2;
 
@@ -47,7 +47,7 @@ const GsSetPhase = (props: {
       idx: 0,
       faza: 1,
       phases: [],
-      name: '',
+      name: "",
       delRec: false,
     };
     maskFaz.idx = props.massMem[i];
@@ -63,7 +63,11 @@ const GsSetPhase = (props: {
   if (newInput) {
     massFaz = [];
     nameMode =
-      'Режим ЗУ(' + new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString() + ')';
+      "Режим ЗУ(" +
+      new Date().toLocaleDateString() +
+      " " +
+      new Date().toLocaleTimeString() +
+      ")";
 
     for (let i = 0; i < props.massMem.length; i++) {
       massFaz.push(MakeMaskFaz(i));
@@ -123,12 +127,16 @@ const GsSetPhase = (props: {
     if (!mode) {
       if (chDel) DelRec(); // сохранить
       if (massFaz.length < 2) {
-        alert('Некорректный режим. Количество светофоров меньше двух');
+        alert("Некорректный режим. Количество светофоров меньше двух");
       } else {
         for (let i = 0; i < map.routes.length; i++) {
           if (nameMode === map.routes[i].description) {
             nameMode +=
-              '(' + new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString() + ')';
+              "(" +
+              new Date().toLocaleDateString() +
+              " " +
+              new Date().toLocaleTimeString() +
+              ")";
           }
         }
         let maskRoutes = {
@@ -162,7 +170,7 @@ const GsSetPhase = (props: {
         }
         map.routes.push(maskRoutes);
         dispatch(mapCreate(map));
-        console.log('Запрос на создание режима', map);
+        console.log("Запрос на создание режима", map);
       }
     }
     massFaz = [];
@@ -171,19 +179,19 @@ const GsSetPhase = (props: {
   };
 
   const handleKey = (event: any) => {
-    if (event.key === 'Enter') event.preventDefault();
+    if (event.key === "Enter") event.preventDefault();
   };
 
   const InputFaza = (mode: number) => {
-    let mesto = '43%';
-    if (props.newMode < 0) mesto = '37%';
+    let mesto = "43%";
+    if (props.newMode < 0) mesto = "37%";
     const styleSetFaza = {
-      position: 'relative',
+      position: "relative",
       left: mesto,
-      width: '12px',
-      maxHeight: '3px',
-      minHeight: '3px',
-      bgcolor: '#FFFBE5',
+      width: "12px",
+      maxHeight: "3px",
+      minHeight: "3px",
+      bgcolor: "#FFFBE5",
       boxShadow: 3,
       p: 1.5,
     };
@@ -205,15 +213,17 @@ const GsSetPhase = (props: {
     }
     for (let i = 0; i < massKey.length; i++) {
       let maskCurrencies = {
-        value: '',
-        label: '',
+        value: "",
+        label: "",
       };
       maskCurrencies.value = massKey[i];
       maskCurrencies.label = massDat[i];
       currencies.push(maskCurrencies);
     }
 
-    const [currency, setCurrency] = React.useState(dat.indexOf(massFaz[mode].faza));
+    const [currency, setCurrency] = React.useState(
+      dat.indexOf(massFaz[mode].faza)
+    );
 
     return (
       <Box sx={styleSetFaza}>
@@ -227,9 +237,14 @@ const GsSetPhase = (props: {
               onChange={handleChange}
               InputProps={{ style: { fontSize: 14 } }}
               variant="standard"
-              color="secondary">
+              color="secondary"
+            >
               {currencies.map((option: any) => (
-                <MenuItem key={option.value} value={option.value} sx={{ fontSize: 14 }}>
+                <MenuItem
+                  key={option.value}
+                  value={option.value}
+                  sx={{ fontSize: 14 }}
+                >
                   {option.label}
                 </MenuItem>
               ))}
@@ -244,46 +259,54 @@ const GsSetPhase = (props: {
     let resStr = [];
 
     for (let i = 0; i < massFaz.length; i++) {
-      knop = 'удалить';
+      knop = "удалить";
       let fSize = 15;
-      colorRec = 'black';
+      colorRec = "black";
       if (massFaz[i].delRec) {
-        knop = 'восстановить';
+        knop = "восстановить";
         fSize = 12.9;
-        colorRec = 'red';
+        colorRec = "red";
       }
       const styleSave = {
         fontSize: fSize,
         marginRight: 0.1,
-        border: '2px solid #000',
-        bgcolor: '#E6F5D6',
-        width: '110px',
-        maxHeight: '20px',
-        minHeight: '20px',
-        borderColor: '#E6F5D6',
+        border: "2px solid #000",
+        bgcolor: "#E6F5D6",
+        width: "110px",
+        maxHeight: "20px",
+        minHeight: "20px",
+        borderColor: "#E6F5D6",
         borderRadius: 2,
         color: colorRec,
-        textTransform: 'unset !important',
+        textTransform: "unset !important",
       };
 
       resStr.push(
-        <Grid key={i} container sx={{ marginTop: 1, color: colorRec, fontSize: fSize }}>
+        <Grid
+          key={i}
+          container
+          sx={{ marginTop: 1, color: colorRec, fontSize: fSize }}
+        >
           <Grid item xs={8} sx={{ paddingLeft: 1 }}>
             {massFaz[i].name}
           </Grid>
 
+          <Grid item xs={xsFaza}>
+            <Box sx={{ textAlign: "center" }}>{InputFaza(i)}</Box>
+          </Grid>
+
           {props.newMode < 0 && (
-            <Grid item xs={2} sx={{ textAlign: 'center' }}>
-              <Button variant="contained" sx={styleSave} onClick={() => ClickKnop(i)}>
+            <Grid item xs={2} sx={{ textAlign: "center" }}>
+              <Button
+                variant="contained"
+                sx={styleSave}
+                onClick={() => ClickKnop(i)}
+              >
                 {knop}
               </Button>
             </Grid>
           )}
-
-          <Grid item xs>
-            <Box sx={{ textAlign: 'center' }}>{InputFaza(i)}</Box>
-          </Grid>
-        </Grid>,
+        </Grid>
       );
     }
     return resStr;
@@ -310,10 +333,10 @@ const GsSetPhase = (props: {
 
         {props.newMode < 0 && (
           <Grid container sx={{ marginTop: 1 }}>
-            <Grid item xs={3.7} sx={{ border: 0, textAlign: 'center' }}>
+            <Grid item xs={3.7} sx={{ border: 0, textAlign: "center" }}>
               <b>Введите название нового ЗУ:</b>
             </Grid>
-            <Grid item xs sx={{ border: 0, textAlign: 'center' }}>
+            <Grid item xs sx={{ border: 0, textAlign: "center" }}>
               <Box sx={styleSet}>
                 <Box component="form" sx={styleBoxFormName}>
                   <TextField
@@ -332,36 +355,36 @@ const GsSetPhase = (props: {
 
         {props.newMode >= 0 && (
           <Grid container sx={{ marginTop: 1 }}>
-            <Grid item xs sx={{ fontSize: 18, textAlign: 'center' }}>
+            <Grid item xs sx={{ fontSize: 18, textAlign: "center" }}>
               Режим: <b>{map.routes[props.newMode].description}</b>
             </Grid>
           </Grid>
         )}
 
-        <Typography variant="h6" sx={{ marginTop: 1, textAlign: 'center' }}>
+        <Typography variant="h6" sx={{ marginTop: 1, textAlign: "center" }}>
           Таблица фаз
         </Typography>
         <Box sx={{ marginTop: 0.5 }}>
-          <Grid container sx={{ bgcolor: '#C0E2C3' }}>
-            <Grid item xs={8} sx={{ border: 0, textAlign: 'center' }}>
+          <Grid container sx={{ bgcolor: "#C0E2C3" }}>
+            <Grid item xs={8} sx={{ border: 0, textAlign: "center" }}>
               <b>Описание</b>
             </Grid>
 
-            <Grid item xs={xsFaza} sx={{ border: 0, textAlign: 'center' }}>
+            <Grid item xs={xsFaza} sx={{ border: 0, textAlign: "center" }}>
               <b>Фаза</b>
             </Grid>
 
             {props.newMode < 0 && (
-              <Grid item xs={2} sx={{ border: 0, textAlign: 'center' }}>
+              <Grid item xs={2} sx={{ border: 0, textAlign: "center" }}>
                 <b>Действие</b>
               </Grid>
             )}
           </Grid>
 
-          <Box sx={{ overflowX: 'auto', height: '69vh' }}>{StrokaTabl()}</Box>
+          <Box sx={{ overflowX: "auto", height: "69vh" }}>{StrokaTabl()}</Box>
 
           {props.newMode < 0 && (
-            <Box sx={{ marginTop: 0.5, textAlign: 'center' }}>
+            <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
               <Button sx={styleModalMenu} onClick={() => SaveRec(0)}>
                 Сохранить режим
               </Button>
@@ -373,7 +396,7 @@ const GsSetPhase = (props: {
           )}
 
           {props.newMode >= 0 && chFaz > 0 && (
-            <Box sx={{ marginTop: 0.5, textAlign: 'center' }}>
+            <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
               <Button sx={styleModalMenu} onClick={() => SaveFaz()}>
                 Сохранить изменения
               </Button>
@@ -386,3 +409,4 @@ const GsSetPhase = (props: {
 };
 
 export default GsSetPhase;
+//alert

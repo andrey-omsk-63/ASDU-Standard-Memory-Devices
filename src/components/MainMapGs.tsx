@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { massdkCreate } from "../redux/actions";
+import { massdkCreate,massmodeCreate  } from "../redux/actions";
 import { mapCreate, coordinatesCreate } from "../redux/actions";
 
 import Grid from "@mui/material/Grid";
@@ -33,6 +33,9 @@ let massMem: Array<number> = [];
 let massCoord: any = [];
 let newMode = -1;
 
+let widthMap = "99.8%";
+let xsMap = 12;
+
 const MainMapSMD = (props: {
   ws: WebSocket;
   region: string;
@@ -45,6 +48,10 @@ const MainMapSMD = (props: {
   let massdk = useSelector((state: any) => {
     const { massdkReducer } = state;
     return massdkReducer.massdk;
+  });
+  let massmode = useSelector((state: any) => {
+    const { massmodeReducer } = state;
+    return massmodeReducer.massmode;
   });
   let coordinates = useSelector((state: any) => {
     const { coordinatesReducer } = state;
@@ -96,11 +103,14 @@ const MainMapSMD = (props: {
       }
     }
     if (massErrRec.length) {
-      let masRab = []; // редактируем у себя map
+      let massRabMap = []; // редактируем у себя map
+
       for (let i = 0; i < map.routes[mode].listTL.length; i++) {
-        if (!massErrRec.includes(i)) masRab.push(map.routes[mode].listTL[i]);
+        if (!massErrRec.includes(i)) {
+          massRabMap.push(map.routes[mode].listTL[i]);
+        }
       }
-      map.routes[mode].listTL = masRab;
+      map.routes[mode].listTL = massRabMap;
       dispatch(mapCreate(map));
     }
     newMode = mode;
@@ -115,6 +125,7 @@ const MainMapSMD = (props: {
   };
 
   const addRoute = (ymaps: any, bound: boolean) => {
+    console.log("Перерисовано");
     mapp.current.geoObjects.removeAll(); // удаление старой коллекции связей
     if (massCoord.length > 1) {
       let multiRoute: any = [];
@@ -194,6 +205,8 @@ const MainMapSMD = (props: {
       pBbI = massMem[massMem.length - 1];
     }
 
+    console.log("4massdk:",massdk)
+
     const DoPlacemarkDo = (props: { coordinate: any; idx: number }) => {
       let aaa = massMem.indexOf(props.idx);
       const MemoPlacemarkDo = React.useMemo(
@@ -263,6 +276,22 @@ const MainMapSMD = (props: {
     }
     dispatch(massdkCreate(massdk));
     dispatch(coordinatesCreate(coordinates));
+    console.log("1massdk:",massdk)
+    let ch = 1;
+    let massRab = []
+    for (let i = 0; i < map.routes.length; i++) {
+      let nameZU = map.routes[i].description;
+      if (!nameZU) nameZU = "без имени(" + ch++ + ")";
+      let maskName = {
+        name: nameZU,
+        delRec: false,
+      };
+      massRab.push(maskName);
+      
+    }
+    dispatch(massmodeCreate(massRab))
+    console.log("2massmode:",massmode)
+    console.log("2massdk:",massdk)
     pointCenter = CenterCoord(
       map.boxPoint.point0.Y,
       map.boxPoint.point0.X,
@@ -283,8 +312,7 @@ const MainMapSMD = (props: {
     switch (mode) {
       case 42: // выбор режима ЗУ
         if (massMem.length) {
-          massMem = [];
-          massCoord = [];
+          StatusQuo();
           ymaps && addRoute(ymaps, false); // перерисовка связей
           setFlagPusk(!flagPusk);
         }
@@ -297,83 +325,93 @@ const MainMapSMD = (props: {
         setSetPhase(true);
         break;
       case 45: // выполнить режим
+        widthMap = "99.9%";
+        xsMap = 7.8;
+        setFlagPusk(!flagPusk);
         setToDoMode(true);
     }
   };
 
+  const OldSizeWind = (size: number) => {
+    widthMap = "99.8%";
+    xsMap = size;
+    setFlagPusk(!flagPusk);
+  };
+
   return (
     <Grid container sx={{ border: 0, height: "99.9vh" }}>
-      {/* {StrokaMenuGlob("Управление картой", PressButton, 41)} */}
-      {StrokaMenuGlob("Выбор режима ЗУ", PressButton, 42)}
-      {massMem.length > 1 && (
-        <>
-          {newMode < 0 && (
-            <>{StrokaMenuGlob("Редактировать режим", PressButton, 44)}</>
-          )}
-          {newMode >= 0 && (
-            <>
-              {StrokaMenuGlob("Создать новый режим", PressButton, 43)}
-              {StrokaMenuGlob("Редактирование фаз", PressButton, 44)}
-              {StrokaMenuGlob("Выполнить режим", PressButton, 45)}
-            </>
-          )}
-        </>
-      )}
-      {Object.keys(map.tflight).length && (
-        <YMaps
-          query={{
-            apikey: "65162f5f-2d15-41d1-a881-6c1acf34cfa1",
-            lang: "ru_RU",
-          }}
-        >
-          <Map
-            modules={["multiRouter.MultiRoute", "Polyline"]}
-            state={mapState}
-            instanceRef={(ref) => InstanceRefDo(ref)}
-            onLoad={(ref) => {
-              ref && setYmaps(ref);
+      <Grid item xs={xsMap} sx={{ border: 0 }}>
+        {StrokaMenuGlob("Выбор режима ЗУ", PressButton, 42)}
+        {massMem.length > 1 && (
+          <>
+            {newMode < 0 && (
+              <>{StrokaMenuGlob("Назначить фазы", PressButton, 44)}</>
+            )}
+            {newMode >= 0 && (
+              <>
+                {StrokaMenuGlob("Создать режим", PressButton, 43)}
+                {StrokaMenuGlob("Редактирование фаз", PressButton, 44)}
+                {StrokaMenuGlob("Выполнить режим", PressButton, 45)}
+              </>
+            )}
+          </>
+        )}
+        {Object.keys(map.tflight).length && (
+          <YMaps
+            query={{
+              apikey: "65162f5f-2d15-41d1-a881-6c1acf34cfa1",
+              lang: "ru_RU",
             }}
-            width={"99.8%"}
-            height={"97%"}
           >
-            {/* сервисы Яндекса */}
-            <FullscreenControl />
-            <GeolocationControl options={{ float: "left" }} />
-            <RulerControl options={{ float: "right" }} />
-            <SearchControl options={searchControl} />
-            <TrafficControl options={{ float: "right" }} />
-            <TypeSelector options={{ float: "right" }} />
-            <ZoomControl options={{ float: "right" }} />
-            {/* служебные компоненты */}
-            <PlacemarkDo />
-            {/* <ModalPressBalloon /> */}
-            {selectMD && (
-              <GsSelectMD setOpen={setSelectMD} idx={ReceiveIdxGs} />
-            )}
-            {makeMode && <GsMakeMode setOpen={setMakeMode} />}
-            {toDoMode && (
-              <GsToDoMode
-                region={props.region}
-                setOpen={setToDoMode}
-                newMode={newMode}
-                massMem={massMem}
-                func={MakeNewMassMem}
-              />
-            )}
-            {setPhase && (
-              <GsSetPhase
-                region={props.region}
-                setOpen={setSetPhase}
-                newMode={newMode}
-                massMem={massMem}
-                func={MakeNewMassMem}
-              />
-            )}
-          </Map>
-        </YMaps>
-      )}
+            <Map
+              modules={["multiRouter.MultiRoute", "Polyline"]}
+              state={mapState}
+              instanceRef={(ref) => InstanceRefDo(ref)}
+              onLoad={(ref) => {
+                ref && setYmaps(ref);
+              }}
+              width={widthMap}
+              height={"97%"}
+            >
+              {/* сервисы Яндекса */}
+              <FullscreenControl />
+              <GeolocationControl options={{ float: "left" }} />
+              <RulerControl options={{ float: "right" }} />
+              <SearchControl options={searchControl} />
+              <TrafficControl options={{ float: "right" }} />
+              <TypeSelector options={{ float: "right" }} />
+              <ZoomControl options={{ float: "right" }} />
+              {/* служебные компоненты */}
+              <PlacemarkDo />
+              {selectMD && (
+                <GsSelectMD setOpen={setSelectMD} receive={ReceiveIdxGs} />
+              )}
+              {makeMode && <GsMakeMode setOpen={setMakeMode} />}
+              {toDoMode && (
+                <GsToDoMode
+                  //region={props.region}
+                  setOpen={setToDoMode}
+                  newMode={newMode}
+                  massMem={massMem}
+                  func={OldSizeWind}
+                />
+              )}
+              {setPhase && (
+                <GsSetPhase
+                  region={props.region}
+                  setOpen={setSetPhase}
+                  newMode={newMode}
+                  massMem={massMem}
+                  func={MakeNewMassMem}
+                />
+              )}
+            </Map>
+          </YMaps>
+        )}
+      </Grid>
     </Grid>
   );
 };
 
 export default MainMapSMD;
+//getPointData

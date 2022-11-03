@@ -14,12 +14,17 @@ let flagBegin = true;
 let knop2 = "удалить";
 let dlRoute = 0;
 
-const GsSelectMD = (props: { setOpen: any; idx: any }) => {
+const GsSelectMD = (props: { setOpen: any; receive: any }) => {
   //== Piece of Redux =======================================
   const map = useSelector((state: any) => {
     const { mapReducer } = state;
     return mapReducer.map.dateMap;
   });
+  let massmode = useSelector((state: any) => {
+    const { massmodeReducer } = state;
+    return massmodeReducer.massmode;
+  });
+  console.log('massmode:',massmode)
   //===========================================================
   const [trigger, setTrigger] = React.useState(true);
   const [chDel, setChDel] = React.useState(0);
@@ -28,8 +33,8 @@ const GsSelectMD = (props: { setOpen: any; idx: any }) => {
   const styleSetInf = {
     position: "relative",
     marginTop: 4,
-    marginLeft: "auto",
-    marginRight: 69,
+    marginLeft: 6,
+    marginRight: "auto",
     width: 444,
     bgcolor: "background.paper",
     border: "3px solid #000",
@@ -70,9 +75,13 @@ const GsSelectMD = (props: { setOpen: any; idx: any }) => {
   };
 
   const ClickKnop1 = (idx: number) => {
-    props.idx(idx)
-    props.setOpen(false);
-    setOpenSetMode(false);
+    if (map.routes[idx].listTL.length < 2) {
+      alert("Некорректный режим. Количество светофоров = 1");
+    } else {
+      props.receive(idx);
+      props.setOpen(false);
+      setOpenSetMode(false);
+    }
   };
 
   const ClickKnop2 = (idx: number) => {
@@ -185,3 +194,4 @@ const GsSelectMD = (props: { setOpen: any; idx: any }) => {
 };
 
 export default GsSelectMD;
+//alert

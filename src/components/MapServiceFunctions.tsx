@@ -130,6 +130,7 @@ export const getPointData = (
   let textBalloon = "";
   if (index === pointBbIndex) textBalloon = "Конец";
   if (index === pointAaIndex) textBalloon = "Начало";
+  console.log("3massdk:",index,massdk)
   return {
     hintContent: "ID:" + massdk[index].ID + " " + massdk[index].nameCoordinates, //balloonContent: PressBalloon(index), iconCaption: textBalloon,
     iconContent: textBalloon,
