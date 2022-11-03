@@ -6,7 +6,7 @@ const intialState = {
 };
 
 export const massmodeReducer = (state = intialState, action: any) => {
-  //console.log('massfazReducer:', action);
+  //console.log('massmodeReducer:', action.type, state);
   switch (action.type) {
     case MASSMODE_CREATE:
       return {

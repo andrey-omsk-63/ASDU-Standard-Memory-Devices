@@ -5,12 +5,12 @@ import {
   // MASSROUTE_CREATE,
   // MASSROUTEPRO_CREATE,
   COORDINATES_CREATE,
-} from "./types";
+} from './types';
 
-import { DateMAP } from "./../interfaceMAP.d";
+import { DateMAP } from './../interfaceMAP.d';
 //import { DateRoute } from "./../interfaceRoute.d";
-import { Pointer } from "./../App";
-import { NameMode } from "./../App";
+import { Pointer } from './../App';
+import { NameMode } from './../App';
 
 export function massdkCreate(massDka: Pointer[] = []) {
   return {
@@ -19,10 +19,10 @@ export function massdkCreate(massDka: Pointer[] = []) {
   };
 }
 
-export function massmodeCreate(massMode: NameMode[] = []) {
+export function massmodeCreate(massMod: NameMode[] = []) {
   return {
     type: MASSMODE_CREATE,
-    data: massMode,
+    data: massMod,
   };
 }
 

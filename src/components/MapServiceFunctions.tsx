@@ -1,8 +1,8 @@
-import Button from "@mui/material/Button";
+import Button from '@mui/material/Button';
 
 // import { Pointer, Router } from "./../App";
-import { Pointer } from "./../App";
-import { Vertex } from "./../interfaceRoute";
+import { Pointer } from './../App';
+import { Vertex } from './../interfaceRoute';
 
 //import { styleModalMenu } from "./MainMapStyle";
 
@@ -11,12 +11,12 @@ export const MapssdkNewPoint = (
   coords: any,
   name: string,
   area: number,
-  id: number
+  id: number,
 ) => {
   let masskPoint: Pointer = {
     ID: 0,
     coordinates: [],
-    nameCoordinates: "",
+    nameCoordinates: '',
     region: 0,
     area: 0,
     newCoordinates: 0,
@@ -36,17 +36,17 @@ export const MassrouteNewPoint = (
   coords: any,
   name: string,
   area: number,
-  id: number
+  id: number,
 ) => {
   let masskPoint: Vertex = {
     region: 0,
     area: 0,
     id: 0,
-    dgis: "",
+    dgis: '',
     scale: 0,
     lin: [],
     lout: [],
-    name: "",
+    name: '',
   };
 
   masskPoint.region = homeRegion;
@@ -94,11 +94,11 @@ export const MassrouteNewPoint = (
 // };
 
 export const DecodingCoord = (coord: string) => {
-  return coord.split(",").map(Number);
+  return coord.split(',').map(Number);
 };
 
 export const CodingCoord = (coord: Array<number>) => {
-  return String(coord[0]) + "," + String(coord[1]);
+  return String(coord[0]) + ',' + String(coord[1]);
 };
 
 export const DoublRoute = (massroute: any, pointA: any, pointB: any) => {
@@ -106,8 +106,7 @@ export const DoublRoute = (massroute: any, pointA: any, pointB: any) => {
   let pointAcod = CodingCoord(pointA);
   let pointBcod = CodingCoord(pointB);
   for (let i = 0; i < massroute.length; i++) {
-    if (massroute[i].starts === pointAcod && massroute[i].stops === pointBcod)
-      flDubl = true;
+    if (massroute[i].starts === pointAcod && massroute[i].stops === pointBcod) flDubl = true;
   }
   return flDubl;
 };
@@ -125,38 +124,40 @@ export const getPointData = (
   index: number,
   pointAaIndex: number,
   pointBbIndex: number,
-  massdk: any
+  massdk: any,
 ) => {
-  let textBalloon = "";
-  if (index === pointBbIndex) textBalloon = "Конец";
-  if (index === pointAaIndex) textBalloon = "Начало";
-  console.log("3massdk:",index,massdk)
+  let textBalloon = '';
+  if (index === pointBbIndex) textBalloon = 'Конец';
+  if (index === pointAaIndex) textBalloon = 'Начало';
+
+  //console.log("3massdk:",index,massdk)
+
   return {
-    hintContent: "ID:" + massdk[index].ID + " " + massdk[index].nameCoordinates, //balloonContent: PressBalloon(index), iconCaption: textBalloon,
+    hintContent: 'ID:' + massdk[index].ID + ' ' + massdk[index].nameCoordinates, //balloonContent: PressBalloon(index), iconCaption: textBalloon,
     iconContent: textBalloon,
   };
 };
 
 export const getPointOptions1 = () => {
   return {
-    iconLayout: "default#image",
-    iconImageHref: "https://localhost:3000/18.svg",
+    iconLayout: 'default#image',
+    iconImageHref: 'https://localhost:3000/18.svg',
     iconImageSize: [30, 38],
     iconImageOffset: [-15, -38],
   };
 };
 
 export const getPointOptions2 = (index: number, massMem: Array<number>) => {
-  let colorBalloon = "islands#violetCircleDotIcon";
+  let colorBalloon = 'islands#violetCircleDotIcon';
   let aaa = massMem.indexOf(index);
 
   if (aaa >= 0) {
-    colorBalloon = "islands#redCircleDotIcon";
+    colorBalloon = 'islands#redCircleDotIcon';
     if (massMem.length === aaa + 1 && massMem.length) {
-      colorBalloon = "islands#darkBlueStretchyIcon";
+      colorBalloon = 'islands#darkBlueStretchyIcon';
     }
     if (!aaa && massMem.length) {
-      colorBalloon = "islands#redStretchyIcon";
+      colorBalloon = 'islands#redStretchyIcon';
     }
   }
 
@@ -227,11 +228,11 @@ export const StrokaMenuGlob = (soob: string, func: any, mode: number) => {
     marginRight: 0.1,
     maxWidth: dlSoob,
     minWidth: dlSoob,
-    maxHeight: "21px",
-    minHeight: "21px",
-    backgroundColor: "#D7F1C0",
-    color: "black",
-    textTransform: "unset !important",
+    maxHeight: '21px',
+    minHeight: '21px',
+    backgroundColor: '#D7F1C0',
+    color: 'black',
+    textTransform: 'unset !important',
   };
 
   return (
@@ -253,7 +254,7 @@ export const MasskPoint = () => {
   let masskPoint: Pointer = {
     ID: -1,
     coordinates: [],
-    nameCoordinates: "",
+    nameCoordinates: '',
     region: 0,
     area: 0,
     newCoordinates: 0,

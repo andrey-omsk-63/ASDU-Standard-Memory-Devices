@@ -1,27 +1,27 @@
-import * as React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { massdkCreate,massmodeCreate  } from "../redux/actions";
-import { mapCreate, coordinatesCreate } from "../redux/actions";
+import * as React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { massdkCreate, massmodeCreate } from '../redux/actions';
+import { mapCreate, coordinatesCreate } from '../redux/actions';
 
-import Grid from "@mui/material/Grid";
+import Grid from '@mui/material/Grid';
 
-import { YMaps, Map, Placemark, FullscreenControl } from "react-yandex-maps";
-import { GeolocationControl, YMapsApi } from "react-yandex-maps";
-import { RulerControl, SearchControl } from "react-yandex-maps";
-import { TrafficControl, TypeSelector, ZoomControl } from "react-yandex-maps";
+import { YMaps, Map, Placemark, FullscreenControl } from 'react-yandex-maps';
+import { GeolocationControl, YMapsApi } from 'react-yandex-maps';
+import { RulerControl, SearchControl } from 'react-yandex-maps';
+import { TrafficControl, TypeSelector, ZoomControl } from 'react-yandex-maps';
 
-import GsSelectMD from "./GsComponents/GsSelectMD";
-import GsMakeMode from "./GsComponents/GsMakeMode";
-import GsSetPhase from "./GsComponents/GsSetPhase";
-import GsToDoMode from "./GsComponents/GsToDoMode";
+import GsSelectMD from './GsComponents/GsSelectMD';
+import GsMakeMode from './GsComponents/GsMakeMode';
+import GsSetPhase from './GsComponents/GsSetPhase';
+import GsToDoMode from './GsComponents/GsToDoMode';
 
-import { getMultiRouteOptions } from "./MapServiceFunctions";
-import { getReferencePoints, CenterCoord } from "./MapServiceFunctions";
-import { getPointData, getPointOptions1 } from "./MapServiceFunctions";
-import { getPointOptions2 } from "./MapServiceFunctions";
-import { StrokaMenuGlob, MasskPoint } from "./MapServiceFunctions";
+import { getMultiRouteOptions } from './MapServiceFunctions';
+import { getReferencePoints, CenterCoord } from './MapServiceFunctions';
+import { getPointData, getPointOptions1 } from './MapServiceFunctions';
+import { getPointOptions2 } from './MapServiceFunctions';
+import { StrokaMenuGlob, MasskPoint } from './MapServiceFunctions';
 
-import { searchControl } from "./MainMapStyle";
+import { searchControl } from './MainMapStyle';
 
 let flagOpen = false;
 
@@ -33,7 +33,7 @@ let massMem: Array<number> = [];
 let massCoord: any = [];
 let newMode = -1;
 
-let widthMap = "99.8%";
+let widthMap = '99.8%';
 let xsMap = 12;
 
 const MainMapSMD = (props: {
@@ -45,22 +45,26 @@ const MainMapSMD = (props: {
 }) => {
   //if (WS.url === "wss://localhost:3000/W") debugging = true;
   //== Piece of Redux =======================================
-  let massdk = useSelector((state: any) => {
-    const { massdkReducer } = state;
-    return massdkReducer.massdk;
-  });
-  let massmode = useSelector((state: any) => {
-    const { massmodeReducer } = state;
-    return massmodeReducer.massmode;
-  });
-  let coordinates = useSelector((state: any) => {
-    const { coordinatesReducer } = state;
-    return coordinatesReducer.coordinates;
-  });
   const map = useSelector((state: any) => {
     const { mapReducer } = state;
     return mapReducer.map.dateMap;
   });
+  //console.log('0map:', map);
+  let massdk = useSelector((state: any) => {
+    const { massdkReducer } = state;
+    return massdkReducer.massdk;
+  });
+  //console.log('0massdk:', massdk);
+  let massmode = useSelector((state: any) => {
+    const { massmodeReducer } = state;
+    return massmodeReducer.massmode;
+  });
+  //console.log('0massmode:', massmode);
+  let coordinates = useSelector((state: any) => {
+    const { coordinatesReducer } = state;
+    return coordinatesReducer.coordinates;
+  });
+  //console.log('0coordinates:', coordinates);
   const dispatch = useDispatch();
   //===========================================================
   const [flagPusk, setFlagPusk] = React.useState(false);
@@ -88,13 +92,13 @@ const MainMapSMD = (props: {
       }
       if (idx < 0) {
         alert(
-          "Не существует светофор: Регион " +
+          'Не существует светофор: Регион ' +
             map.routes[mode].listTL[i].pos.region +
-            " Район " +
+            ' Район ' +
             map.routes[mode].listTL[i].pos.area +
-            " ID " +
+            ' ID ' +
             map.routes[mode].listTL[i].pos.id +
-            ". Устройство будет проигнорировано"
+            '. Устройство будет проигнорировано',
         );
         massErrRec.push(i);
       } else {
@@ -115,7 +119,7 @@ const MainMapSMD = (props: {
     }
     newMode = mode;
     if (massMem.length < 2) {
-      alert("Некорректный режим. Количество светофоров = 1");
+      alert('Некорректный режим. Количество светофоров = 1');
       massMem = [];
       massCoord = [];
       newMode = -1;
@@ -125,14 +129,14 @@ const MainMapSMD = (props: {
   };
 
   const addRoute = (ymaps: any, bound: boolean) => {
-    console.log("Перерисовано");
+    console.log('Перерисовано');
     mapp.current.geoObjects.removeAll(); // удаление старой коллекции связей
     if (massCoord.length > 1) {
       let multiRoute: any = [];
       if (massCoord.length === 2) {
         multiRoute = new ymaps.multiRouter.MultiRoute(
           getReferencePoints(massCoord[0], massCoord[1]),
-          getMultiRouteOptions()
+          getMultiRouteOptions(),
         );
       } else {
         let between = [];
@@ -144,7 +148,7 @@ const MainMapSMD = (props: {
             referencePoints: massCoord,
             params: { viaIndexes: between },
           },
-          { boundsAutoApply: bound, wayPointVisible: false }
+          { boundsAutoApply: bound, wayPointVisible: false },
         );
       }
       mapp.current.geoObjects.add(multiRoute);
@@ -205,8 +209,6 @@ const MainMapSMD = (props: {
       pBbI = massMem[massMem.length - 1];
     }
 
-    console.log("4massdk:",massdk)
-
     const DoPlacemarkDo = (props: { coordinate: any; idx: number }) => {
       let aaa = massMem.indexOf(props.idx);
       const MemoPlacemarkDo = React.useMemo(
@@ -216,16 +218,15 @@ const MainMapSMD = (props: {
             geometry={props.coordinate}
             properties={getPointData(props.idx, pAaI, pBbI, massdk)}
             options={
-              (massMem.length === aaa + 1 && massMem.length) ||
-              (!aaa && massMem.length > 1)
+              (massMem.length === aaa + 1 && massMem.length) || (!aaa && massMem.length > 1)
                 ? getPointOptions2(props.idx, massMem)
                 : getPointOptions1()
             }
-            modules={["geoObject.addon.balloon", "geoObject.addon.hint"]}
+            modules={['geoObject.addon.balloon', 'geoObject.addon.hint']}
             onClick={() => OnPlacemarkClickPoint(props.idx)}
           />
         ),
-        [props.coordinate, props.idx, aaa]
+        [props.coordinate, props.idx, aaa],
       );
       return MemoPlacemarkDo;
     };
@@ -249,10 +250,10 @@ const MainMapSMD = (props: {
       //     setOpenSetCreate(true);
       //   }
       // });
-      mapp.current.events.add("mousedown", function (e: any) {
+      mapp.current.events.add('mousedown', function (e: any) {
         pointCenter = mapp.current.getCenter(); // нажата левая/правая кнопка мыши 0, 1 или 2 в зависимости от того, какая кнопка мыши нажата (В IE значение может быть от 0 до 7).
       });
-      mapp.current.events.add(["boundschange"], function () {
+      mapp.current.events.add(['boundschange'], function () {
         pointCenter = mapp.current.getCenter();
         zoom = mapp.current.getZoom(); // покрутили колёсико мыши
       });
@@ -260,8 +261,6 @@ const MainMapSMD = (props: {
   };
   //=== инициализация ======================================
   if (!flagOpen && Object.keys(map.tflight).length) {
-    console.log("map:", map);
-
     for (let i = 0; i < map.tflight.length; i++) {
       let masskPoint = MasskPoint();
       masskPoint.ID = map.tflight[i].ID;
@@ -274,29 +273,24 @@ const MainMapSMD = (props: {
       massdk.push(masskPoint);
       coordinates.push(masskPoint.coordinates);
     }
-    dispatch(massdkCreate(massdk));
-    dispatch(coordinatesCreate(coordinates));
-    console.log("1massdk:",massdk)
     let ch = 1;
-    let massRab = []
     for (let i = 0; i < map.routes.length; i++) {
       let nameZU = map.routes[i].description;
-      if (!nameZU) nameZU = "без имени(" + ch++ + ")";
+      if (!nameZU) nameZU = 'без имени(' + ch++ + ')';
       let maskName = {
         name: nameZU,
         delRec: false,
       };
-      massRab.push(maskName);
-      
+      massmode.push(maskName);
     }
-    dispatch(massmodeCreate(massRab))
-    console.log("2massmode:",massmode)
-    console.log("2massdk:",massdk)
+    dispatch(massdkCreate(massdk));
+    dispatch(coordinatesCreate(coordinates));
+    dispatch(massmodeCreate(massmode));
     pointCenter = CenterCoord(
       map.boxPoint.point0.Y,
       map.boxPoint.point0.X,
       map.boxPoint.point1.Y,
-      map.boxPoint.point1.X
+      map.boxPoint.point1.X,
     );
     flagOpen = true;
   }
@@ -325,7 +319,7 @@ const MainMapSMD = (props: {
         setSetPhase(true);
         break;
       case 45: // выполнить режим
-        widthMap = "99.9%";
+        widthMap = '99.9%';
         xsMap = 7.8;
         setFlagPusk(!flagPusk);
         setToDoMode(true);
@@ -333,25 +327,23 @@ const MainMapSMD = (props: {
   };
 
   const OldSizeWind = (size: number) => {
-    widthMap = "99.8%";
+    widthMap = '99.8%';
     xsMap = size;
     setFlagPusk(!flagPusk);
   };
 
   return (
-    <Grid container sx={{ border: 0, height: "99.9vh" }}>
+    <Grid container sx={{ border: 0, height: '99.9vh' }}>
       <Grid item xs={xsMap} sx={{ border: 0 }}>
-        {StrokaMenuGlob("Выбор режима ЗУ", PressButton, 42)}
+        {StrokaMenuGlob('Выбор режима ЗУ', PressButton, 42)}
         {massMem.length > 1 && (
           <>
-            {newMode < 0 && (
-              <>{StrokaMenuGlob("Назначить фазы", PressButton, 44)}</>
-            )}
+            {newMode < 0 && <>{StrokaMenuGlob('Назначить фазы', PressButton, 44)}</>}
             {newMode >= 0 && (
               <>
-                {StrokaMenuGlob("Создать режим", PressButton, 43)}
-                {StrokaMenuGlob("Редактирование фаз", PressButton, 44)}
-                {StrokaMenuGlob("Выполнить режим", PressButton, 45)}
+                {StrokaMenuGlob('Создать режим', PressButton, 43)}
+                {StrokaMenuGlob('Редактирование фаз', PressButton, 44)}
+                {StrokaMenuGlob('Выполнить режим', PressButton, 45)}
               </>
             )}
           </>
@@ -359,33 +351,29 @@ const MainMapSMD = (props: {
         {Object.keys(map.tflight).length && (
           <YMaps
             query={{
-              apikey: "65162f5f-2d15-41d1-a881-6c1acf34cfa1",
-              lang: "ru_RU",
-            }}
-          >
+              apikey: '65162f5f-2d15-41d1-a881-6c1acf34cfa1',
+              lang: 'ru_RU',
+            }}>
             <Map
-              modules={["multiRouter.MultiRoute", "Polyline"]}
+              modules={['multiRouter.MultiRoute', 'Polyline']}
               state={mapState}
               instanceRef={(ref) => InstanceRefDo(ref)}
               onLoad={(ref) => {
                 ref && setYmaps(ref);
               }}
               width={widthMap}
-              height={"97%"}
-            >
+              height={'97%'}>
               {/* сервисы Яндекса */}
               <FullscreenControl />
-              <GeolocationControl options={{ float: "left" }} />
-              <RulerControl options={{ float: "right" }} />
+              <GeolocationControl options={{ float: 'left' }} />
+              <RulerControl options={{ float: 'right' }} />
               <SearchControl options={searchControl} />
-              <TrafficControl options={{ float: "right" }} />
-              <TypeSelector options={{ float: "right" }} />
-              <ZoomControl options={{ float: "right" }} />
+              <TrafficControl options={{ float: 'right' }} />
+              <TypeSelector options={{ float: 'right' }} />
+              <ZoomControl options={{ float: 'right' }} />
               {/* служебные компоненты */}
               <PlacemarkDo />
-              {selectMD && (
-                <GsSelectMD setOpen={setSelectMD} receive={ReceiveIdxGs} />
-              )}
+              {selectMD && <GsSelectMD setOpen={setSelectMD} receive={ReceiveIdxGs} />}
               {makeMode && <GsMakeMode setOpen={setMakeMode} />}
               {toDoMode && (
                 <GsToDoMode

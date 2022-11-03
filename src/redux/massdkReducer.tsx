@@ -6,7 +6,7 @@ const intialState = {
 };
 
 export const massdkReducer = (state = intialState, action: any) => {
-  //console.log('massfazReducer:', action);
+  //console.log('massdkReducer:', action);
   switch (action.type) {
     case MASSDK_CREATE:
       return {
