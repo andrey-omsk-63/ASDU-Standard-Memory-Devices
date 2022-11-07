@@ -6,7 +6,11 @@ import { useSelector } from "react-redux";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
+import Modal from "@mui/material/Modal";
 import CardMedia from "@mui/material/CardMedia";
+//import TextField from "@mui/material/TextField";
+//import Typography from "@mui/material/Typography";
+//import MenuItem from "@mui/material/MenuItem";
 
 import { styleModalEnd } from "../MainMapStyle";
 import { styleModalMenu } from "./GsSetPhaseStyle";
@@ -14,14 +18,14 @@ import { styleModalMenu } from "./GsSetPhaseStyle";
 let newInput = true;
 let massFaz: any = [];
 
-//let toDoMode = false;
+let toDoMode = false;
 
 const GsToDoMode = (props: {
   //region: string;
-  //setOpen: any;
+  setOpen: any;
   newMode: number;
   massMem: Array<number>;
-  //func: any;
+  func: any;
 }) => {
   //== Piece of Redux ======================================
   const map = useSelector((state: any) => {
@@ -30,9 +34,8 @@ const GsToDoMode = (props: {
   });
   //const dispatch = useDispatch();
   //========================================================
-  //const [openSetMode, setOpenSetMode] = React.useState(true);
+  const [openSetMode, setOpenSetMode] = React.useState(true);
   const [trigger, setTrigger] = React.useState(true);
-  let newMode = props.newMode;
 
   //const [chDel, setChDel] = React.useState(0);
 
@@ -41,13 +44,13 @@ const GsToDoMode = (props: {
     position: "relative",
     marginTop: 0.1,
     marginLeft: "auto",
-    width: "96%",
+    width: "33%",
     bgcolor: "background.paper",
     border: "3px solid #000",
     borderColor: "primary.main",
     borderRadius: 2,
     boxShadow: 24,
-    p: 1.0,
+    p: 1.5,
   };
 
   const styleStrokaTabl = {
@@ -63,17 +66,54 @@ const GsToDoMode = (props: {
     textTransform: "unset !important",
   };
 
-  //========================================================
-  // const handleCloseSetEnd = () => {
-  //   props.func(12);
-  //   props.setOpen(false);
-  //   setOpenSetMode(false);
-  // };
+  const MakeMaskFaz = (i: number) => {
+    let maskFaz = {
+      idx: 0,
+      faza: 1,
+      phases: [],
+      name: "",
+      starRec: false,
+      runRec: false,
+    };
+    maskFaz.idx = props.massMem[i];
+    maskFaz.name = map.tflight[maskFaz.idx].description;
+    maskFaz.phases = map.tflight[maskFaz.idx].phases;
+    return maskFaz;
+  };
 
-  // const ToDoMode = (mode: number) => {
-  //   toDoMode = !toDoMode;
-  //   setTrigger(!trigger);
-  // };
+  if (newInput) {
+    massFaz = [];
+
+    for (let i = 0; i < props.massMem.length; i++) {
+      massFaz.push(MakeMaskFaz(i));
+    }
+    newInput = false;
+  } else {
+    let massRab: any = [];
+    for (let i = 0; i < props.massMem.length; i++) {
+      let flagHave = false;
+      for (let j = 0; j < massFaz.length; j++) {
+        if (massFaz[j].idx === props.massMem[i]) {
+          massRab.push(massFaz[j]);
+          flagHave = true;
+          break;
+        }
+      }
+      if (!flagHave) massRab.push(MakeMaskFaz(i));
+    }
+    massFaz = massRab;
+  }
+  //========================================================
+  const handleCloseSetEnd = () => {
+    props.func(12);
+    props.setOpen(false);
+    setOpenSetMode(false);
+  };
+
+  const ToDoMode = (mode: number) => {
+    toDoMode = !toDoMode;
+    setTrigger(!trigger);
+  };
 
   const StrokaHeader = (xss: number, soob: string) => {
     return (
@@ -84,48 +124,10 @@ const GsToDoMode = (props: {
   };
 
   const StrokaTabl = () => {
-    const MakeMaskFaz = (i: number) => {
-      let maskFaz = {
-        idx: 0,
-        faza: 1,
-        phases: [],
-        name: "",
-        starRec: false,
-        runRec: false,
-      };
-      maskFaz.idx = props.massMem[i];
-      maskFaz.name = map.tflight[maskFaz.idx].description;
-      maskFaz.phases = map.tflight[maskFaz.idx].phases;
-      return maskFaz;
-    };
-    
     const ClickKnop = (mode: number) => {
       massFaz[mode].starRec = !massFaz[mode].starRec;
       setTrigger(!trigger);
     };
-
-    if (newInput) {
-      massFaz = [];
-
-      for (let i = 0; i < props.massMem.length; i++) {
-        massFaz.push(MakeMaskFaz(i));
-      }
-      newInput = false;
-    } else {
-      let massRab: any = [];
-      for (let i = 0; i < props.massMem.length; i++) {
-        let flagHave = false;
-        for (let j = 0; j < massFaz.length; j++) {
-          if (massFaz[j].idx === props.massMem[i]) {
-            massRab.push(massFaz[j]);
-            flagHave = true;
-            break;
-          }
-        }
-        if (!flagHave) massRab.push(MakeMaskFaz(i));
-      }
-      massFaz = massRab;
-    }
 
     const ClickImg = (mode: number) => {
       massFaz[mode].runRec = !massFaz[mode].runRec;
@@ -149,7 +151,7 @@ const GsToDoMode = (props: {
     for (let i = 0; i < massFaz.length; i++) {
       let star = "";
       if (massFaz[i].starRec) star = "*";
-
+      
       resStr.push(
         <Grid key={i} container sx={{ marginTop: 1 }}>
           <Grid item xs={1} sx={{ paddingTop: 0.7, textAlign: "center" }}>
@@ -203,59 +205,46 @@ const GsToDoMode = (props: {
   };
 
   return (
-    <>
-        {/* {toDoMode && ( */}
-          <Box sx={styleToDoMode}>
-            <Button
-              sx={styleModalEnd}
-              //onClick={handleCloseSetEnd}
-            >
-              <b>&#10006;</b>
-            </Button>
+    <Modal open={openSetMode} onClose={handleCloseSetEnd} hideBackdrop>
+      <Box sx={styleToDoMode}>
+        <Button sx={styleModalEnd} onClick={handleCloseSetEnd}>
+          <b>&#10006;</b>
+        </Button>
 
-            <Grid container sx={{ marginTop: 0 }}>
-              <Grid item xs sx={{ fontSize: 18, textAlign: "center" }}>
-                Режим: <b>{map.routes[newMode].description}</b>
-              </Grid>
-            </Grid>
+        <Grid container sx={{ marginTop: 0 }}>
+          <Grid item xs sx={{ fontSize: 18, textAlign: "center" }}>
+            Режим: <b>{map.routes[props.newMode].description}</b>
+          </Grid>
+        </Grid>
 
-            <Box sx={{ marginTop: 1 }}>
-              <Grid container sx={{ bgcolor: "#C0E2C3" }}>
-                {StrokaHeader(1, "Номер")}
-                {StrokaHeader(3.5, "Состояние")}
-                {StrokaHeader(1.5, "Фаза")}
-                {StrokaHeader(6, "ДК")}
-              </Grid>
+        <Box sx={{ marginTop: 1 }}>
+          <Grid container sx={{ bgcolor: "#C0E2C3" }}>
+            {StrokaHeader(1, "Номер")}
+            {StrokaHeader(3.5, "Состояние")}
+            {StrokaHeader(1.5, "Фаза")}
+            {StrokaHeader(6, "ДК")}
+          </Grid>
 
-              <Box sx={{ overflowX: "auto", height: "83vh" }}>
-                {StrokaTabl()}
-              </Box>
+          <Box sx={{ overflowX: "auto", height: "81vh" }}>{StrokaTabl()}</Box>
 
-              {/* {!toDoMode && ( */}
-                <Box sx={{ marginTop: 1.5, textAlign: "center" }}>
-                  <Button
-                    sx={styleModalMenu}
-                    //onClick={() => ToDoMode(0)}
-                  >
-                    Начать исполнение
-                  </Button>
-                </Box>
-              {/* )} */}
-
-              {/* {toDoMode && (
-                <Box sx={{ marginTop: 1.5, textAlign: "center" }}>
-                  <Button
-                    sx={styleModalMenu}
-                    //onClick={() => ToDoMode(1)}
-                  >
-                    Закончить исполнение
-                  </Button>
-                </Box>
-              )} */}
+          {!toDoMode && (
+            <Box sx={{ marginTop: 1.5, textAlign: "center" }}>
+              <Button sx={styleModalMenu} onClick={() => ToDoMode(0)}>
+                Начать исполнение
+              </Button>
             </Box>
-          </Box>
-        {/* )} */}
-      </>
+          )}
+
+          {toDoMode && (
+            <Box sx={{ marginTop: 1.5, textAlign: "center" }}>
+              <Button sx={styleModalMenu} onClick={() => ToDoMode(1)}>
+                Закончить исполнение
+              </Button>
+            </Box>
+          )}
+        </Box>
+      </Box>
+    </Modal>
   );
 };
 

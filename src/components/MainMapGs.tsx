@@ -4,6 +4,9 @@ import { massdkCreate, massmodeCreate } from "../redux/actions";
 import { mapCreate, coordinatesCreate } from "../redux/actions";
 
 import Grid from "@mui/material/Grid";
+// import Box from "@mui/material/Box";
+// import Button from "@mui/material/Button";
+// import CardMedia from "@mui/material/CardMedia";
 
 import { YMaps, Map, Placemark, FullscreenControl } from "react-yandex-maps";
 import { GeolocationControl, YMapsApi } from "react-yandex-maps";
@@ -35,7 +38,8 @@ let massCoord: any = [];
 let newMode = -1;
 let soobErr = "";
 let widthMap = "99.8%";
-let xsMap = 12;
+let xsMap = 11.95;
+let xsTab = 0.05;
 
 const MainMapSMD = (props: {
   ws: WebSocket;
@@ -332,21 +336,22 @@ const MainMapSMD = (props: {
         } else {
           widthMap = "99.9%";
           xsMap = 7.8;
+          xsTab = 4.2;
           setFlagPusk(!flagPusk);
           setToDoMode(true);
         }
     }
   };
 
-  const OldSizeWind = (size: number) => {
-    widthMap = "99.8%";
-    xsMap = size;
-    setFlagPusk(!flagPusk);
-  };
+  // const OldSizeWind = (size: number) => {
+  //   widthMap = "99.8%";
+  //   xsMap = size;
+  //   setFlagPusk(!flagPusk);
+  // };
 
-  return (
-    <Grid container sx={{ border: 0, height: "99.9vh" }}>
-      <Grid item xs={xsMap} sx={{ border: 0 }}>
+  const MenuGl = () => {
+    return (
+      <>
         {StrokaMenuGlob("Выбор режима ЗУ", PressButton, 42)}
         {massMem.length > 1 && (
           <>
@@ -363,65 +368,70 @@ const MainMapSMD = (props: {
             )}
           </>
         )}
-        {Object.keys(map.tflight).length && (
-          <YMaps
-            query={{
-              apikey: "65162f5f-2d15-41d1-a881-6c1acf34cfa1",
-              lang: "ru_RU",
-            }}
-          >
-            <Map
-              modules={["multiRouter.MultiRoute", "Polyline"]}
-              state={mapState}
-              instanceRef={(ref) => InstanceRefDo(ref)}
-              onLoad={(ref) => {
-                ref && setYmaps(ref);
-              }}
-              width={widthMap}
-              height={"97%"}
-            >
-              {/* сервисы Яндекса */}
-              <FullscreenControl />
-              <GeolocationControl options={{ float: "left" }} />
-              <RulerControl options={{ float: "right" }} />
-              <SearchControl options={searchControl} />
-              <TrafficControl options={{ float: "right" }} />
-              <TypeSelector options={{ float: "right" }} />
-              <ZoomControl options={{ float: "right" }} />
-              {/* служебные компоненты */}
-              <PlacemarkDo />
-              {selectMD && (
-                <GsSelectMD setOpen={setSelectMD} receive={ReceiveIdxGs} />
-              )}
-              {makeMode && <GsMakeMode setOpen={setMakeMode} />}
-              {toDoMode && (
-                <GsToDoMode
-                  //region={props.region}
-                  setOpen={setToDoMode}
-                  newMode={newMode}
-                  massMem={massMem}
-                  func={OldSizeWind}
-                />
-              )}
-              {setPhase && (
-                <GsSetPhase
-                  region={props.region}
-                  setOpen={setSetPhase}
-                  newMode={newMode}
-                  massMem={massMem}
-                  func={MakeNewMassMem}
-                />
-              )}
-              {openSoobErr && (
-                <GsErrorMessage setOpen={setOpenSoobErr} sErr={soobErr} />
-              )}
-            </Map>
-          </YMaps>
-        )}
+      </>
+    );
+  };
+
+  return (
+    <Grid container sx={{ border: 0, height: "99.9vh" }}>
+      <Grid item xs sx={{ border: 0 }}>
+        {MenuGl()}
+        <Grid container sx={{ border: 0, height: "96.9vh" }}>
+          <Grid item xs={xsMap} sx={{ border: 0 }}>
+            {Object.keys(map.tflight).length && (
+              <YMaps
+                query={{
+                  apikey: "65162f5f-2d15-41d1-a881-6c1acf34cfa1",
+                  lang: "ru_RU",
+                }}
+              >
+                <Map
+                  modules={["multiRouter.MultiRoute", "Polyline"]}
+                  state={mapState}
+                  instanceRef={(ref) => InstanceRefDo(ref)}
+                  onLoad={(ref) => {
+                    ref && setYmaps(ref);
+                  }}
+                  width={widthMap}
+                  height={"99.9%"}
+                >
+                  {/* сервисы Яндекса */}
+                  <FullscreenControl />
+                  <GeolocationControl options={{ float: "left" }} />
+                  <RulerControl options={{ float: "right" }} />
+                  <SearchControl options={searchControl} />
+                  <TrafficControl options={{ float: "right" }} />
+                  <TypeSelector options={{ float: "right" }} />
+                  <ZoomControl options={{ float: "right" }} />
+                  {/* служебные компоненты */}
+                  <PlacemarkDo />
+                  {selectMD && (
+                    <GsSelectMD setOpen={setSelectMD} receive={ReceiveIdxGs} />
+                  )}
+                  {makeMode && <GsMakeMode setOpen={setMakeMode} />}
+                  {setPhase && (
+                    <GsSetPhase
+                      region={props.region}
+                      setOpen={setSetPhase}
+                      newMode={newMode}
+                      massMem={massMem}
+                      func={MakeNewMassMem}
+                    />
+                  )}
+                  {openSoobErr && (
+                    <GsErrorMessage setOpen={setOpenSoobErr} sErr={soobErr} />
+                  )}
+                </Map>
+              </YMaps>
+            )}
+          </Grid>
+          <Grid item xs={xsTab} sx={{ border: 0, height: "97.0vh" }}>
+            {toDoMode && <GsToDoMode newMode={newMode} massMem={massMem} />}
+          </Grid>
+        </Grid>
       </Grid>
     </Grid>
   );
 };
 
 export default MainMapSMD;
-//getPointData

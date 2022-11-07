@@ -68,12 +68,17 @@ const GsSetPhase = (props: {
   console.log("newInput:", newInput, props.newMode);
 
   if (props.newMode >= 0) {
-    massFaz = []; // существующий режим
-    for (let i = 0; i < props.massMem.length; i++) {
-      massFaz.push(MakeMaskFaz(i));
+    if (newInput) {
+      massFaz = []; // существующий режим
+      for (let i = 0; i < props.massMem.length; i++) {
+        massFaz.push(MakeMaskFaz(i));
+      }
+      newInput = false;
+      console.log("Обновление1");
     }
   } else {
     if (newInput) {
+      console.log("Обновление2");
       massFaz = []; // новый режим
       nameMode =
         "Режим ЗУ(" +
@@ -133,6 +138,7 @@ const GsSetPhase = (props: {
       map.routes[props.newMode].listTL[i].phase = massFaz[i].faza;
     }
     dispatch(mapCreate(map));
+    console.log("Map:",props.newMode, massFaz, map);
     chFaz = 0;
     handleCloseSetEnd();
     newInput = true;
