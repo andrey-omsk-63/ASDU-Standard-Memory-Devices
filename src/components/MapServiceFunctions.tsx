@@ -222,7 +222,7 @@ export const getMultiRouteOptions = () => {
 // };
 
 export const StrokaMenuGlob = (soob: string, func: any, mode: number) => {
-  let dlSoob = (soob.length + 5) * 7.5;
+  let dlSoob = (soob.length + 5) * 8;
   const styleApp01 = {
     fontSize: 14,
     marginRight: 0.1,
@@ -261,5 +261,3 @@ export const MasskPoint = () => {
   };
   return masskPoint;
 };
-
-
