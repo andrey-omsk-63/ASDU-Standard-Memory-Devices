@@ -1,31 +1,30 @@
-import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { massdkCreate, massmodeCreate } from '../redux/actions';
-import { mapCreate, coordinatesCreate } from '../redux/actions';
+import * as React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { massdkCreate, massmodeCreate } from "../redux/actions";
+import { mapCreate, coordinatesCreate } from "../redux/actions";
 
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-// import Button from "@mui/material/Button";
-// import CardMedia from "@mui/material/CardMedia";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 
-import { YMaps, Map, Placemark, FullscreenControl } from 'react-yandex-maps';
-import { GeolocationControl, YMapsApi } from 'react-yandex-maps';
-import { RulerControl, SearchControl } from 'react-yandex-maps';
-import { TrafficControl, TypeSelector, ZoomControl } from 'react-yandex-maps';
+import { YMaps, Map, Placemark, FullscreenControl } from "react-yandex-maps";
+import { GeolocationControl, YMapsApi } from "react-yandex-maps";
+import { RulerControl, SearchControl } from "react-yandex-maps";
+import { TrafficControl, TypeSelector, ZoomControl } from "react-yandex-maps";
 
-import GsSelectMD from './GsComponents/GsSelectMD';
-import GsMakeMode from './GsComponents/GsMakeMode';
-import GsSetPhase from './GsComponents/GsSetPhase';
-import GsToDoMode from './GsComponents/GsToDoMode';
-import GsErrorMessage from './GsComponents/GsErrorMessage';
+import GsSelectMD from "./GsComponents/GsSelectMD";
+import GsMakeMode from "./GsComponents/GsMakeMode";
+import GsSetPhase from "./GsComponents/GsSetPhase";
+import GsToDoMode from "./GsComponents/GsToDoMode";
+import GsErrorMessage from "./GsComponents/GsErrorMessage";
 
-import { getMultiRouteOptions } from './MapServiceFunctions';
-import { getReferencePoints, CenterCoord } from './MapServiceFunctions';
-import { getPointData, getPointOptions1 } from './MapServiceFunctions';
-import { getPointOptions2 } from './MapServiceFunctions';
-import { StrokaMenuGlob, MasskPoint } from './MapServiceFunctions';
+import { getMultiRouteOptions } from "./MapServiceFunctions";
+import { getReferencePoints, CenterCoord } from "./MapServiceFunctions";
+import { getPointData, getPointOptions1 } from "./MapServiceFunctions";
+import { getPointOptions2 } from "./MapServiceFunctions";
+import { StrokaMenuGlob, MasskPoint } from "./MapServiceFunctions";
 
-import { searchControl } from './MainMapStyle';
+import { searchControl, styleInfoSoob } from "./MainMapStyle";
 
 let flagOpen = false;
 
@@ -36,12 +35,16 @@ let pointCenter: any = 0;
 let massMem: Array<number> = [];
 let massCoord: any = [];
 let newMode = -1;
-let soobErr = '';
-let widthMap = '99.8%';
-let xsMap = 11.95;
-let xsTab = 0.05;
+let soobErr = "";
+let helper = true;
+
+let xsMap = 11.99;
+let xsTab = 0.01;
+let widthMap = "99.9%";
 
 let modeToDo = 0;
+//let flagCenter = false;
+let newCenter: any = [];
 
 const MainMapGs = (props: {
   ws: WebSocket;
@@ -79,6 +82,7 @@ const MainMapGs = (props: {
   const [makeMode, setMakeMode] = React.useState(false);
   const [setPhase, setSetPhase] = React.useState(false);
   const [toDoMode, setToDoMode] = React.useState(false);
+  const [flagCenter, setFlagCenter] = React.useState(false);
   const [openSoobErr, setOpenSoobErr] = React.useState(false);
 
   const [ymaps, setYmaps] = React.useState<YMapsApi | null>(null);
@@ -100,13 +104,13 @@ const MainMapGs = (props: {
       }
       if (idx < 0) {
         alert(
-          'Не существует светофор: Регион ' +
+          "Не существует светофор: Регион " +
             map.routes[mode].listTL[i].pos.region +
-            ' Район ' +
+            " Район " +
             map.routes[mode].listTL[i].pos.area +
-            ' ID ' +
+            " ID " +
             map.routes[mode].listTL[i].pos.id +
-            '. Устройство будет проигнорировано',
+            ". Устройство будет проигнорировано"
         );
         massErrRec.push(i);
       } else {
@@ -127,7 +131,7 @@ const MainMapGs = (props: {
     }
     newMode = mode;
     if (massMem.length < 2) {
-      alert('Некорректный режим. Количество светофоров = 1');
+      alert("Некорректный режим. Количество светофоров = 1");
       massMem = [];
       massCoord = [];
       newMode = -1;
@@ -143,7 +147,7 @@ const MainMapGs = (props: {
       if (massCoord.length === 2) {
         multiRoute = new ymaps.multiRouter.MultiRoute(
           getReferencePoints(massCoord[0], massCoord[1]),
-          getMultiRouteOptions(),
+          getMultiRouteOptions()
         );
       } else {
         let between = [];
@@ -155,7 +159,7 @@ const MainMapGs = (props: {
             referencePoints: massCoord,
             params: { viaIndexes: between },
           },
-          { boundsAutoApply: bound, wayPointVisible: false },
+          { boundsAutoApply: bound, wayPointVisible: false }
         );
       }
       mapp.current.geoObjects.add(multiRoute);
@@ -191,11 +195,12 @@ const MainMapGs = (props: {
   };
 
   const OnPlacemarkClickPoint = (index: number) => {
+    let nomInMass = massMem.indexOf(index);
+    let masscoord: any = [];
     if (newMode < 0) {
-      let nomInMass = massMem.indexOf(index); // процесс создания нового режима
+      // создание нового режима
       if (nomInMass < 0) {
         massMem.push(index);
-        let masscoord: any = [];
         masscoord[0] = map.tflight[index].points.Y;
         masscoord[1] = map.tflight[index].points.X;
         massCoord.push(masscoord);
@@ -205,6 +210,15 @@ const MainMapGs = (props: {
       }
       ymaps && addRoute(ymaps, false); // перерисовка связей
       setFlagPusk(!flagPusk);
+    } else {
+      // работа с существующем режимом
+
+      if (nomInMass >= 0 && nomInMass + 1 < massMem.length) {
+        console.log("IDX:", index, nomInMass, massMem[nomInMass + 1], massMem);
+        masscoord[0] = map.tflight[massMem[nomInMass + 1]].points.Y;
+        masscoord[1] = map.tflight[massMem[nomInMass + 1]].points.X;
+        NewPointCenter(masscoord)
+      }
     }
   };
 
@@ -225,15 +239,16 @@ const MainMapGs = (props: {
             geometry={props.coordinate}
             properties={getPointData(props.idx, pAaI, pBbI, massdk)}
             options={
-              (massMem.length === aaa + 1 && massMem.length) || (!aaa && massMem.length > 1)
+              (massMem.length === aaa + 1 && massMem.length) ||
+              (!aaa && massMem.length > 1)
                 ? getPointOptions2(props.idx, massMem)
                 : getPointOptions1()
             }
-            modules={['geoObject.addon.balloon', 'geoObject.addon.hint']}
+            modules={["geoObject.addon.balloon", "geoObject.addon.hint"]}
             onClick={() => OnPlacemarkClickPoint(props.idx)}
           />
         ),
-        [props.coordinate, props.idx, aaa],
+        [props.coordinate, props.idx, aaa]
       );
       return MemoPlacemarkDo;
     };
@@ -257,15 +272,25 @@ const MainMapGs = (props: {
       //     setOpenSetCreate(true);
       //   }
       // });
-      mapp.current.events.add('mousedown', function (e: any) {
+      mapp.current.events.add("mousedown", function (e: any) {
         pointCenter = mapp.current.getCenter(); // нажата левая/правая кнопка мыши 0, 1 или 2 в зависимости от того, какая кнопка мыши нажата (В IE значение может быть от 0 до 7).
       });
-      mapp.current.events.add(['boundschange'], function () {
+      mapp.current.events.add(["boundschange"], function () {
         pointCenter = mapp.current.getCenter();
         zoom = mapp.current.getZoom(); // покрутили колёсико мыши
       });
+      if (flagCenter) {
+        pointCenter = newCenter;
+        setFlagCenter(false);
+      }
     }
   };
+
+  const NewPointCenter = (coord: any) => {
+    newCenter = coord;
+    setFlagCenter(true);
+  };
+
   //=== инициализация ======================================
   if (!flagOpen && Object.keys(map.tflight).length) {
     for (let i = 0; i < map.tflight.length; i++) {
@@ -283,7 +308,7 @@ const MainMapGs = (props: {
     let ch = 1;
     for (let i = 0; i < map.routes.length; i++) {
       let nameZU = map.routes[i].description;
-      if (!nameZU) nameZU = 'без имени(' + ch++ + ')';
+      if (!nameZU) nameZU = "без имени(" + ch++ + ")";
       let maskName = {
         name: nameZU,
         delRec: false,
@@ -297,7 +322,7 @@ const MainMapGs = (props: {
       map.boxPoint.point0.Y,
       map.boxPoint.point0.X,
       map.boxPoint.point1.Y,
-      map.boxPoint.point1.X,
+      map.boxPoint.point1.X
     );
     flagOpen = true;
   }
@@ -305,8 +330,9 @@ const MainMapGs = (props: {
   let mapState: any = {
     center: pointCenter,
     zoom,
-    //autoFitToViewport: true,
+    //behaviors: ["default", "scrollZoom"],
     //controls: [],
+    //yandexMapDisablePoiInteractivity: true,
   };
 
   const PressButton = (mode: number) => {
@@ -322,9 +348,11 @@ const MainMapGs = (props: {
           ymaps && addRoute(ymaps, false); // перерисовка связей
           setFlagPusk(!flagPusk);
         }
+        helper = false;
         setSelectMD(true);
         break;
       case 43: // переход к созданию нового режима
+        helper = true;
         StatusQuo();
         break;
       case 44: // назначить фазы
@@ -332,54 +360,66 @@ const MainMapGs = (props: {
         break;
       case 45: // выполнить режим
         if (massmode[newMode].delRec) {
-          soobErr = 'Данный режим помечен к удалению';
+          soobErr = "Данный режим помечен к удалению";
           setOpenSoobErr(true);
         } else {
-          widthMap = '99.9%';
           xsMap = 7.8;
           xsTab = 4.2;
+          widthMap = "99.8%";
           modeToDo = 1;
-          setFlagPusk(!flagPusk);
           setToDoMode(true);
+          setFlagPusk(!flagPusk);
         }
     }
   };
 
-  // const OldSizeWind = (size: number) => {
-  //   widthMap = "99.8%";
-  //   xsMap = size;
-  //   setFlagPusk(!flagPusk);
-  // };
+  const OldSizeWind = (size: number) => {
+    xsMap = size;
+    xsTab = 0.01;
+    widthMap = "99.9%";
+    modeToDo = 0;
+    setToDoMode(false);
+    setFlagPusk(!flagPusk);
+  };
 
   const ModeToDo = (mod: number) => {
     modeToDo = mod;
-    console.log('modeToDo', modeToDo);
+    if (!modeToDo) StatusQuo();
     setFlagPusk(!flagPusk);
   };
 
   const MenuGl = (mod: number) => {
-    let soobInfo = 'Подготовка к испонению режима';
-    if (modeToDo === 2) soobInfo = 'Происходит выполнение режима';
+    let soobInfo = "Подготовка к испонению режима";
+    if (modeToDo === 2) soobInfo = "Происходит выполнение режима";
 
     return (
       <>
         {modeToDo > 0 && (
-          <Box sx={{ paddingBottom: 0.5, color: '#C94710', textAlign: 'center' }}>
+          <Box
+            sx={{ paddingBottom: 0.5, color: "#E6761B", textAlign: "center" }}
+          >
             <em>{soobInfo}</em>
           </Box>
         )}
         {modeToDo === 0 && (
           <>
-            {StrokaMenuGlob('Выбор режима ЗУ', PressButton, 42)}
+            {StrokaMenuGlob("Выбор режима ЗУ", PressButton, 42)}
+            {massMem.length < 2 && helper && (
+              <Button sx={styleInfoSoob}>
+                <em>Выберите перекрёстки для создание нового маршрута</em>
+              </Button>
+            )}
             {massMem.length > 1 && (
               <>
-                {newMode < 0 && <>{StrokaMenuGlob('Обработка режима', PressButton, 44)}</>}
+                {newMode < 0 && (
+                  <>{StrokaMenuGlob("Обработка режима", PressButton, 44)}</>
+                )}
                 {newMode >= 0 && (
                   <>
-                    {StrokaMenuGlob('Создать режим', PressButton, 43)}
-                    {StrokaMenuGlob('Редактировать фазы', PressButton, 44)}
-                    {StrokaMenuGlob('Выполнить режим', PressButton, 45)}
-                    {StrokaMenuGlob('Удалить режим', PressButton, 41)}
+                    {StrokaMenuGlob("Создать режим", PressButton, 43)}
+                    {StrokaMenuGlob("Редактировать фазы", PressButton, 44)}
+                    {StrokaMenuGlob("Выполнить режим", PressButton, 45)}
+                    {StrokaMenuGlob("Удалить режим", PressButton, 41)}
                   </>
                 )}
               </>
@@ -391,37 +431,45 @@ const MainMapGs = (props: {
   };
 
   return (
-    <Grid container sx={{ border: 0, height: '99.9vh' }}>
+    <Grid container sx={{ border: 0, height: "99.9vh" }}>
       <Grid item xs sx={{ border: 0 }}>
         {MenuGl(modeToDo)}
-        <Grid container sx={{ border: 0, height: '96.9vh' }}>
+        <Grid container sx={{ border: 0, height: "96.9vh" }}>
           <Grid item xs={xsMap} sx={{ border: 0 }}>
             {Object.keys(map.tflight).length && (
               <YMaps
                 query={{
-                  apikey: '65162f5f-2d15-41d1-a881-6c1acf34cfa1',
-                  lang: 'ru_RU',
-                }}>
+                  apikey: "65162f5f-2d15-41d1-a881-6c1acf34cfa1",
+                  lang: "ru_RU",
+                }}
+              >
                 <Map
-                  modules={['multiRouter.MultiRoute', 'Polyline']}
+                  modules={[
+                    "multiRouter.MultiRoute",
+                    "Polyline",
+                    //"geolocation", "geocode",
+                  ]}
                   state={mapState}
                   instanceRef={(ref) => InstanceRefDo(ref)}
                   onLoad={(ref) => {
                     ref && setYmaps(ref);
                   }}
                   width={widthMap}
-                  height={'99.9%'}>
+                  height={"99.9%"}
+                >
                   {/* сервисы Яндекса */}
                   <FullscreenControl />
-                  <GeolocationControl options={{ float: 'left' }} />
-                  <RulerControl options={{ float: 'right' }} />
+                  <GeolocationControl options={{ float: "left" }} />
+                  <RulerControl options={{ float: "right" }} />
                   <SearchControl options={searchControl} />
-                  <TrafficControl options={{ float: 'right' }} />
-                  <TypeSelector options={{ float: 'right' }} />
-                  <ZoomControl options={{ float: 'right' }} />
+                  <TrafficControl options={{ float: "right" }} />
+                  <TypeSelector options={{ float: "right" }} />
+                  <ZoomControl options={{ float: "right" }} />
                   {/* служебные компоненты */}
                   <PlacemarkDo />
-                  {selectMD && <GsSelectMD setOpen={setSelectMD} receive={ReceiveIdxGs} />}
+                  {selectMD && (
+                    <GsSelectMD setOpen={setSelectMD} receive={ReceiveIdxGs} />
+                  )}
                   {makeMode && <GsMakeMode setOpen={setMakeMode} />}
                   {setPhase && (
                     <GsSetPhase
@@ -432,13 +480,23 @@ const MainMapGs = (props: {
                       func={MakeNewMassMem}
                     />
                   )}
-                  {openSoobErr && <GsErrorMessage setOpen={setOpenSoobErr} sErr={soobErr} />}
+                  {openSoobErr && (
+                    <GsErrorMessage setOpen={setOpenSoobErr} sErr={soobErr} />
+                  )}
                 </Map>
               </YMaps>
             )}
           </Grid>
-          <Grid item xs={xsTab} sx={{ border: 0, height: '97.0vh' }}>
-            {toDoMode && <GsToDoMode newMode={newMode} massMem={massMem} funcMode={ModeToDo} />}
+          <Grid item xs={xsTab} sx={{ border: 0, height: "97.0vh" }}>
+            {toDoMode && (
+              <GsToDoMode
+                newMode={newMode}
+                massMem={massMem}
+                funcMode={ModeToDo}
+                funcSize={OldSizeWind}
+                funcCenter={NewPointCenter}
+              />
+            )}
           </Grid>
         </Grid>
       </Grid>

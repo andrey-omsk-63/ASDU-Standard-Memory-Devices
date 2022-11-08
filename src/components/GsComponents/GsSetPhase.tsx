@@ -12,9 +12,9 @@ import MenuItem from "@mui/material/MenuItem";
 
 import { styleModalEnd } from "../MainMapStyle";
 
-import { styleSetInf, styleModalMenu } from "./GsSetPhaseStyle";
-import { styleBoxFormFaza } from "./GsSetPhaseStyle";
-import { styleSet, styleBoxFormName } from "./GsSetPhaseStyle";
+import { styleSetInf, styleModalMenu } from "./GsComponentsStyle";
+import { styleBoxFormFaza } from "./GsComponentsStyle";
+import { styleSet, styleBoxFormName } from "./GsComponentsStyle";
 
 let newInput = true;
 let massFaz: any = [];
@@ -64,9 +64,7 @@ const GsSetPhase = (props: {
     }
     return maskFaz;
   };
-
-  console.log("newInput:", newInput, props.newMode);
-
+  
   if (props.newMode >= 0) {
     if (newInput) {
       massFaz = []; // существующий режим

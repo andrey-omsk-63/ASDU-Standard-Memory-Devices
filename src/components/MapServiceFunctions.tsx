@@ -262,27 +262,4 @@ export const MasskPoint = () => {
   return masskPoint;
 };
 
-// export const ChangeCrossFunc = (fromCross: any, toCross: any) => {
-//   let cross: any = {
-//     Region: "",
-//     Area: "",
-//     ID: 0,
-//     Cod: "",
-//   };
-//   cross.Region = fromCross.pointAaRegin;
-//   cross.Area = fromCross.pointAaArea;
-//   cross.ID = fromCross.pointAaID;
-//   cross.Cod = fromCross.pointAcod;
-//   fromCross.pointAaRegin = toCross.pointBbRegin;
-//   fromCross.pointAaArea = toCross.pointBbArea;
-//   fromCross.pointAaID = toCross.pointBbID;
-//   fromCross.pointAcod = toCross.pointBcod;
-//   toCross.pointBbRegin = cross.Region;
-//   toCross.pointBbArea = cross.Area;
-//   toCross.pointBbID = cross.ID;
-//   toCross.pointBcod = cross.Cod;
-//   let mass: any = [];
-//   mass.push(fromCross);
-//   mass.push(toCross);
-//   return mass;
-// };
+
