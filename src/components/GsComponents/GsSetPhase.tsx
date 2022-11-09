@@ -25,7 +25,7 @@ let chFaz = 0;
 let xsFaza = 2;
 
 const GsSetPhase = (props: {
-  region: string;
+  //region: string;
   setOpen: any;
   newMode: number;
   massMem: Array<number>;
@@ -39,6 +39,10 @@ const GsSetPhase = (props: {
   let massmode = useSelector((state: any) => {
     const { massmodeReducer } = state;
     return massmodeReducer.massmode;
+  });
+  let datestat = useSelector((state: any) => {
+    const { statsaveReducer } = state;
+    return statsaveReducer.datestat;
   });
   const dispatch = useDispatch();
   //========================================================
@@ -159,7 +163,7 @@ const GsSetPhase = (props: {
           }
         }
         let maskRoutes = {
-          region: props.region,
+          region: datestat.region,
           description: nameMode,
           box: {
             point0: {
@@ -434,4 +438,4 @@ const GsSetPhase = (props: {
 };
 
 export default GsSetPhase;
-//alert
+

@@ -21,6 +21,7 @@ const GsToDoMode = (props: {
   funcMode: any;
   funcSize: any;
   funcCenter: any;
+  funcHelper: any;
 }) => {
   //== Piece of Redux ======================================
   const map = useSelector((state: any) => {
@@ -86,6 +87,7 @@ const GsToDoMode = (props: {
       setTrigger(!trigger);
     } else {
       props.funcMode(mode);
+      props.funcHelper(true);
       handleCloseSetEnd(); // закончить исполнение
     }
   };

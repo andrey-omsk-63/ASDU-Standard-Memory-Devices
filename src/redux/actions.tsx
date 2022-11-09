@@ -2,6 +2,7 @@ import {
   MAP_CREATE,
   MASSDK_CREATE,
   MASSMODE_CREATE,
+  STATSAVE_CREATE,
   // MASSROUTE_CREATE,
   // MASSROUTEPRO_CREATE,
   COORDINATES_CREATE,
@@ -10,6 +11,7 @@ import {
 import { DateMAP } from './../interfaceMAP.d';
 //import { DateRoute } from "./../interfaceRoute.d";
 import { Pointer } from './../App';
+import { Stater } from './../App';
 import { NameMode } from './../App';
 
 export function massdkCreate(massDka: Pointer[] = []) {
@@ -30,6 +32,13 @@ export function mapCreate(dateMap: DateMAP) {
   return {
     type: MAP_CREATE,
     data: { dateMap },
+  };
+}
+
+export function statsaveCreate(dateStat: Stater) {
+  return {
+    type: STATSAVE_CREATE,
+    data: dateStat,
   };
 }
 

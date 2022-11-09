@@ -14,7 +14,7 @@ import GsErrorMessage from "./GsErrorMessage";
 let knop2 = "удалить";
 let soobErr = "";
 
-const GsSelectMD = (props: { setOpen: any; receive: any }) => {
+const GsSelectMD = (props: { setOpen: any; receive: any; funcHelper: any }) => {
   //== Piece of Redux =======================================
   const map = useSelector((state: any) => {
     const { mapReducer } = state;
@@ -54,6 +54,7 @@ const GsSelectMD = (props: { setOpen: any; receive: any }) => {
 
   const handleCloseSetEnd = () => {
     props.setOpen(false);
+    props.funcHelper(true);
     setOpenSetMode(false);
   };
 
@@ -193,4 +194,3 @@ const GsSelectMD = (props: { setOpen: any; receive: any }) => {
 };
 
 export default GsSelectMD;
-
