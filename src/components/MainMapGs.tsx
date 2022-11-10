@@ -4,8 +4,6 @@ import { massdkCreate, massmodeCreate } from "../redux/actions";
 import { mapCreate, coordinatesCreate } from "../redux/actions";
 
 import Grid from "@mui/material/Grid";
-//import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 
 import { YMaps, Map, Placemark, FullscreenControl } from "react-yandex-maps";
 import { GeolocationControl, YMapsApi } from "react-yandex-maps";
@@ -13,18 +11,20 @@ import { RulerControl, SearchControl } from "react-yandex-maps";
 import { TrafficControl, TypeSelector, ZoomControl } from "react-yandex-maps";
 
 import GsSelectMD from "./GsComponents/GsSelectMD";
-//import GsMakeMode from "./GsComponents/GsMakeMode";
 import GsSetPhase from "./GsComponents/GsSetPhase";
 import GsToDoMode from "./GsComponents/GsToDoMode";
 import GsErrorMessage from "./GsComponents/GsErrorMessage";
 
-import { getMultiRouteOptions } from "./MapServiceFunctions";
+import { getMultiRouteOptions, StrokaHelp } from "./MapServiceFunctions";
 import { getReferencePoints, CenterCoord } from "./MapServiceFunctions";
 import { getPointData, getPointOptions1 } from "./MapServiceFunctions";
-import { getPointOptions2 } from "./MapServiceFunctions";
+import { getPointOptions2, ErrorHaveVertex } from "./MapServiceFunctions";
 import { StrokaMenuGlob, MasskPoint } from "./MapServiceFunctions";
 
-import { searchControl, styleInfoSoob } from "./MainMapStyle";
+import { SendSocketUpdateRoute } from "./MapSocketFunctions";
+import { SendSocketGetPhases } from "./MapSocketFunctions";
+
+import { searchControl } from "./MainMapStyle";
 
 let flagOpen = false;
 
@@ -44,17 +44,9 @@ let xsTab = 0.01;
 let widthMap = "99.9%";
 
 let modeToDo = 0;
-//let flagCenter = false;
 let newCenter: any = [];
 
-const MainMapGs = (props: {
-  // ws: WebSocket;
-  // region: string;
-  // sErr: string;
-  // svg: any;
-  // setSvg: any;
-}) => {
-  //if (WS.url === "wss://localhost:3000/W") debugging = true;
+const MainMapGs = () => {
   //== Piece of Redux =======================================
   const map = useSelector((state: any) => {
     const { mapReducer } = state;
@@ -76,7 +68,8 @@ const MainMapGs = (props: {
     const { statsaveReducer } = state;
     return statsaveReducer.datestat;
   });
-  console.log("Datestat:",datestat.ws, datestat);
+  const debug = datestat.debug;
+  const ws = datestat.ws;
   const dispatch = useDispatch();
   //===========================================================
   const [flagPusk, setFlagPusk] = React.useState(false);
@@ -105,15 +98,7 @@ const MainMapGs = (props: {
         }
       }
       if (idx < 0) {
-        alert(
-          "Не существует светофор: Регион " +
-            map.routes[mode].listTL[i].pos.region +
-            " Район " +
-            map.routes[mode].listTL[i].pos.area +
-            " ID " +
-            map.routes[mode].listTL[i].pos.id +
-            ". Устройство будет проигнорировано и удалёно из плана"
-        );
+        ErrorHaveVertex(map.routes[mode].listTL[i].pos);
         massErrRec.push(i);
       } else {
         massMem.push(idx);
@@ -122,22 +107,16 @@ const MainMapGs = (props: {
     }
     if (massErrRec.length) {
       let massRabMap = []; // редактируем у себя map
-
       for (let i = 0; i < map.routes[mode].listTL.length; i++) {
         if (!massErrRec.includes(i)) {
           massRabMap.push(map.routes[mode].listTL[i]);
         }
       }
       map.routes[mode].listTL = massRabMap;
+      SendSocketUpdateRoute(debug, ws, map.routes[mode]);
       dispatch(mapCreate(map));
     }
     newMode = mode;
-    if (massMem.length < 2) {
-      alert("Некорректный режим. Количество светофоров = 1");
-      massMem = [];
-      massCoord = [];
-      newMode = -1;
-    }
     ymaps && addRoute(ymaps, true); // перерисовка связей
     setFlagPusk(!flagPusk);
   };
@@ -293,14 +272,7 @@ const MainMapGs = (props: {
   //=== инициализация ======================================
   if (!flagOpen && Object.keys(map.tflight).length) {
     for (let i = 0; i < map.tflight.length; i++) {
-      let masskPoint = MasskPoint();
-      masskPoint.ID = map.tflight[i].ID;
-      masskPoint.coordinates[0] = map.tflight[i].points.Y;
-      masskPoint.coordinates[1] = map.tflight[i].points.X;
-      masskPoint.nameCoordinates = map.tflight[i].description;
-      masskPoint.region = Number(map.tflight[i].region.num);
-      masskPoint.area = Number(map.tflight[i].area.num);
-      masskPoint.newCoordinates = 0;
+      let masskPoint = MasskPoint(map.tflight[i]);
       massdk.push(masskPoint);
       coordinates.push(masskPoint.coordinates);
     }
@@ -317,6 +289,12 @@ const MainMapGs = (props: {
     dispatch(massdkCreate(massdk));
     dispatch(coordinatesCreate(coordinates));
     dispatch(massmodeCreate(massmode));
+    // получение изображения фаз
+    for (let i = 0; i < massdk.length; i++) {
+      let reg = massdk[i].region.toString();
+      let area = massdk[i].area.toString();
+      SendSocketGetPhases(debug, ws, reg, area, massdk[i].ID);
+    }
     pointCenter = CenterCoord(
       map.boxPoint.point0.Y,
       map.boxPoint.point0.X,
@@ -391,24 +369,17 @@ const MainMapGs = (props: {
   };
 
   const MenuGl = (mod: number) => {
+    let soobHelp = "Выберите перекрёстки для создания нового маршрута";
     let soobInfo = "Подготовка к выпонению режима";
     if (modeToDo === 2) soobInfo = "Происходит выполнение режима";
 
     return (
       <>
-        {modeToDo > 0 && (
-          <Button sx={styleInfoSoob}>
-            <em>{soobInfo}</em>
-          </Button>
-        )}
+        {modeToDo > 0 && <>{StrokaHelp(soobInfo)}</>}
         {modeToDo === 0 && (
           <>
             {StrokaMenuGlob("Существующие режимы ЗУ", PressButton, 42)}
-            {massMem.length < 2 && helper && (
-              <Button sx={styleInfoSoob}>
-                <em>Выберите перекрёстки для создания нового маршрута</em>
-              </Button>
-            )}
+            {massMem.length < 2 && helper && <>{StrokaHelp(soobHelp)}</>}
             {massMem.length > 1 && (
               <>
                 {newMode < 0 && (
@@ -473,7 +444,6 @@ const MainMapGs = (props: {
                   {/* {makeMode && <GsMakeMode setOpen={setMakeMode} />} */}
                   {setPhase && (
                     <GsSetPhase
-                      //region={props.region}
                       setOpen={setSetPhase}
                       newMode={newMode}
                       massMem={massMem}

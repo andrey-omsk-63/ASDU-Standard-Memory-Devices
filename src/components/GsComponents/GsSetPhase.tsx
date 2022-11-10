@@ -10,8 +10,11 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import MenuItem from "@mui/material/MenuItem";
 
-import { styleModalEnd } from "../MainMapStyle";
+import { NameMode } from "../MapServiceFunctions";
+import { SendSocketCreateRoute } from "../MapSocketFunctions";
+import { SendSocketUpdateRoute } from "../MapSocketFunctions";
 
+import { styleModalEnd } from "../MainMapStyle";
 import { styleSetInf, styleModalMenu } from "./GsComponentsStyle";
 import { styleBoxFormFaza } from "./GsComponentsStyle";
 import { styleSet, styleBoxFormName } from "./GsComponentsStyle";
@@ -25,7 +28,6 @@ let chFaz = 0;
 let xsFaza = 2;
 
 const GsSetPhase = (props: {
-  //region: string;
   setOpen: any;
   newMode: number;
   massMem: Array<number>;
@@ -44,6 +46,8 @@ const GsSetPhase = (props: {
     const { statsaveReducer } = state;
     return statsaveReducer.datestat;
   });
+  const debug = datestat.debug;
+  const ws = datestat.ws;
   const dispatch = useDispatch();
   //========================================================
   const [openSetMode, setOpenSetMode] = React.useState(true);
@@ -68,7 +72,7 @@ const GsSetPhase = (props: {
     }
     return maskFaz;
   };
-  
+
   if (props.newMode >= 0) {
     if (newInput) {
       massFaz = []; // существующий режим
@@ -76,18 +80,13 @@ const GsSetPhase = (props: {
         massFaz.push(MakeMaskFaz(i));
       }
       newInput = false;
-      console.log("Обновление1");
     }
   } else {
     if (newInput) {
-      console.log("Обновление2");
       massFaz = []; // новый режим
-      nameMode =
-        "Режим ЗУ(" +
-        new Date().toLocaleDateString() +
-        " " +
-        new Date().toLocaleTimeString() +
-        ")";
+      nameMode = "Режим ЗУ" + NameMode();
+
+console.log('nameMode:',nameMode)
 
       for (let i = 0; i < props.massMem.length; i++) {
         massFaz.push(MakeMaskFaz(i));
@@ -136,11 +135,13 @@ const GsSetPhase = (props: {
   };
 
   const SaveFaz = () => {
+    console.log('props.newMode:',props.newMode)
     for (let i = 0; i < massFaz.length; i++) {
       map.routes[props.newMode].listTL[i].phase = massFaz[i].faza;
     }
     dispatch(mapCreate(map));
-    console.log("Map:",props.newMode, massFaz, map);
+    //console.log("Map:", props.newMode, map.routes[props.newMode]);
+    SendSocketUpdateRoute(debug,ws,map.routes[props.newMode])
     chFaz = 0;
     handleCloseSetEnd();
     newInput = true;
@@ -154,12 +155,7 @@ const GsSetPhase = (props: {
       } else {
         for (let i = 0; i < map.routes.length; i++) {
           if (nameMode === map.routes[i].description) {
-            nameMode +=
-              "(" +
-              new Date().toLocaleDateString() +
-              " " +
-              new Date().toLocaleTimeString() +
-              ")";
+            nameMode += NameMode();
           }
         }
         let maskRoutes = {
@@ -193,13 +189,13 @@ const GsSetPhase = (props: {
         }
         map.routes.push(maskRoutes);
         dispatch(mapCreate(map));
+        SendSocketCreateRoute(debug, ws, maskRoutes);
         let maskName = {
           name: nameMode,
           delRec: false,
         };
         massmode.push(maskName);
         dispatch(massmodeCreate(massmode));
-        console.log("Запрос на создание режима", map);
       }
     }
     massFaz = [];
@@ -438,4 +434,3 @@ const GsSetPhase = (props: {
 };
 
 export default GsSetPhase;
-

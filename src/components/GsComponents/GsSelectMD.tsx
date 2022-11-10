@@ -8,6 +8,8 @@ import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
 
+import { SendSocketDeleteRoute } from "../MapSocketFunctions";
+
 import { styleModalEnd } from "../MainMapStyle";
 import GsErrorMessage from "./GsErrorMessage";
 
@@ -24,6 +26,12 @@ const GsSelectMD = (props: { setOpen: any; receive: any; funcHelper: any }) => {
     const { massmodeReducer } = state;
     return massmodeReducer.massmode;
   });
+  let datestat = useSelector((state: any) => {
+    const { statsaveReducer } = state;
+    return statsaveReducer.datestat;
+  });
+  const debug = datestat.debug;
+  const ws = datestat.ws;
   const dispatch = useDispatch();
   //===========================================================
   const [trigger, setTrigger] = React.useState(true);
@@ -87,6 +95,8 @@ const GsSelectMD = (props: { setOpen: any; receive: any; funcHelper: any }) => {
       if (!massmode[i].delRec) {
         massRab.push(massmode[i]);
         massRoute.push(map.routes[i]);
+      } else {
+        SendSocketDeleteRoute(debug,ws,map.routes[i])
       }
     }
     massmode = massRab;

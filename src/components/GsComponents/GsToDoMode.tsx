@@ -6,6 +6,8 @@ import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import CardMedia from "@mui/material/CardMedia";
 
+import { SendSocketRoute } from "../MapSocketFunctions";
+
 import { styleModalEnd } from "../MainMapStyle";
 import { styleModalMenu, styleStrokaTablImg } from "./GsComponentsStyle";
 import { styleToDoMode, styleStrokaTabl } from "./GsComponentsStyle";
@@ -28,6 +30,12 @@ const GsToDoMode = (props: {
     const { mapReducer } = state;
     return mapReducer.map.dateMap;
   });
+  let datestat = useSelector((state: any) => {
+    const { statsaveReducer } = state;
+    return statsaveReducer.datestat;
+  });
+  const debug = datestat.debug;
+  const ws = datestat.ws;
   //const dispatch = useDispatch();
   //========================================================
   const [trigger, setTrigger] = React.useState(true);
@@ -39,22 +47,20 @@ const GsToDoMode = (props: {
       idx: 0,
       faza: 1,
       phases: [],
+      idevice: 0,
       name: "",
-      //coordinates: [],
       starRec: false,
       runRec: false,
     };
     maskFaz.idx = props.massMem[i];
     maskFaz.name = map.tflight[maskFaz.idx].description;
     maskFaz.phases = map.tflight[maskFaz.idx].phases;
-    // let coor = map.tflight[maskFaz.idx].points
-    // maskFaz.coordinates = [coor.Y,coor.X];
+    maskFaz.idevice = map.tflight[maskFaz.idx].idevice;
     return maskFaz;
   };
 
   if (newInput) {
     massFaz = [];
-
     for (let i = 0; i < props.massMem.length; i++) {
       massFaz.push(MakeMaskFaz(i));
     }
@@ -81,14 +87,22 @@ const GsToDoMode = (props: {
   };
 
   const ToDoMode = (mode: number) => {
+    let massIdevice: Array<number> = [];
     if (mode) {
+      console.log("MASSFAZ", massFaz);
+      for (let i = 0; i < massFaz.length; i++) {
+        massIdevice.push(massFaz[i].idevice);
+      }
+      SendSocketRoute(debug, ws, massIdevice, true);
       toDoMode = true; // выполнение режима
       props.funcMode(mode);
       setTrigger(!trigger);
     } else {
-      props.funcMode(mode);
+      SendSocketRoute(debug, ws, massIdevice, false);
+      props.funcMode(mode); // закончить исполнение
       props.funcHelper(true);
-      handleCloseSetEnd(); // закончить исполнение
+      handleCloseSetEnd();
+      newInput = true;
     }
   };
 
@@ -103,9 +117,9 @@ const GsToDoMode = (props: {
   const StrokaTabl = () => {
     const ClickKnop = (mode: number) => {
       let coor = map.routes[newMode].listTL[mode].point;
-      let coord = [coor.Y,coor.X];
+      let coord = [coor.Y, coor.X];
       massFaz[mode].starRec = !massFaz[mode].starRec;
-      props.funcCenter(coord)
+      props.funcCenter(coord);
       setTrigger(!trigger);
     };
 

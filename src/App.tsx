@@ -17,11 +17,13 @@ export let dateRouteProGl: any;
 
 export interface Stater {
   ws: any;
+  debug: boolean;
   region: string;
 }
 
 export let dateStat: Stater = {
   ws: null,
+  debug: false,
   region: "",
 };
 
@@ -31,9 +33,19 @@ export interface Pointer {
   nameCoordinates: string;
   region: number;
   area: number;
-  newCoordinates: number;
+  phSvg: Array<string>;
 }
 export let massDk: Pointer[] = [];
+
+// export interface Fazer {
+//   ID: number;
+//   coordinates: Array<number>;
+//   nameCoordinates: string;
+//   region: number;
+//   area: number;
+//   newCoordinates: number;
+// }
+// export let massFaz: Fazer[] = [];
 
 export interface NameMode {
   name: string;
@@ -71,6 +83,7 @@ const App = () => {
   if (flagOpenWS) {
     WS = new WebSocket(host);
     dateStat.ws = WS;
+    if (WS.url === "wss://localhost:3000/W") dateStat.debug = true;
     dispatch(statsaveCreate(dateStat));
     flagOpenWS = false;
   }
@@ -137,13 +150,7 @@ const App = () => {
     <Grid container sx={{ height: "100vh", width: "100%", bgcolor: "#E9F5D8" }}>
       <Grid item xs>
         {openSetErr && <AppSocketError sErr={soob} setOpen={setOpenSetErr} />}
-        <MainMapGS
-          // ws={WS}
-          // region={homeRegion}
-          // sErr={soob}
-          // svg={svg}
-          // setSvg={setSvg}
-        />
+        <MainMapGS />
       </Grid>
     </Grid>
   );
