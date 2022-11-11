@@ -13,11 +13,9 @@ export const SendSocketCreateRoute = (
         ws.send(
           JSON.stringify({
             type: "createRoute",
-            data: {
-              region: maskRoutes.region,
-              description: maskRoutes.description,
-              listTL: maskRoutes.listTL,
-            },
+            region: maskRoutes.region,
+            description: maskRoutes.description,
+            listTL: maskRoutes.listTL,
           })
         );
       } else {
@@ -42,11 +40,9 @@ export const SendSocketUpdateRoute = (
         ws.send(
           JSON.stringify({
             type: "updateRoute",
-            data: {
-              region: maskRoutes.region,
-              description: maskRoutes.description,
-              listTL: maskRoutes.listTL,
-            },
+            region: maskRoutes.region,
+            description: maskRoutes.description,
+            listTL: maskRoutes.listTL,
           })
         );
       } else {
@@ -71,10 +67,8 @@ export const SendSocketDeleteRoute = (
         ws.send(
           JSON.stringify({
             type: "deleteRoute",
-            data: {
-              region: maskRoutes.region,
-              description: maskRoutes.description,
-            },
+            region: maskRoutes.region,
+            description: maskRoutes.description,
           })
         );
       } else {

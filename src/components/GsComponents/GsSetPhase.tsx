@@ -86,7 +86,7 @@ const GsSetPhase = (props: {
       massFaz = []; // новый режим
       nameMode = "Режим ЗУ" + NameMode();
 
-console.log('nameMode:',nameMode)
+      //console.log('nameMode:',nameMode)
 
       for (let i = 0; i < props.massMem.length; i++) {
         massFaz.push(MakeMaskFaz(i));
@@ -135,13 +135,13 @@ console.log('nameMode:',nameMode)
   };
 
   const SaveFaz = () => {
-    console.log('props.newMode:',props.newMode)
+    console.log("props.newMode:", props.newMode);
     for (let i = 0; i < massFaz.length; i++) {
       map.routes[props.newMode].listTL[i].phase = massFaz[i].faza;
     }
     dispatch(mapCreate(map));
     //console.log("Map:", props.newMode, map.routes[props.newMode]);
-    SendSocketUpdateRoute(debug,ws,map.routes[props.newMode])
+    SendSocketUpdateRoute(debug, ws, map.routes[props.newMode]);
     chFaz = 0;
     handleCloseSetEnd();
     newInput = true;

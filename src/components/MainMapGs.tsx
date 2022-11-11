@@ -52,6 +52,7 @@ const MainMapGs = () => {
     const { mapReducer } = state;
     return mapReducer.map.dateMap;
   });
+  //console.log("map", map);
   let massdk = useSelector((state: any) => {
     const { massdkReducer } = state;
     return massdkReducer.massdk;
@@ -68,13 +69,13 @@ const MainMapGs = () => {
     const { statsaveReducer } = state;
     return statsaveReducer.datestat;
   });
+  //console.log("datestat", datestat);
   const debug = datestat.debug;
   const ws = datestat.ws;
   const dispatch = useDispatch();
   //===========================================================
   const [flagPusk, setFlagPusk] = React.useState(false);
   const [selectMD, setSelectMD] = React.useState(false);
-  //const [makeMode, setMakeMode] = React.useState(false);
   const [setPhase, setSetPhase] = React.useState(false);
   const [toDoMode, setToDoMode] = React.useState(false);
   const [flagCenter, setFlagCenter] = React.useState(false);
@@ -85,6 +86,8 @@ const MainMapGs = () => {
 
   const ReceiveIdxGs = (mode: number) => {
     let massErrRec = [];
+    massMem = [];
+    massCoord = [];
     for (let i = 0; i < map.routes[mode].listTL.length; i++) {
       let idx = -1;
       for (let j = 0; j < map.tflight.length; j++) {
@@ -99,6 +102,7 @@ const MainMapGs = () => {
       }
       if (idx < 0) {
         ErrorHaveVertex(map.routes[mode].listTL[i].pos);
+        console.log("CoorError", map.routes[mode].listTL[i].point);
         massErrRec.push(i);
       } else {
         massMem.push(idx);
@@ -175,6 +179,7 @@ const MainMapGs = () => {
 
   const OnPlacemarkClickPoint = (index: number) => {
     let nomInMass = massMem.indexOf(index);
+    console.log("!!!!!!:", nomInMass, massMem);
     let masscoord: any = [];
     if (newMode < 0) {
       // создание нового режима
@@ -193,8 +198,10 @@ const MainMapGs = () => {
       // работа с существующем режимом
       if (nomInMass >= 0 && nomInMass + 1 < massMem.length) {
         console.log("IDX:", index, nomInMass, massMem[nomInMass + 1], massMem);
+
         masscoord[0] = map.tflight[massMem[nomInMass + 1]].points.Y;
         masscoord[1] = map.tflight[massMem[nomInMass + 1]].points.X;
+        console.log("coord:", nomInMass, masscoord);
         NewPointCenter(masscoord);
       }
     }
@@ -220,7 +227,7 @@ const MainMapGs = () => {
               (massMem.length === aaa + 1 && massMem.length) ||
               (!aaa && massMem.length > 1)
                 ? getPointOptions2(props.idx, massMem)
-                : getPointOptions1()
+                : getPointOptions1(debug, props.idx, map)
             }
             modules={["geoObject.addon.balloon", "geoObject.addon.hint"]}
             onClick={() => OnPlacemarkClickPoint(props.idx)}
@@ -250,21 +257,31 @@ const MainMapGs = () => {
       //     setOpenSetCreate(true);
       //   }
       // });
-      mapp.current.events.add("mousedown", function (e: any) {
-        pointCenter = mapp.current.getCenter(); // нажата левая/правая кнопка мыши 0, 1 или 2 в зависимости от того, какая кнопка мыши нажата (В IE значение может быть от 0 до 7).
-      });
-      mapp.current.events.add(["boundschange"], function () {
-        pointCenter = mapp.current.getCenter();
-        zoom = mapp.current.getZoom(); // покрутили колёсико мыши
-      });
+      // mapp.current.events.add("mousedown", function (e: any) {
+      //   pointCenter = mapp.current.getCenter(); // нажата левая/правая кнопка мыши 0, 1 или 2 в зависимости от того, какая кнопка мыши нажата (В IE значение может быть от 0 до 7).
+      // });
+      // mapp.current.events.add(["boundschange"], function () {
+      //   pointCenter = mapp.current.getCenter();
+      //   zoom = mapp.current.getZoom(); // покрутили колёсико мыши
+      // });
       if (flagCenter) {
         pointCenter = newCenter;
+        console.log("Новый центр", pointCenter);
         setFlagCenter(false);
+      } else {
+        mapp.current.events.add("mousedown", function (e: any) {
+          pointCenter = mapp.current.getCenter(); // нажата левая/правая кнопка мыши 0, 1 или 2 в зависимости от того, какая кнопка мыши нажата (В IE значение может быть от 0 до 7).
+        });
+        mapp.current.events.add(["boundschange"], function () {
+          pointCenter = mapp.current.getCenter();
+          zoom = mapp.current.getZoom(); // покрутили колёсико мыши
+        });
       }
     }
   };
 
   const NewPointCenter = (coord: any) => {
+    //console.log("newCenter:", coord);
     newCenter = coord;
     setFlagCenter(true);
   };
@@ -316,6 +333,8 @@ const MainMapGs = () => {
         massmode[newMode].delRec = true;
         dispatch(massmodeCreate(massmode));
         StatusQuo();
+        ymaps && addRoute(ymaps, false); // перерисовка связей
+        setFlagPusk(!flagPusk);
         break;
       case 42: // выбор режима ЗУ
         if (massMem.length) {
@@ -441,7 +460,6 @@ const MainMapGs = () => {
                       funcHelper={SetHelper}
                     />
                   )}
-                  {/* {makeMode && <GsMakeMode setOpen={setMakeMode} />} */}
                   {setPhase && (
                     <GsSetPhase
                       setOpen={setSetPhase}
@@ -457,7 +475,7 @@ const MainMapGs = () => {
               </YMaps>
             )}
           </Grid>
-          <Grid item xs={xsTab} sx={{ border: 0, height: "97.0vh" }}>
+          <Grid item xs={xsTab} sx={{ height: "97.0vh" }}>
             {toDoMode && (
               <GsToDoMode
                 newMode={newMode}

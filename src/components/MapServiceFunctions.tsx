@@ -1,6 +1,7 @@
 import Button from "@mui/material/Button";
 
 import { Pointer } from "./../App";
+import { DateMAP } from "./../interfaceMAP.d";
 
 import { styleInfoSoob } from "./MainMapStyle";
 
@@ -66,10 +67,16 @@ export const getPointData = (
   };
 };
 
-export const getPointOptions1 = () => {
+export const getPointOptions1 = (debug: boolean, idx: number, map: DateMAP) => {
+  let host = "https://localhost:3000/18.svg";
+  if (!debug) {
+    let num = map.tflight[idx].tlsost.num.toString();
+    host = window.location.origin + "/free/img/trafficLights/" + num + ".svg";
+  }
   return {
     iconLayout: "default#image",
-    iconImageHref: "https://localhost:3000/18.svg",
+    //https://192.168.115.25/free/img/trafficLights/18.svg
+    iconImageHref: host,
     iconImageSize: [30, 38],
     iconImageOffset: [-15, -38],
   };

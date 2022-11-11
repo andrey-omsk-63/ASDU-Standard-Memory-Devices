@@ -11,6 +11,7 @@ import { SendSocketRoute } from "../MapSocketFunctions";
 import { styleModalEnd } from "../MainMapStyle";
 import { styleModalMenu, styleStrokaTablImg } from "./GsComponentsStyle";
 import { styleToDoMode, styleStrokaTabl } from "./GsComponentsStyle";
+import { maxHeight } from "@mui/system";
 
 let newInput = true;
 let massFaz: any = [];
@@ -131,8 +132,17 @@ const GsToDoMode = (props: {
     let resStr = [];
 
     for (let i = 0; i < massFaz.length; i++) {
+      // let host = window.location.origin + "/free/img/trafficLights/18.svg";
+      // if (debug) host = "https://localhost:3000/18.svg";
+      let host = "https://localhost:3000/18.svg";
+      if (!debug) {
+        let num = map.tflight[massFaz[i].idx].tlsost.num.toString();
+        host =
+          window.location.origin + "/free/img/trafficLights/" + num + ".svg";
+      }
       let star = "";
       if (massFaz[i].starRec) star = "*";
+      //let aa = "data: image/png; base64; "+ datestat.phSvg
 
       resStr.push(
         <Grid key={i} container sx={{ marginTop: 1 }}>
@@ -149,18 +159,40 @@ const GsToDoMode = (props: {
           <Grid item xs={1.2} sx={{ fontSize: 27, textAlign: "right" }}>
             {star}
           </Grid>
-          <Grid item xs={1.0} sx={{ border: 0 }}>
-            <Button
+          {/* <Grid item xs={1.0} sx={{ border: 1 }}> */}
+          <Grid item xs={2.5} sx={{ border: 1 }}>
+            {/* <Button
               variant="contained"
               sx={styleStrokaTablImg}
               onClick={() => ClickImg(i)}
-            >
-              <CardMedia
+            > */}
+              {/* <CardMedia
                 component="img"
                 sx={{ textAlign: "center", height: 40, width: 30 }}
-                image="https://localhost:3000/18.svg"
-              />
-            </Button>
+                image={host}
+              /> */}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                xmlnsXlink="http://www.w3.org/1999/xlink"
+                width={100}
+                height={100}
+                style={{
+                  maxWidth: 100,
+                  minWidth: 100,
+                  maxHeight: 100,
+                  minHeight: 100,
+                }}
+
+                //version="1"
+                //viewBox="0 0 91 54"
+              >
+                <image
+                  width={"99.9%"}
+                  height={"99.9%"}
+                  xlinkHref={"data:image/png;base64," + datestat.phSvg}
+                />
+              </svg>
+            {/* </Button> */}
           </Grid>
           {massFaz[i].runRec && (
             <Grid item xs={1.3} sx={{ fontSize: 30, textAlign: "left" }}>
@@ -173,9 +205,9 @@ const GsToDoMode = (props: {
             </Grid>
           )}
 
-          <Grid item xs={1.5} sx={{ border: 0, textAlign: "center" }}>
+          {/* <Grid item xs={1.5} sx={{ border: 0, textAlign: "center" }}>
             --
-          </Grid>
+          </Grid> */}
 
           <Grid item xs sx={{ fontSize: 14 }}>
             {massFaz[i].name}
