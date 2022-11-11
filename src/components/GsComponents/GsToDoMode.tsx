@@ -1,17 +1,16 @@
-import * as React from "react";
-import { useSelector } from "react-redux";
+import * as React from 'react';
+import { useSelector } from 'react-redux';
 
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
-import CardMedia from "@mui/material/CardMedia";
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
+import CardMedia from '@mui/material/CardMedia';
 
-import { SendSocketRoute } from "../MapSocketFunctions";
+import { SendSocketRoute } from '../MapSocketFunctions';
 
-import { styleModalEnd } from "../MainMapStyle";
-import { styleModalMenu, styleStrokaTablImg } from "./GsComponentsStyle";
-import { styleToDoMode, styleStrokaTabl } from "./GsComponentsStyle";
-import { maxHeight } from "@mui/system";
+import { styleModalEnd } from '../MainMapStyle';
+import { styleModalMenu, styleStrokaTablImg } from './GsComponentsStyle';
+import { styleToDoMode, styleStrokaTabl } from './GsComponentsStyle';
 
 let newInput = true;
 let massFaz: any = [];
@@ -49,7 +48,7 @@ const GsToDoMode = (props: {
       faza: 1,
       phases: [],
       idevice: 0,
-      name: "",
+      name: '',
       starRec: false,
       runRec: false,
     };
@@ -90,7 +89,7 @@ const GsToDoMode = (props: {
   const ToDoMode = (mode: number) => {
     let massIdevice: Array<number> = [];
     if (mode) {
-      console.log("MASSFAZ", massFaz);
+      console.log('MASSFAZ', massFaz);
       for (let i = 0; i < massFaz.length; i++) {
         massIdevice.push(massFaz[i].idevice);
       }
@@ -109,7 +108,7 @@ const GsToDoMode = (props: {
 
   const StrokaHeader = (xss: number, soob: string) => {
     return (
-      <Grid item xs={xss} sx={{ fontSize: 14, textAlign: "center" }}>
+      <Grid item xs={xss} sx={{ fontSize: 14, textAlign: 'center' }}>
         <b>{soob}</b>
       </Grid>
     );
@@ -129,90 +128,75 @@ const GsToDoMode = (props: {
       setTrigger(!trigger);
     };
 
+    const OutputFazaImg = () => {
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          xmlnsXlink="http://www.w3.org/1999/xlink"
+          width={70}
+          height={40}
+          style={{
+            border: 1,
+            maxWidth: 40,
+            minWidth: 40,
+            maxHeight: 40,
+            minHeight: 40,
+          }}>
+          <image
+            width={'99.9%'}
+            height={'99.9%'}
+            xlinkHref={'data:image/png;base64,' + datestat.phSvg}
+            //xlinkHref={'data:image/png;base64,' + null}
+          />
+        </svg>
+      );
+    };
+
     let resStr = [];
 
     for (let i = 0; i < massFaz.length; i++) {
-      // let host = window.location.origin + "/free/img/trafficLights/18.svg";
-      // if (debug) host = "https://localhost:3000/18.svg";
-      let host = "https://localhost:3000/18.svg";
+      let bull = '';
+      if (massFaz[i].runRec) bull = '•';
+      let host = 'https://localhost:3000/18.svg';
       if (!debug) {
         let num = map.tflight[massFaz[i].idx].tlsost.num.toString();
-        host =
-          window.location.origin + "/free/img/trafficLights/" + num + ".svg";
+        host = window.location.origin + '/free/img/trafficLights/' + num + '.svg';
       }
-      let star = "";
-      if (massFaz[i].starRec) star = "*";
-      //let aa = "data: image/png; base64; "+ datestat.phSvg
+      let star = '';
+      if (massFaz[i].starRec) star = '*';
 
       resStr.push(
         <Grid key={i} container sx={{ marginTop: 1 }}>
-          <Grid item xs={1} sx={{ paddingTop: 0.7, textAlign: "center" }}>
-            <Button
-              variant="contained"
-              sx={styleStrokaTabl}
-              onClick={() => ClickKnop(i)}
-            >
+          <Grid item xs={1} sx={{ paddingTop: 0.7, textAlign: 'center' }}>
+            <Button variant="contained" sx={styleStrokaTabl} onClick={() => ClickKnop(i)}>
               {i + 1}
             </Button>
           </Grid>
 
-          <Grid item xs={1.2} sx={{ fontSize: 27, textAlign: "right" }}>
+          <Grid item xs={1.2} sx={{ fontSize: 27, textAlign: 'right' }}>
             {star}
           </Grid>
-          {/* <Grid item xs={1.0} sx={{ border: 1 }}> */}
-          <Grid item xs={2.5} sx={{ border: 1 }}>
-            {/* <Button
-              variant="contained"
-              sx={styleStrokaTablImg}
-              onClick={() => ClickImg(i)}
-            > */}
-              {/* <CardMedia
+          <Grid item xs={1.0} sx={{ border: 0 }}>
+            <Button variant="contained" sx={styleStrokaTablImg} onClick={() => ClickImg(i)}>
+              <CardMedia
                 component="img"
-                sx={{ textAlign: "center", height: 40, width: 30 }}
+                sx={{ textAlign: 'center', height: 40, width: 30 }}
                 image={host}
-              /> */}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                xmlnsXlink="http://www.w3.org/1999/xlink"
-                width={100}
-                height={100}
-                style={{
-                  maxWidth: 100,
-                  minWidth: 100,
-                  maxHeight: 100,
-                  minHeight: 100,
-                }}
-
-                //version="1"
-                //viewBox="0 0 91 54"
-              >
-                <image
-                  width={"99.9%"}
-                  height={"99.9%"}
-                  xlinkHref={"data:image/png;base64," + datestat.phSvg}
-                />
-              </svg>
-            {/* </Button> */}
+              />
+            </Button>
           </Grid>
-          {massFaz[i].runRec && (
-            <Grid item xs={1.3} sx={{ fontSize: 30, textAlign: "left" }}>
-              &bull;
-            </Grid>
-          )}
-          {!massFaz[i].runRec && (
-            <Grid item xs={1.3} sx={{ fontSize: 30, textAlign: "left" }}>
-              {" "}
-            </Grid>
-          )}
+          <Grid item xs={1.3} sx={{ fontSize: 30, textAlign: 'left' }}>
+            {bull}
+          </Grid>
 
-          {/* <Grid item xs={1.5} sx={{ border: 0, textAlign: "center" }}>
-            --
-          </Grid> */}
+          <Grid item xs={1.6} sx={{ border: 0, textAlign: 'center' }}>
+            {OutputFazaImg()}
+          </Grid>
 
           <Grid item xs sx={{ fontSize: 14 }}>
             {massFaz[i].name}
           </Grid>
-        </Grid>
+        </Grid>,
       );
     }
     return resStr;
@@ -228,23 +212,23 @@ const GsToDoMode = (props: {
         )}
 
         <Grid container sx={{ marginTop: 0 }}>
-          <Grid item xs sx={{ fontSize: 18, textAlign: "center" }}>
+          <Grid item xs sx={{ fontSize: 18, textAlign: 'center' }}>
             Режим: <b>{map.routes[newMode].description}</b>
           </Grid>
         </Grid>
 
         <Box sx={{ marginTop: 1 }}>
-          <Grid container sx={{ bgcolor: "#C0E2C3" }}>
-            {StrokaHeader(1, "Номер")}
-            {StrokaHeader(3.5, "Состояние")}
-            {StrokaHeader(1.5, "Фаза")}
-            {StrokaHeader(6, "ДК")}
+          <Grid container sx={{ bgcolor: '#C0E2C3' }}>
+            {StrokaHeader(1, 'Номер')}
+            {StrokaHeader(3.5, 'Состояние')}
+            {StrokaHeader(1.5, 'Фаза')}
+            {StrokaHeader(6, 'ДК')}
           </Grid>
 
-          <Box sx={{ overflowX: "auto", height: "81vh" }}>{StrokaTabl()}</Box>
+          <Box sx={{ overflowX: 'auto', height: '81vh' }}>{StrokaTabl()}</Box>
 
           {!toDoMode && (
-            <Box sx={{ marginTop: 1.5, textAlign: "center" }}>
+            <Box sx={{ marginTop: 1.5, textAlign: 'center' }}>
               <Button sx={styleModalMenu} onClick={() => ToDoMode(2)}>
                 Начать исполнение
               </Button>
@@ -252,7 +236,7 @@ const GsToDoMode = (props: {
           )}
 
           {toDoMode && (
-            <Box sx={{ marginTop: 1.5, textAlign: "center" }}>
+            <Box sx={{ marginTop: 1.5, textAlign: 'center' }}>
               <Button sx={styleModalMenu} onClick={() => ToDoMode(0)}>
                 Закончить исполнение
               </Button>
