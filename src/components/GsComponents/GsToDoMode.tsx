@@ -132,8 +132,8 @@ const GsToDoMode = (props: {
     let resStr = [];
 
     for (let i = 0; i < massFaz.length; i++) {
-      let bull = '';
-      if (massFaz[i].runRec) bull = '•';
+      let bull = ' ';
+      if (massFaz[i].runRec) bull = ' •';
       let host = 'https://localhost:3000/18.svg';
       if (!debug) {
         let num = map.tflight[massFaz[i].idx].tlsost.num.toString();
@@ -158,7 +158,7 @@ const GsToDoMode = (props: {
               {OutputVertexImg(host)}
             </Button>
           </Grid>
-          <Grid item xs={1.3} sx={{ fontSize: 30, textAlign: 'left' }}>
+          <Grid item xs={1.3} sx={{ fontSize: 30, textAlign: 'center' }}>
             {bull}
           </Grid>
 
