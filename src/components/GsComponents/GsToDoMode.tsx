@@ -4,8 +4,8 @@ import { useSelector } from 'react-redux';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-import CardMedia from '@mui/material/CardMedia';
 
+import { OutputFazaImg, OutputVertexImg } from '../MapServiceFunctions';
 import { SendSocketRoute } from '../MapSocketFunctions';
 
 import { styleModalEnd } from '../MainMapStyle';
@@ -90,6 +90,7 @@ const GsToDoMode = (props: {
     let massIdevice: Array<number> = [];
     if (mode) {
       console.log('MASSFAZ', massFaz);
+
       for (let i = 0; i < massFaz.length; i++) {
         massIdevice.push(massFaz[i].idevice);
       }
@@ -128,30 +129,6 @@ const GsToDoMode = (props: {
       setTrigger(!trigger);
     };
 
-    const OutputFazaImg = () => {
-      return (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          xmlnsXlink="http://www.w3.org/1999/xlink"
-          width={70}
-          height={40}
-          style={{
-            border: 1,
-            maxWidth: 40,
-            minWidth: 40,
-            maxHeight: 40,
-            minHeight: 40,
-          }}>
-          <image
-            width={'99.9%'}
-            height={'99.9%'}
-            xlinkHref={'data:image/png;base64,' + datestat.phSvg}
-            //xlinkHref={'data:image/png;base64,' + null}
-          />
-        </svg>
-      );
-    };
-
     let resStr = [];
 
     for (let i = 0; i < massFaz.length; i++) {
@@ -178,11 +155,7 @@ const GsToDoMode = (props: {
           </Grid>
           <Grid item xs={1.0} sx={{ border: 0 }}>
             <Button variant="contained" sx={styleStrokaTablImg} onClick={() => ClickImg(i)}>
-              <CardMedia
-                component="img"
-                sx={{ textAlign: 'center', height: 40, width: 30 }}
-                image={host}
-              />
+              {OutputVertexImg(host)}
             </Button>
           </Grid>
           <Grid item xs={1.3} sx={{ fontSize: 30, textAlign: 'left' }}>
@@ -190,7 +163,7 @@ const GsToDoMode = (props: {
           </Grid>
 
           <Grid item xs={1.6} sx={{ border: 0, textAlign: 'center' }}>
-            {OutputFazaImg()}
+            {OutputFazaImg(datestat.phSvg)}
           </Grid>
 
           <Grid item xs sx={{ fontSize: 14 }}>

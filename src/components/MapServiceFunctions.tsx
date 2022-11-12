@@ -1,15 +1,16 @@
-import Button from "@mui/material/Button";
+import Button from '@mui/material/Button';
+import CardMedia from '@mui/material/CardMedia';
 
-import { Pointer } from "./../App";
-import { DateMAP } from "./../interfaceMAP.d";
+import { Pointer } from './../App';
+import { DateMAP } from './../interfaceMAP.d';
 
-import { styleInfoSoob } from "./MainMapStyle";
+import { styleInfoSoob } from './MainMapStyle';
 
 export const MasskPoint = (rec: any) => {
   let masskPoint: Pointer = {
     ID: -1,
     coordinates: [],
-    nameCoordinates: "",
+    nameCoordinates: '',
     region: 0,
     area: 0,
     phSvg: [],
@@ -24,11 +25,11 @@ export const MasskPoint = (rec: any) => {
 };
 
 export const DecodingCoord = (coord: string) => {
-  return coord.split(",").map(Number);
+  return coord.split(',').map(Number);
 };
 
 export const CodingCoord = (coord: Array<number>) => {
-  return String(coord[0]) + "," + String(coord[1]);
+  return String(coord[0]) + ',' + String(coord[1]);
 };
 
 export const DoublRoute = (massroute: any, pointA: any, pointB: any) => {
@@ -36,8 +37,7 @@ export const DoublRoute = (massroute: any, pointA: any, pointB: any) => {
   let pointAcod = CodingCoord(pointA);
   let pointBcod = CodingCoord(pointB);
   for (let i = 0; i < massroute.length; i++) {
-    if (massroute[i].starts === pointAcod && massroute[i].stops === pointBcod)
-      flDubl = true;
+    if (massroute[i].starts === pointAcod && massroute[i].stops === pointBcod) flDubl = true;
   }
   return flDubl;
 };
@@ -55,26 +55,26 @@ export const getPointData = (
   index: number,
   pointAaIndex: number,
   pointBbIndex: number,
-  massdk: any
+  massdk: any,
 ) => {
-  let textBalloon = "";
-  if (index === pointBbIndex) textBalloon = "Конец";
-  if (index === pointAaIndex) textBalloon = "Начало";
+  let textBalloon = '';
+  if (index === pointBbIndex) textBalloon = 'Конец';
+  if (index === pointAaIndex) textBalloon = 'Начало';
 
   return {
-    hintContent: "ID:" + massdk[index].ID + " " + massdk[index].nameCoordinates, //balloonContent: PressBalloon(index), iconCaption: textBalloon,
+    hintContent: 'ID:' + massdk[index].ID + ' ' + massdk[index].nameCoordinates, //balloonContent: PressBalloon(index), iconCaption: textBalloon,
     iconContent: textBalloon,
   };
 };
 
 export const getPointOptions1 = (debug: boolean, idx: number, map: DateMAP) => {
-  let host = "https://localhost:3000/18.svg";
+  let host = 'https://localhost:3000/18.svg';
   if (!debug) {
     let num = map.tflight[idx].tlsost.num.toString();
-    host = window.location.origin + "/free/img/trafficLights/" + num + ".svg";
+    host = window.location.origin + '/free/img/trafficLights/' + num + '.svg';
   }
   return {
-    iconLayout: "default#image",
+    iconLayout: 'default#image',
     //https://192.168.115.25/free/img/trafficLights/18.svg
     iconImageHref: host,
     iconImageSize: [30, 38],
@@ -83,16 +83,16 @@ export const getPointOptions1 = (debug: boolean, idx: number, map: DateMAP) => {
 };
 
 export const getPointOptions2 = (index: number, massMem: Array<number>) => {
-  let colorBalloon = "islands#violetCircleDotIcon";
+  let colorBalloon = 'islands#violetCircleDotIcon';
   let aaa = massMem.indexOf(index);
 
   if (aaa >= 0) {
-    colorBalloon = "islands#redCircleDotIcon";
+    colorBalloon = 'islands#redCircleDotIcon';
     if (massMem.length === aaa + 1 && massMem.length) {
-      colorBalloon = "islands#darkBlueStretchyIcon";
+      colorBalloon = 'islands#darkBlueStretchyIcon';
     }
     if (!aaa && massMem.length) {
-      colorBalloon = "islands#redStretchyIcon";
+      colorBalloon = 'islands#redStretchyIcon';
     }
   }
 
@@ -103,13 +103,13 @@ export const getPointOptions2 = (index: number, massMem: Array<number>) => {
 
 export const ErrorHaveVertex = (rec: any) => {
   alert(
-    "Не существует светофор: Регион " +
+    'Не существует светофор: Регион ' +
       rec.region +
-      " Район " +
+      ' Район ' +
       rec.area +
-      " ID " +
+      ' ID ' +
       rec.id +
-      ". Устройство будет проигнорировано и удалёно из плана"
+      '. Устройство будет проигнорировано и удалёно из плана',
   );
 };
 
@@ -132,14 +132,26 @@ export const getMultiRouteOptions = () => {
 //=== GsSetPhase ===================================
 export const NameMode = () => {
   let nameMode =
-    "(" +
-    new Date().toLocaleDateString() +
-    " " +
-    new Date().toLocaleTimeString() +
-    ")";
+    '(' + new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString() + ')';
   return nameMode;
 };
+//=== GsToDoMode ===================================
+export const OutputFazaImg = (img: any) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      xmlnsXlink="http://www.w3.org/1999/xlink"
+      style={{ width: 40, height: 40 }}>
+      <image width={'100%'} height={'100%'} xlinkHref={'data:image/png;base64,' + img} />
+    </svg>
+  );
+};
 
+export const OutputVertexImg = (host: string) => {
+  return (
+    <CardMedia component="img" sx={{ textAlign: 'center', height: 40, width: 30 }} image={host} />
+  );
+};
 //=== Разное =======================================
 // export const RecevKeySvg = (recMassroute: any) => {
 //   let keySvg =
@@ -158,11 +170,11 @@ export const StrokaMenuGlob = (soob: string, func: any, mode: number) => {
     marginRight: 0.1,
     maxWidth: dlSoob,
     minWidth: dlSoob,
-    maxHeight: "21px",
-    minHeight: "21px",
-    backgroundColor: "#D7F1C0",
-    color: "black",
-    textTransform: "unset !important",
+    maxHeight: '21px',
+    minHeight: '21px',
+    backgroundColor: '#D7F1C0',
+    color: 'black',
+    textTransform: 'unset !important',
   };
 
   return (
