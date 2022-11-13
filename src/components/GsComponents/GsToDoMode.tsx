@@ -151,7 +151,7 @@ const GsToDoMode = (props: {
           <Grid item xs={1.2} sx={{ fontSize: 27, textAlign: 'right' }}>
             {star}
           </Grid>
-          <Grid item xs={1.0} sx={{ border: 0 }}>
+          <Grid item xs={1.0} sx={{}}>
             <Button variant="contained" sx={styleStrokaTablImg} onClick={() => ClickImg(i)}>
               {OutputVertexImg(host)}
             </Button>
@@ -160,7 +160,7 @@ const GsToDoMode = (props: {
             {bull}
           </Grid>
 
-          <Grid item xs={1.6} sx={{ border: 0, textAlign: 'center' }}>
+          <Grid item xs={1.6} sx={{ textAlign: 'center' }}>
             {OutputFazaImg(datestat.phSvg)}
           </Grid>
 
@@ -191,9 +191,9 @@ const GsToDoMode = (props: {
         <Box sx={{ marginTop: 1 }}>
           <Grid container sx={{ bgcolor: '#C0E2C3' }}>
             {StrokaHeader(1, 'Номер')}
-            {StrokaHeader(3.5, 'Состояние')}
-            {StrokaHeader(1.5, 'Фаза')}
-            {StrokaHeader(6, 'ДК')}
+            {StrokaHeader(3.6, 'Состояние')}
+            {StrokaHeader(1.6, 'Фаза')}
+            {StrokaHeader(5.8, 'ДК')}
           </Grid>
 
           <Box sx={{ overflowX: 'auto', height: '81vh' }}>{StrokaTabl()}</Box>
