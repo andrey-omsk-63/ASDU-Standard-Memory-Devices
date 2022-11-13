@@ -89,8 +89,6 @@ const GsToDoMode = (props: {
   const ToDoMode = (mode: number) => {
     let massIdevice: Array<number> = [];
     if (mode) {
-      console.log('MASSFAZ', massFaz);
-
       for (let i = 0; i < massFaz.length; i++) {
         massIdevice.push(massFaz[i].idevice);
       }
@@ -158,7 +156,7 @@ const GsToDoMode = (props: {
               {OutputVertexImg(host)}
             </Button>
           </Grid>
-          <Grid item xs={1.3} sx={{ fontSize: 30, textAlign: 'center' }}>
+          <Grid item xs={1.3} sx={{ fontSize: 30, marginLeft: 1 }}>
             {bull}
           </Grid>
 
