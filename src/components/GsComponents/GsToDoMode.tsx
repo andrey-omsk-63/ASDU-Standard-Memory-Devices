@@ -65,7 +65,7 @@ const GsToDoMode = (props: {
     if (!maskFaz.phases.length) {
       maskFaz.img = [null, null, null];
     } else {
-        maskFaz.img = massdk[maskFaz.idx].phSvg;
+      maskFaz.img = massdk[maskFaz.idx].phSvg;
     }
     return maskFaz;
   };
@@ -172,7 +172,7 @@ const GsToDoMode = (props: {
           </Grid>
 
           <Grid item xs={1.6} sx={{ textAlign: 'center' }}>
-            {OutputFazaImg(massFaz[i].img[massFaz[i].faza-1])}
+            {OutputFazaImg(massFaz[i].img[massFaz[i].faza - 1])}
           </Grid>
 
           <Grid item xs sx={{ fontSize: 14 }}>
