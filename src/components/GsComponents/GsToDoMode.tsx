@@ -30,6 +30,10 @@ const GsToDoMode = (props: {
     const { mapReducer } = state;
     return mapReducer.map.dateMap;
   });
+  let massdk = useSelector((state: any) => {
+    const { massdkReducer } = state;
+    return massdkReducer.massdk;
+  });
   let datestat = useSelector((state: any) => {
     const { statsaveReducer } = state;
     return statsaveReducer.datestat;
@@ -43,6 +47,7 @@ const GsToDoMode = (props: {
 
   //=== инициализация ======================================
   const MakeMaskFaz = (i: number) => {
+    let im: Array<string | null> = [];
     let maskFaz = {
       idx: 0,
       faza: 1,
@@ -51,11 +56,17 @@ const GsToDoMode = (props: {
       name: '',
       starRec: false,
       runRec: false,
+      img: im,
     };
     maskFaz.idx = props.massMem[i];
-    maskFaz.name = map.tflight[maskFaz.idx].description;
-    maskFaz.phases = map.tflight[maskFaz.idx].phases;
+    maskFaz.name = massdk[maskFaz.idx].nameCoordinates;
+    maskFaz.phases = massdk[maskFaz.idx].phases;
     maskFaz.idevice = map.tflight[maskFaz.idx].idevice;
+    if (!maskFaz.phases.length) {
+      maskFaz.img = [null, null, null];
+    } else {
+        maskFaz.img = massdk[maskFaz.idx].phSvg;
+    }
     return maskFaz;
   };
 
@@ -161,7 +172,7 @@ const GsToDoMode = (props: {
           </Grid>
 
           <Grid item xs={1.6} sx={{ textAlign: 'center' }}>
-            {OutputFazaImg(datestat.phSvg)}
+            {OutputFazaImg(massFaz[i].img[massFaz[i].faza-1])}
           </Grid>
 
           <Grid item xs sx={{ fontSize: 14 }}>

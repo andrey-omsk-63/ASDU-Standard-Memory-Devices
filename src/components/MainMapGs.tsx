@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { massdkCreate, massmodeCreate } from '../redux/actions';
-import { mapCreate, coordinatesCreate } from '../redux/actions';
+import { mapCreate, massmodeCreate } from '../redux/actions';
 
 import Grid from '@mui/material/Grid';
 
@@ -19,10 +18,9 @@ import { getMultiRouteOptions, StrokaHelp } from './MapServiceFunctions';
 import { getReferencePoints, CenterCoord } from './MapServiceFunctions';
 import { getPointData, getPointOptions1 } from './MapServiceFunctions';
 import { getPointOptions2, ErrorHaveVertex } from './MapServiceFunctions';
-import { StrokaMenuGlob, MasskPoint } from './MapServiceFunctions';
+import { StrokaMenuGlob } from './MapServiceFunctions';
 
 import { SendSocketUpdateRoute } from './MapSocketFunctions';
-import { SendSocketGetPhases } from './MapSocketFunctions';
 
 import { searchControl } from './MainMapStyle';
 
@@ -57,6 +55,7 @@ const MainMapGs = () => {
     const { massdkReducer } = state;
     return massdkReducer.massdk;
   });
+  console.log("massdk", massdk);
   let massmode = useSelector((state: any) => {
     const { massmodeReducer } = state;
     return massmodeReducer.massmode;
@@ -69,7 +68,6 @@ const MainMapGs = () => {
     const { statsaveReducer } = state;
     return statsaveReducer.datestat;
   });
-  //console.log("datestat", datestat);
   const debug = datestat.debug;
   const ws = datestat.ws;
   const dispatch = useDispatch();
@@ -254,53 +252,25 @@ const MainMapGs = () => {
       // });
       mapp.current.events.add('mousedown', function (e: any) {
         pointCenter = mapp.current.getCenter(); // нажата левая/правая кнопка мыши 0, 1 или 2 в зависимости от того, какая кнопка мыши нажата (В IE значение может быть от 0 до 7).
-        //console.log('Новый центр++', pointCenter);
       });
       mapp.current.events.add(['boundschange'], function () {
         pointCenter = mapp.current.getCenter();
         zoom = mapp.current.getZoom(); // покрутили колёсико мыши
-        //console.log('Новый центр+++', pointCenter);
       });
       if (flagCenter) {
         pointCenter = newCenter;
-        //console.log('Новый центр', pointCenter);
         setFlagCenter(false);
       }
     }
   };
 
   const NewPointCenter = (coord: any) => {
-    //console.log('newCenter:', coord);
     newCenter = coord;
     setFlagCenter(true);
   };
 
   //=== инициализация ======================================
   if (!flagOpen && Object.keys(map.tflight).length) {
-    for (let i = 0; i < map.tflight.length; i++) {
-      let masskPoint = MasskPoint(map.tflight[i]);
-      massdk.push(masskPoint);
-      coordinates.push(masskPoint.coordinates);
-    }
-    let ch = 1;
-    for (let i = 0; i < map.routes.length; i++) {
-      let nameZU = map.routes[i].description;
-      if (!nameZU) nameZU = 'без имени(' + ch++ + ')';
-      let maskName = {
-        name: nameZU,
-        delRec: false,
-      };
-      massmode.push(maskName);
-    }
-    dispatch(massdkCreate(massdk));
-    dispatch(coordinatesCreate(coordinates));
-    dispatch(massmodeCreate(massmode));
-    // получение изображения фаз
-    for (let i = 0; i < massdk.length; i++) {
-      let reg = massdk[i].region.toString();
-      let area = massdk[i].area.toString();
-      SendSocketGetPhases(debug, ws, reg, area, massdk[i].ID);
-    }
     pointCenter = CenterCoord(
       map.boxPoint.point0.Y,
       map.boxPoint.point0.X,
