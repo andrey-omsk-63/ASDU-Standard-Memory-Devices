@@ -1,21 +1,23 @@
-import * as React from 'react';
-import { useSelector } from 'react-redux';
+import * as React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { massfazCreate } from '../../redux/actions';
 
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
 
-import { OutputFazaImg, OutputVertexImg } from '../MapServiceFunctions';
-import { SendSocketRoute } from '../MapSocketFunctions';
+import { Fazer } from "./../../App";
 
-import { styleModalEnd } from '../MainMapStyle';
-import { styleModalMenu, styleStrokaTablImg } from './GsComponentsStyle';
-import { styleToDoMode, styleStrokaTabl } from './GsComponentsStyle';
+import { OutputFazaImg, OutputVertexImg } from "../MapServiceFunctions";
+import { SendSocketRoute } from "../MapSocketFunctions";
 
-let newInput = true;
-let massFaz: any = [];
+import { styleModalEnd } from "../MainMapStyle";
+import { styleModalMenu, styleStrokaTablImg } from "./GsComponentsStyle";
+import { styleToDoMode, styleStrokaTabl } from "./GsComponentsStyle";
 
+//let massFaz: any = [];
 let toDoMode = false;
+let init = true;
 
 const GsToDoMode = (props: {
   newMode: number;
@@ -34,34 +36,40 @@ const GsToDoMode = (props: {
     const { massdkReducer } = state;
     return massdkReducer.massdk;
   });
+  let massfaz = useSelector((state: any) => {
+    const { massfazReducer } = state;
+    return massfazReducer.massfaz;
+  });
+  console.log("TODOmassfaz", massfaz);
   let datestat = useSelector((state: any) => {
     const { statsaveReducer } = state;
     return statsaveReducer.datestat;
   });
   const debug = datestat.debug;
   const ws = datestat.ws;
-  //const dispatch = useDispatch();
+  const dispatch = useDispatch();
   //========================================================
   const [trigger, setTrigger] = React.useState(true);
   let newMode = props.newMode;
 
   //=== инициализация ======================================
   const MakeMaskFaz = (i: number) => {
-    let im: Array<string | null> = [];
-    let maskFaz = {
+    //let im: Array<string | null> = [];
+    let maskFaz: Fazer = {
       idx: 0,
       faza: 1,
       phases: [],
       idevice: 0,
-      name: '',
+      name: "",
       starRec: false,
       runRec: false,
-      img: im,
+      img: [],
     };
     maskFaz.idx = props.massMem[i];
     maskFaz.name = massdk[maskFaz.idx].nameCoordinates;
     maskFaz.phases = massdk[maskFaz.idx].phases;
     maskFaz.idevice = map.tflight[maskFaz.idx].idevice;
+    maskFaz.faza = map.routes[newMode].listTL[i].phase;
     if (!maskFaz.phases.length) {
       maskFaz.img = [null, null, null];
     } else {
@@ -69,39 +77,27 @@ const GsToDoMode = (props: {
     }
     return maskFaz;
   };
-
-  if (newInput) {
-    massFaz = [];
+  if (init) {
+    massfaz = [];
     for (let i = 0; i < props.massMem.length; i++) {
-      massFaz.push(MakeMaskFaz(i));
+      massfaz.push(MakeMaskFaz(i));
     }
-    newInput = false;
-  } else {
-    let massRab: any = [];
-    for (let i = 0; i < props.massMem.length; i++) {
-      let flagHave = false;
-      for (let j = 0; j < massFaz.length; j++) {
-        if (massFaz[j].idx === props.massMem[i]) {
-          massRab.push(massFaz[j]);
-          flagHave = true;
-          break;
-        }
-      }
-      if (!flagHave) massRab.push(MakeMaskFaz(i));
-    }
-    massFaz = massRab;
+    init = false;
+    dispatch(massfazCreate(massfaz));
   }
+
   //========================================================
   const handleCloseSetEnd = () => {
     props.funcSize(11.99);
     toDoMode = false;
+    init = true;
   };
 
   const ToDoMode = (mode: number) => {
     let massIdevice: Array<number> = [];
     if (mode) {
-      for (let i = 0; i < massFaz.length; i++) {
-        massIdevice.push(massFaz[i].idevice);
+      for (let i = 0; i < massfaz.length; i++) {
+        massIdevice.push(massfaz[i].idevice);
       }
       SendSocketRoute(debug, ws, massIdevice, true);
       toDoMode = true; // выполнение режима
@@ -112,13 +108,12 @@ const GsToDoMode = (props: {
       props.funcMode(mode); // закончить исполнение
       props.funcHelper(true);
       handleCloseSetEnd();
-      newInput = true;
     }
   };
 
   const StrokaHeader = (xss: number, soob: string) => {
     return (
-      <Grid item xs={xss} sx={{ fontSize: 14, textAlign: 'center' }}>
+      <Grid item xs={xss} sx={{ fontSize: 14, textAlign: "center" }}>
         <b>{soob}</b>
       </Grid>
     );
@@ -128,57 +123,79 @@ const GsToDoMode = (props: {
     const ClickKnop = (mode: number) => {
       let coor = map.routes[newMode].listTL[mode].point;
       let coord = [coor.Y, coor.X];
-      massFaz[mode].starRec = !massFaz[mode].starRec;
+      massfaz[mode].starRec = !massfaz[mode].starRec;
       props.funcCenter(coord);
       setTrigger(!trigger);
     };
 
     const ClickImg = (mode: number) => {
-      massFaz[mode].runRec = !massFaz[mode].runRec;
+      massfaz[mode].runRec = !massfaz[mode].runRec;
       setTrigger(!trigger);
     };
 
     let resStr = [];
 
-    for (let i = 0; i < massFaz.length; i++) {
-      let bull = ' ';
-      if (massFaz[i].runRec) bull = ' •';
-      let host = 'https://localhost:3000/18.svg';
+    for (let i = 0; i < massfaz.length; i++) {
+      let bull = " ";
+      if (massfaz[i].runRec) bull = " •";
+      let host = "https://localhost:3000/18.svg";
       if (!debug) {
-        let num = map.tflight[massFaz[i].idx].tlsost.num.toString();
-        host = window.location.origin + '/free/img/trafficLights/' + num + '.svg';
+        let num = map.tflight[massfaz[i].idx].tlsost.num.toString();
+        host =
+          window.location.origin + "/free/img/trafficLights/" + num + ".svg";
       }
-      let star = '';
-      if (massFaz[i].starRec) star = '*';
+      let star = "";
+      if (massfaz[i].starRec) star = "*";
+      let takt = "пром такт";
+      let pad = 1.2;
+      if (i !== 1) {
+        takt = massfaz[i].faza;
+        pad = 0;
+      } 
 
       resStr.push(
         <Grid key={i} container sx={{ marginTop: 1 }}>
-          <Grid item xs={1} sx={{ paddingTop: 0.7, textAlign: 'center' }}>
-            <Button variant="contained" sx={styleStrokaTabl} onClick={() => ClickKnop(i)}>
+          <Grid item xs={1} sx={{ paddingTop: 0.7, textAlign: "center" }}>
+            <Button
+              variant="contained"
+              sx={styleStrokaTabl}
+              onClick={() => ClickKnop(i)}
+            >
               {i + 1}
             </Button>
           </Grid>
 
-          <Grid item xs={1.2} sx={{ fontSize: 27, textAlign: 'right' }}>
+          <Grid item xs={1.2} sx={{ fontSize: 27, textAlign: "right" }}>
             {star}
           </Grid>
           <Grid item xs={1.0} sx={{}}>
-            <Button variant="contained" sx={styleStrokaTablImg} onClick={() => ClickImg(i)}>
+            <Button
+              variant="contained"
+              sx={styleStrokaTablImg}
+              onClick={() => ClickImg(i)}
+            >
               {OutputVertexImg(host)}
             </Button>
           </Grid>
-          <Grid item xs={1.3} sx={{ fontSize: 30, marginLeft: 1 }}>
+          <Grid item xs={0.4} sx={{ border: 0, fontSize: 30, marginLeft: 1 }}>
             {bull}
           </Grid>
 
-          <Grid item xs={1.6} sx={{ textAlign: 'center' }}>
-            {OutputFazaImg(massFaz[i].img[massFaz[i].faza - 1])}
+          <Grid
+            item
+            xs={1.1}
+            sx={{ fontSize: 12, paddingTop: 1.7, textAlign: "right" }}
+          >
+            {takt}
+          </Grid>
+          <Grid item xs={2} sx={{ paddingTop: pad, textAlign: "center" }}>
+            {OutputFazaImg(massfaz[i].img[massfaz[i].faza - 1])}
           </Grid>
 
           <Grid item xs sx={{ fontSize: 14 }}>
-            {massFaz[i].name}
+            {massfaz[i].name}
           </Grid>
-        </Grid>,
+        </Grid>
       );
     }
     return resStr;
@@ -194,23 +211,23 @@ const GsToDoMode = (props: {
         )}
 
         <Grid container sx={{ marginTop: 0 }}>
-          <Grid item xs sx={{ fontSize: 18, textAlign: 'center' }}>
+          <Grid item xs sx={{ fontSize: 18, textAlign: "center" }}>
             Режим: <b>{map.routes[newMode].description}</b>
           </Grid>
         </Grid>
 
         <Box sx={{ marginTop: 1 }}>
-          <Grid container sx={{ bgcolor: '#C0E2C3' }}>
-            {StrokaHeader(1, 'Номер')}
-            {StrokaHeader(3.6, 'Состояние')}
-            {StrokaHeader(1.6, 'Фаза')}
-            {StrokaHeader(5.8, 'ДК')}
+          <Grid container sx={{ bgcolor: "#C0E2C3" }}>
+            {StrokaHeader(1, "Номер")}
+            {StrokaHeader(3.6, "Состояние")}
+            {StrokaHeader(1.9, "Фаза")}
+            {StrokaHeader(5.5, "ДК")}
           </Grid>
 
-          <Box sx={{ overflowX: 'auto', height: '81vh' }}>{StrokaTabl()}</Box>
+          <Box sx={{ overflowX: "auto", height: "81vh" }}>{StrokaTabl()}</Box>
 
           {!toDoMode && (
-            <Box sx={{ marginTop: 1.5, textAlign: 'center' }}>
+            <Box sx={{ marginTop: 1.5, textAlign: "center" }}>
               <Button sx={styleModalMenu} onClick={() => ToDoMode(2)}>
                 Начать исполнение
               </Button>
@@ -218,7 +235,7 @@ const GsToDoMode = (props: {
           )}
 
           {toDoMode && (
-            <Box sx={{ marginTop: 1.5, textAlign: 'center' }}>
+            <Box sx={{ marginTop: 1.5, textAlign: "center" }}>
               <Button sx={styleModalMenu} onClick={() => ToDoMode(0)}>
                 Закончить исполнение
               </Button>

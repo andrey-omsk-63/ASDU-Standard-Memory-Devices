@@ -3,7 +3,7 @@ import {
   MASSDK_CREATE,
   MASSMODE_CREATE,
   STATSAVE_CREATE,
-  // MASSROUTE_CREATE,
+  MASSFAZ_CREATE,
   // MASSROUTEPRO_CREATE,
   COORDINATES_CREATE,
 } from './types';
@@ -11,6 +11,7 @@ import {
 import { DateMAP } from './../interfaceMAP.d';
 //import { DateRoute } from "./../interfaceRoute.d";
 import { Pointer } from './../App';
+import { Fazer } from './../App';
 import { Stater } from './../App';
 import { NameMode } from './../App';
 
@@ -18,6 +19,14 @@ export function massdkCreate(massDka: Pointer[] = []) {
   return {
     type: MASSDK_CREATE,
     data: massDka,
+  };
+}
+
+export function massfazCreate(massFaza: Fazer[] = []) {
+  //console.log('2massfazReducer:', massFaza);
+  return {
+    type: MASSFAZ_CREATE,
+    data: massFaza,
   };
 }
 

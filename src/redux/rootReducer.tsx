@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import { massdkReducer } from './massdkReducer';
+import { massfazReducer } from './massfazReducer';
 import { massmodeReducer } from './massmodeReducer';
 import { statsaveReducer } from './statsaveReducer';
 // import { massrouteReducer } from './massrouteReducer';
@@ -11,6 +12,7 @@ export const rootReducer = combineReducers({
   //commReducer,
   mapReducer,
   massdkReducer,
+  massfazReducer,
   massmodeReducer,
   statsaveReducer,
   // massrouteReducer,

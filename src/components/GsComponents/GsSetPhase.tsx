@@ -116,8 +116,6 @@ const GsSetPhase = (props: {
       massFaz = massRab;
     }
   }
-  console.log('massFazGl', massFaz);
-
   //========================================================
   const handleCloseSetEnd = () => {
     if (chDel) DelRec();
@@ -306,8 +304,6 @@ const GsSetPhase = (props: {
         color: colorRec,
         textTransform: 'unset !important',
       };
-
-      console.log('massFaz[i].img', massFaz[i], massFaz[i].faza);
 
       resStr.push(
         <Grid key={i} container sx={{ marginTop: 1, color: colorRec, fontSize: fSize }}>

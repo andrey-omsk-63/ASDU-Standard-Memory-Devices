@@ -55,7 +55,12 @@ const MainMapGs = () => {
     const { massdkReducer } = state;
     return massdkReducer.massdk;
   });
-  console.log("massdk", massdk);
+  //console.log("massdk", massdk);
+  // let massfaz = useSelector((state: any) => {
+  //   const { massfazReducer } = state;
+  //   return massfazReducer.massfaz;
+  // });
+  // console.log("MainMAPmassfaz", massfaz);
   let massmode = useSelector((state: any) => {
     const { massmodeReducer } = state;
     return massmodeReducer.massmode;
