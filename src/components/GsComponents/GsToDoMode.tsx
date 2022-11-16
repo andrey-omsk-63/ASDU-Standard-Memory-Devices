@@ -15,7 +15,6 @@ import { styleModalEnd } from "../MainMapStyle";
 import { styleModalMenu, styleStrokaTablImg } from "./GsComponentsStyle";
 import { styleToDoMode, styleStrokaTabl } from "./GsComponentsStyle";
 
-//let massFaz: any = [];
 let toDoMode = false;
 let init = true;
 
@@ -107,6 +106,14 @@ const GsToDoMode = (props: {
       props.funcMode(mode);
       setTrigger(!trigger);
     } else {
+      // принудительное закрытие
+      for (let i = 0; i < massfaz.length; i++) {
+        if (massfaz[i].runRec) {
+          SendSocketDispatch(debug, ws, massfaz[i].idevice, 9, 9);
+          //massfaz[mode].runRec = !massfaz[mode].runRec;
+        }
+      }
+      //dispatch(massfazCreate(massfaz));
       SendSocketRoute(debug, ws, massIdevice, false);
       props.funcMode(mode); // закончить исполнение
       props.funcHelper(true);
@@ -139,6 +146,7 @@ const GsToDoMode = (props: {
         SendSocketDispatch(debug, ws, fazer.idevice, 9, 9);
       }
       massfaz[mode].runRec = !massfaz[mode].runRec;
+      dispatch(massfazCreate(massfaz));
       setTrigger(!trigger);
     };
 
@@ -219,6 +227,21 @@ const GsToDoMode = (props: {
     }
     return resStr;
   };
+
+  React.useEffect(() => {
+    if (toDoMode) {
+      const timer = setInterval(() => {
+        for (let i = 0; i < massfaz.length; i++) {
+          if (massfaz[i].runRec) {
+            let faz = massfaz[i];
+            SendSocketDispatch(debug, ws, faz.idevice, 9, faz.faza);
+          }
+        }
+        console.log("Отправка");
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  });
 
   return (
     <>

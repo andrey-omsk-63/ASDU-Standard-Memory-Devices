@@ -96,7 +96,7 @@ const App = () => {
     const { massfazReducer } = state;
     return massfazReducer.massfaz;
   });
-  console.log("APPmassfaz", massfaz);
+  //console.log("APPmassfaz", massfaz);
   let coordinates = useSelector((state: any) => {
     const { coordinatesReducer } = state;
     return coordinatesReducer.coordinates;

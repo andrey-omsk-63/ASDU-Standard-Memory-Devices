@@ -45,7 +45,6 @@ let modeToDo = 0;
 let newCenter: any = [];
 
 const MainMapGs = (props: {trigger: boolean}) => {
-  console.log('1TRIGGER:',props.trigger)
   //== Piece of Redux =======================================
   const map = useSelector((state: any) => {
     const { mapReducer } = state;
