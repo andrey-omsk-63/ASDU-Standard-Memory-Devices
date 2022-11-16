@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { massfazCreate } from '../../redux/actions';
+import { massfazCreate } from "../../redux/actions";
 
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -9,7 +9,7 @@ import Button from "@mui/material/Button";
 import { Fazer } from "./../../App";
 
 import { OutputFazaImg, OutputVertexImg } from "../MapServiceFunctions";
-import { SendSocketRoute } from "../MapSocketFunctions";
+import { SendSocketRoute, SendSocketDispatch } from "../MapSocketFunctions";
 
 import { styleModalEnd } from "../MainMapStyle";
 import { styleModalMenu, styleStrokaTablImg } from "./GsComponentsStyle";
@@ -26,7 +26,9 @@ const GsToDoMode = (props: {
   funcSize: any;
   funcCenter: any;
   funcHelper: any;
+  trigger: boolean;
 }) => {
+  //console.log("2TRIGGER:", props.trigger);
   //== Piece of Redux ======================================
   const map = useSelector((state: any) => {
     const { mapReducer } = state;
@@ -58,6 +60,7 @@ const GsToDoMode = (props: {
     let maskFaz: Fazer = {
       idx: 0,
       faza: 1,
+      fazaSist: -1,
       phases: [],
       idevice: 0,
       name: "",
@@ -128,7 +131,13 @@ const GsToDoMode = (props: {
       setTrigger(!trigger);
     };
 
-    const ClickImg = (mode: number) => {
+    const ClickVertex = (mode: number) => {
+      let fazer = massfaz[mode];
+      if (!fazer.runRec) {
+        SendSocketDispatch(debug, ws, fazer.idevice, 9, fazer.faza);
+      } else {
+        SendSocketDispatch(debug, ws, fazer.idevice, 9, 9);
+      }
       massfaz[mode].runRec = !massfaz[mode].runRec;
       setTrigger(!trigger);
     };
@@ -146,12 +155,18 @@ const GsToDoMode = (props: {
       }
       let star = "";
       if (massfaz[i].starRec) star = "*";
-      let takt = "пром такт";
+      let takt: number | string = "";
       let pad = 1.2;
-      if (i !== 1) {
-        takt = massfaz[i].faza;
-        pad = 0;
-      } 
+      let fazaImg: null | string = null;
+      if (massfaz[i].fazaSist > 0) {
+        takt = massfaz[i].fazaSist;
+        if (takt === 9) {
+          takt = "пром такт";
+          pad = 0;
+        }
+        if (takt <= massfaz[i].img.length)
+          fazaImg = massfaz[i].img[massfaz[i].fazaSist - 1];
+      }
 
       resStr.push(
         <Grid key={i} container sx={{ marginTop: 1 }}>
@@ -169,13 +184,16 @@ const GsToDoMode = (props: {
             {star}
           </Grid>
           <Grid item xs={1.0} sx={{}}>
-            <Button
-              variant="contained"
-              sx={styleStrokaTablImg}
-              onClick={() => ClickImg(i)}
-            >
-              {OutputVertexImg(host)}
-            </Button>
+            {!toDoMode && <>{OutputVertexImg(host)}</>}
+            {toDoMode && (
+              <Button
+                variant="contained"
+                sx={styleStrokaTablImg}
+                onClick={() => ClickVertex(i)}
+              >
+                {OutputVertexImg(host)}
+              </Button>
+            )}
           </Grid>
           <Grid item xs={0.4} sx={{ border: 0, fontSize: 30, marginLeft: 1 }}>
             {bull}
@@ -189,7 +207,8 @@ const GsToDoMode = (props: {
             {takt}
           </Grid>
           <Grid item xs={2} sx={{ paddingTop: pad, textAlign: "center" }}>
-            {OutputFazaImg(massfaz[i].img[massfaz[i].faza - 1])}
+            {/* {OutputFazaImg(massfaz[i].img[massfaz[i].faza - 1])} */}
+            {OutputFazaImg(fazaImg)}
           </Grid>
 
           <Grid item xs sx={{ fontSize: 14 }}>

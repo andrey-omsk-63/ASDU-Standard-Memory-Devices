@@ -107,6 +107,35 @@ export const SendSocketRoute = (
   };
   handleSendOpen();
 };
+
+export const SendSocketDispatch = (
+  debug: boolean,
+  ws: WebSocket,
+  idevice: number,
+  cmdd: number,
+  faza: number,
+) => {
+  console.log("dispatchProps:", debug, idevice, cmdd, faza);
+  const handleSendOpen = () => {
+    if (!debug) {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(
+          JSON.stringify({
+            type: "dispatch",
+            id: idevice,
+            cmd: cmdd,
+            param: faza,
+          })
+        );
+      } else {
+        setTimeout(() => {
+          handleSendOpen();
+        }, 1000);
+      }
+    }
+  };
+  handleSendOpen();
+};
 //=== SendSocket ===================================
 export const SendSocketGetPhases = (
   debugging: boolean,

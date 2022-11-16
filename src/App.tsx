@@ -48,6 +48,7 @@ export let massDk: Pointer[] = [];
 export interface Fazer {
   idx: number;
   faza: number;
+  fazaSist: number;
   phases: Array<number>;
   idevice: number;
   name: string;
@@ -60,6 +61,7 @@ export let massFaz: Fazer[] = [];
 let maskFaz: Fazer = {
   idx: 0,
   faza: 1,
+  fazaSist: -1,
   phases: [],
   idevice: 0,
   name: "",
@@ -82,6 +84,7 @@ let WS: any = null;
 let homeRegion: string = "0";
 let soob = "";
 let flagInit = false;
+//let trigger = false;
 
 const App = () => {
   // //== Piece of Redux ======================================
@@ -127,7 +130,6 @@ const App = () => {
     dispatch(massfazCreate(massfaz));
     dispatch(coordinatesCreate(coordinates));
     dispatch(massmodeCreate(massmode));
-
     // запросы на получение изображения фаз
     for (let i = 0; i < massdk.length; i++) {
       let reg = massdk[i].region.toString();
@@ -135,28 +137,6 @@ const App = () => {
       SendSocketGetPhases(dateStat.debug, WS, reg, area, massdk[i].ID);
     }
   };
-
-  const GetFases = (data: any) => {
-    for (let i = 0; i < massdk.length; i++) {
-      if (
-        massdk[i].region.toString() === data.pos.region &&
-        massdk[i].area.toString() === data.pos.area &&
-        massdk[i].ID === data.pos.id
-      ) {
-        if (data.images) {
-          if (data.images.length) {
-            for (let j = 0; j < data.images.length; j++) {
-              let k = Number(data.images[j].num);
-              if (k <= massdk[i].phSvg.length)
-                massdk[i].phSvg[k - 1] = data.images[j].phase;
-            }
-            dispatch(massdkCreate(massdk));
-          }
-          break;
-        }
-      }
-    }
-  }
 
   const host =
     "wss://" +
@@ -167,6 +147,7 @@ const App = () => {
 
   const [openSetErr, setOpenSetErr] = React.useState(false);
   const [openMapInfo, setOpenMapInfo] = React.useState(false);
+  const [trigger, setTrigger] = React.useState(false);
   //=== инициализация ======================================
   if (flagOpenWS) {
     WS = new WebSocket(host);
@@ -196,10 +177,14 @@ const App = () => {
       //console.log("пришло:", data.error, allData.type, data);
       switch (allData.type) {
         case "phases":
-          console.log("пришло:", data.phases, data.phases[1]);
           for (let i = 0; i < data.phases.length; i++) {
-            console.log("!!!:", data.phases[i]);
+            for (let j = 0; j < massfaz.length; j++) {
+              if (massfaz[j].idevice === data.phases[i].device)
+                massfaz[j].fazaSist = data.phases[i].phase;
+            }
           }
+          dispatch(massfazCreate(massfaz));
+          setTrigger(!trigger);
           break;
         case "mapInfo":
           dateMapGl = JSON.parse(JSON.stringify(data));
@@ -215,32 +200,31 @@ const App = () => {
           setOpenMapInfo(true);
           break;
         case "getPhases":
-          GetFases(data)
-          // for (let i = 0; i < massdk.length; i++) {
-          //   if (
-          //     massdk[i].region.toString() === data.pos.region &&
-          //     massdk[i].area.toString() === data.pos.area &&
-          //     massdk[i].ID === data.pos.id
-          //   ) {
-          //     if (data.images) {
-          //       if (data.images.length) {
-          //         for (let j = 0; j < data.images.length; j++) {
-          //           let k = Number(data.images[j].num);
-          //           if (k <= massdk[i].phSvg.length)
-          //             massdk[i].phSvg[k - 1] = data.images[j].phase;
-          //         }
-          //         dispatch(massdkCreate(massdk));
-          //       }
-          //       break;
-          //     }
-          //   }
-          // }
+          for (let i = 0; i < massdk.length; i++) {
+            if (
+              massdk[i].region.toString() === data.pos.region &&
+              massdk[i].area.toString() === data.pos.area &&
+              massdk[i].ID === data.pos.id
+            ) {
+              if (data.images) {
+                if (data.images.length) {
+                  for (let j = 0; j < data.images.length; j++) {
+                    let k = Number(data.images[j].num);
+                    if (k <= massdk[i].phSvg.length)
+                      massdk[i].phSvg[k - 1] = data.images[j].phase;
+                  }
+                  dispatch(massdkCreate(massdk));
+                }
+                break;
+              }
+            }
+          }
           break;
         default:
           console.log("data_default:", data);
       }
     };
-  }, [dispatch, massdk]);
+  }, [dispatch, massdk, massfaz, trigger]);
 
   if (WS.url === "wss://localhost:3000/W" && flagOpen) {
     console.log("РЕЖИМ ОТЛАДКИ!!!");
@@ -270,7 +254,7 @@ const App = () => {
     <Grid container sx={{ height: "100vh", width: "100%", bgcolor: "#E9F5D8" }}>
       <Grid item xs>
         {openSetErr && <AppSocketError sErr={soob} setOpen={setOpenSetErr} />}
-        {openMapInfo && <MainMapGS />}
+        {openMapInfo && <MainMapGS trigger={trigger} />}
       </Grid>
     </Grid>
   );

@@ -44,7 +44,8 @@ let widthMap = '99.9%';
 let modeToDo = 0;
 let newCenter: any = [];
 
-const MainMapGs = () => {
+const MainMapGs = (props: {trigger: boolean}) => {
+  console.log('1TRIGGER:',props.trigger)
   //== Piece of Redux =======================================
   const map = useSelector((state: any) => {
     const { mapReducer } = state;
@@ -442,6 +443,7 @@ const MainMapGs = () => {
                 funcSize={OldSizeWind}
                 funcCenter={NewPointCenter}
                 funcHelper={SetHelper}
+                trigger={props.trigger}
               />
             )}
           </Grid>
