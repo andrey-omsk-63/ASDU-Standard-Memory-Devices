@@ -17,6 +17,9 @@ import { styleToDoMode, styleStrokaTabl } from "./GsComponentsStyle";
 
 let toDoMode = false;
 let init = true;
+let timerId: any[] = [];
+
+let massInt: any[][] = [];
 
 const GsToDoMode = (props: {
   newMode: number;
@@ -41,7 +44,7 @@ const GsToDoMode = (props: {
     const { massfazReducer } = state;
     return massfazReducer.massfaz;
   });
-  console.log("TODOmassfaz", massfaz);
+  //console.log("TODOmassfaz", massfaz);
   let datestat = useSelector((state: any) => {
     const { statsaveReducer } = state;
     return statsaveReducer.datestat;
@@ -51,6 +54,7 @@ const GsToDoMode = (props: {
   const dispatch = useDispatch();
   //========================================================
   const [trigger, setTrigger] = React.useState(true);
+  //const timer = React.useRef<any>(null);
   let newMode = props.newMode;
 
   //=== инициализация ======================================
@@ -81,13 +85,19 @@ const GsToDoMode = (props: {
   };
   if (init) {
     massfaz = [];
+    timerId = [];
     for (let i = 0; i < props.massMem.length; i++) {
       massfaz.push(MakeMaskFaz(i));
+      timerId.push(null);
     }
+    for (let i = 0; i < props.massMem.length; i++) {
+      massInt.push(timerId);
+    }
+    console.log("timerId", timerId);
+    console.log("MassInt", massInt);
     init = false;
     dispatch(massfazCreate(massfaz));
   }
-
   //========================================================
   const handleCloseSetEnd = () => {
     props.funcSize(11.99);
@@ -118,6 +128,10 @@ const GsToDoMode = (props: {
       props.funcMode(mode); // закончить исполнение
       props.funcHelper(true);
       handleCloseSetEnd();
+      console.log("000timerId:", timerId);
+
+      //if(timerId) clearInterval(timerId);
+      //timerId = null;
     }
   };
 
@@ -140,8 +154,14 @@ const GsToDoMode = (props: {
 
     const ClickVertex = (mode: number) => {
       let fazer = massfaz[mode];
+      console.log("000000",timerId[0],massInt[0],massInt);
+      alert('000000')
       if (!fazer.runRec) {
-        SendSocketDispatch(debug, ws, fazer.idevice, 9, fazer.faza);
+        //SendSocketDispatch(debug, ws, fazer.idevice, 9, fazer.faza);
+        
+        timerId[mode] = setInterval(() => DoTimerId(), 10000);
+        massInt[0].push('timerId[0]');
+        console.log(mode + 1, "светофор", timerId[0], massInt);
       } else {
         SendSocketDispatch(debug, ws, fazer.idevice, 9, 9);
       }
@@ -228,23 +248,32 @@ const GsToDoMode = (props: {
     return resStr;
   };
 
-  React.useEffect(() => {
-    if (toDoMode) {
-      const timer = setInterval(() => {
-        for (let i = 0; i < massfaz.length; i++) {
-          if (massfaz[i].runRec) {
-            let faz = massfaz[i];
-            SendSocketDispatch(debug, ws, faz.idevice, 9, faz.faza);
-          }
-        }
-        console.log("Отправка");
-      }, 1000);
-      return () => clearInterval(timer);
+  const DoTimerId = () => {
+    console.log("Отправка", timerId, massInt);
+    for (let i = 0; i < massInt[0].length - 1; i++) {
+      if (massInt[0][i]) {
+        clearInterval(massInt[0][i]);
+        massInt[0][i] = null;
+      }
     }
-  });
+    console.log("MassInt", timerId, massInt);
+    massInt[0] = massInt[0].filter(function (el: any) {
+      return el !== null;
+    });
+  };
+
+  // const TimerId = () => {
+  //   console.log("111121", massInt);
+  //   if (massfaz[0].runRec) {
+  //     timerId[0] = setInterval(() => DoTimerId(), 10000);
+  //     massInt[0].push(timerId[0]);
+  //     console.log("222221", massInt);
+  //   }
+  // };
 
   return (
     <>
+      {/* {toDoMode && <>{TimerId()}</>} */}
       <Box sx={styleToDoMode}>
         {!toDoMode && (
           <Button sx={styleModalEnd} onClick={handleCloseSetEnd}>
@@ -290,3 +319,18 @@ const GsToDoMode = (props: {
 };
 
 export default GsToDoMode;
+
+// React.useEffect(() => {
+//   if (toDoMode) {
+//     const timer = setInterval(() => {
+//       for (let i = 0; i < massfaz.length; i++) {
+//         if (massfaz[i].runRec) {
+//           let faz = massfaz[i];
+//           SendSocketDispatch(debug, ws, faz.idevice, 9, faz.faza);
+//         }
+//       }
+//       console.log("Отправка");
+//     }, 1000);
+//     return () => clearInterval(timer);
+//   }
+// });
