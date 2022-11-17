@@ -1,22 +1,18 @@
 //import { Way } from "./../interfaceRoute";
 
 //=== GsSetPhase ===================================
-export const SendSocketCreateRoute = (
-  debug: boolean,
-  ws: WebSocket,
-  maskRoutes: any
-) => {
-  console.log("maskRoutes:", debug, ws, maskRoutes);
+export const SendSocketCreateRoute = (debug: boolean, ws: WebSocket, maskRoutes: any) => {
+  console.log('maskRoutes:', debug, ws, maskRoutes);
   const handleSendOpen = () => {
     if (!debug) {
       if (ws.readyState === WebSocket.OPEN) {
         ws.send(
           JSON.stringify({
-            type: "createRoute",
+            type: 'createRoute',
             region: maskRoutes.region,
             description: maskRoutes.description,
             listTL: maskRoutes.listTL,
-          })
+          }),
         );
       } else {
         setTimeout(() => {
@@ -28,22 +24,18 @@ export const SendSocketCreateRoute = (
   handleSendOpen();
 };
 
-export const SendSocketUpdateRoute = (
-  debug: boolean,
-  ws: WebSocket,
-  maskRoutes: any
-) => {
-  console.log("maskRoutes:", debug, ws, maskRoutes);
+export const SendSocketUpdateRoute = (debug: boolean, ws: WebSocket, maskRoutes: any) => {
+  console.log('maskRoutes:', debug, ws, maskRoutes);
   const handleSendOpen = () => {
     if (!debug) {
       if (ws.readyState === WebSocket.OPEN) {
         ws.send(
           JSON.stringify({
-            type: "updateRoute",
+            type: 'updateRoute',
             region: maskRoutes.region,
             description: maskRoutes.description,
             listTL: maskRoutes.listTL,
-          })
+          }),
         );
       } else {
         setTimeout(() => {
@@ -55,21 +47,17 @@ export const SendSocketUpdateRoute = (
   handleSendOpen();
 };
 
-export const SendSocketDeleteRoute = (
-  debug: boolean,
-  ws: WebSocket,
-  maskRoutes: any
-) => {
-  console.log("maskRoutes:", debug, ws, maskRoutes);
+export const SendSocketDeleteRoute = (debug: boolean, ws: WebSocket, maskRoutes: any) => {
+  console.log('maskRoutes:', maskRoutes);
   const handleSendOpen = () => {
     if (!debug) {
       if (ws.readyState === WebSocket.OPEN) {
         ws.send(
           JSON.stringify({
-            type: "deleteRoute",
+            type: 'deleteRoute',
             region: maskRoutes.region,
             description: maskRoutes.description,
-          })
+          }),
         );
       } else {
         setTimeout(() => {
@@ -85,18 +73,18 @@ export const SendSocketRoute = (
   debug: boolean,
   ws: WebSocket,
   devicesProps: Array<number>,
-  turnOnProps: boolean
+  turnOnProps: boolean,
 ) => {
-  console.log("devicesProps:", debug, ws, turnOnProps, devicesProps);
+  console.log('devicesProps:', turnOnProps, devicesProps);
   const handleSendOpen = () => {
     if (!debug) {
       if (ws.readyState === WebSocket.OPEN) {
         ws.send(
           JSON.stringify({
-            type: "route",
+            type: 'route',
             devices: devicesProps,
             turnOn: turnOnProps,
-          })
+          }),
         );
       } else {
         setTimeout(() => {
@@ -115,17 +103,17 @@ export const SendSocketDispatch = (
   cmdd: number,
   faza: number,
 ) => {
-  console.log("dispatchProps:", debug, idevice, cmdd, faza);
+  console.log('dispatchProps:', debug, idevice, cmdd, faza);
   const handleSendOpen = () => {
     if (!debug) {
       if (ws.readyState === WebSocket.OPEN) {
         ws.send(
           JSON.stringify({
-            type: "dispatch",
+            type: 'dispatch',
             id: idevice,
             cmd: cmdd,
             param: faza,
-          })
+          }),
         );
       } else {
         setTimeout(() => {
@@ -142,7 +130,7 @@ export const SendSocketGetPhases = (
   ws: WebSocket,
   region: string,
   area: string,
-  id: number
+  id: number,
 ) => {
   //console.log("getPhasesProps:", region, area, id);
   const handleSendOpen = () => {
@@ -150,9 +138,9 @@ export const SendSocketGetPhases = (
       if (ws.readyState === WebSocket.OPEN) {
         ws.send(
           JSON.stringify({
-            type: "getPhases",
+            type: 'getPhases',
             pos: { region, area, id },
-          })
+          }),
         );
       } else {
         setTimeout(() => {
