@@ -85,4 +85,10 @@ export const styleStrokaTablImg = {
   color: "black",
   textTransform: "unset !important",
 };
+
+export const styleStrokaTakt = {
+  fontSize: 12,
+  paddingTop: 1.7,
+  textAlign: "right",
+};
 //========================================================

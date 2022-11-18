@@ -103,7 +103,7 @@ export const SendSocketDispatch = (
   cmdd: number,
   faza: number,
 ) => {
-  console.log('dispatchProps:', debug, idevice, cmdd, faza);
+  console.log('DispatchProps:', idevice, cmdd, faza);
   const handleSendOpen = () => {
     if (!debug) {
       if (ws.readyState === WebSocket.OPEN) {

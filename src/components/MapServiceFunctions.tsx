@@ -1,3 +1,4 @@
+import * as React from "react";
 import Button from "@mui/material/Button";
 import CardMedia from "@mui/material/CardMedia";
 
@@ -75,7 +76,7 @@ export const getPointData = (
   };
 };
 
-export const getPointOptions1 = (debug: boolean, idx: number, map: DateMAP) => {
+export const GetPointOptions1 = (debug: boolean, idx: number, map: DateMAP) => {
   let host = "https://localhost:3000/18.svg";
   if (!debug) {
     let num = map.tflight[idx].tlsost.num.toString();
@@ -90,7 +91,66 @@ export const getPointOptions1 = (debug: boolean, idx: number, map: DateMAP) => {
   };
 };
 
-export const getPointOptions2 = (index: number, massMem: Array<number>) => {
+// export const getPointOptions11 = React.useCallback(
+//   (debug: boolean, idx: number, map: DateMAP) => {
+//     let host = "https://localhost:3000/18.svg";
+//     if (!debug) {
+//       let num = map.tflight[idx].tlsost.num.toString();
+//       host = window.location.origin + "/free/img/trafficLights/" + num + ".svg";
+//     }
+//     return {
+//       iconLayout: "default#image",
+//       //https://192.168.115.25/free/img/trafficLights/18.svg
+//       iconImageHref: host,
+//       iconImageSize: [30, 38],
+//       iconImageOffset: [-15, -38],
+//     };
+//   },
+//   [map]
+// );
+
+export const GetPointOptions12 = (
+  debug: boolean,
+  idx: number,
+  map: DateMAP
+) => {
+  const GetPointOptions = React.useCallback(() => {
+    let host = "https://localhost:3000/18.svg";
+    if (!debug) {
+      let num = map.tflight[idx].tlsost.num.toString();
+      host = window.location.origin + "/free/img/trafficLights/" + num + ".svg";
+    }
+    return {
+      iconLayout: "default#image",
+      //https://192.168.115.25/free/img/trafficLights/18.svg
+      iconImageHref: host,
+      iconImageSize: [30, 38],
+      iconImageOffset: [-15, -38],
+    };
+  }, [map, idx, debug]);
+  return GetPointOptions();
+};
+
+export const GetPointOptions14 = (debug: boolean, idx: number, map: DateMAP) => {
+  const GetPointOptions = React.useCallback(() => {
+    let host = "https://localhost:3000/18.svg";
+    if (!debug) {
+      let num = map.tflight[idx].tlsost.num.toString();
+      host = window.location.origin + "/free/img/trafficLights/" + num + ".svg";
+    }
+    return host;
+  }, [debug, idx, map.tflight]);
+
+  return {
+    iconLayout: "default#image",
+    //https://192.168.115.25/free/img/trafficLights/18.svg
+    iconImageHref: GetPointOptions(),
+    iconImageSize: [30, 38],
+    iconImageOffset: [-15, -38],
+  };
+};
+
+export const GetPointOptions2 = (index: number, massMem: Array<number>) => {
   let colorBalloon = "islands#violetCircleDotIcon";
   let aaa = massMem.indexOf(index);
 
