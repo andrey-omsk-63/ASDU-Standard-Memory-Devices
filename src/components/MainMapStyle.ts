@@ -8,7 +8,7 @@ export const styleInfoSoob = {
   fontSize: 14,
   border: 0,
   marginRight: 0.1,
-  width: 682,
+  width: 650,
   maxHeight: '21px',
   minHeight: '21px',
   backgroundColor: '#E9F5D8',

@@ -221,7 +221,7 @@ const MainMapGs = (props: { trigger: boolean }) => {
           (!massMem.indexOf(props.idx) && massMem.length > 1)
           ? GetPointOptions2(props.idx, massMem)
           : GetPointOptions1(debug, props.idx, map);
-      }, [props.idx ]);
+      }, [props.idx]);
 
       const MemoPlacemarkDo = React.useMemo(
         () => (
@@ -230,12 +230,6 @@ const MainMapGs = (props: { trigger: boolean }) => {
             geometry={props.coordinate}
             properties={getPointData(props.idx, pAaI, pBbI, massdk)}
             options={GetPointOptions()}
-            // options={
-            //   (massMem.length === aaa + 1 && massMem.length) ||
-            //   (!aaa && massMem.length > 1)
-            //     ? GetPointOptions2(props.idx, massMem)
-            //     : GetPointOptions1(debug, props.idx, map)
-            // }
             modules={["geoObject.addon.balloon", "geoObject.addon.hint"]}
             onClick={() => OnPlacemarkClickPoint(props.idx)}
           />
@@ -362,6 +356,7 @@ const MainMapGs = (props: { trigger: boolean }) => {
 
   const MenuGl = (mod: number) => {
     let soobHelp = "Выберите перекрёстки для создания нового маршрута";
+    let soobHelpFiest = "Добавьте/удалите перекрёстки для создания маршрута";
     let soobInfo = "Подготовка к выпонению режима";
     if (modeToDo === 2) soobInfo = "Происходит выполнение режима";
 
@@ -370,19 +365,21 @@ const MainMapGs = (props: { trigger: boolean }) => {
         {modeToDo > 0 && <>{StrokaHelp(soobInfo)}</>}
         {modeToDo === 0 && (
           <>
-            {StrokaMenuGlob("Существующие режимы ЗУ", PressButton, 42)}
+            {StrokaMenuGlob("Существующие ЗУ", PressButton, 42)}
             {massMem.length < 2 && helper && <>{StrokaHelp(soobHelp)}</>}
+
             {massMem.length > 1 && (
               <>
                 {newMode < 0 && (
                   <>{StrokaMenuGlob("Обработка режима", PressButton, 44)}</>
                 )}
+                {newMode < 0 && <>{StrokaHelp(soobHelpFiest)}</>}
                 {newMode >= 0 && (
                   <>
                     {StrokaMenuGlob("Создать режим", PressButton, 43)}
+                    {StrokaMenuGlob("Удалить режим", PressButton, 41)}
                     {StrokaMenuGlob("Редактировать фазы", PressButton, 44)}
                     {StrokaMenuGlob("Выполнить режим", PressButton, 45)}
-                    {StrokaMenuGlob("Удалить режим", PressButton, 41)}
                   </>
                 )}
               </>

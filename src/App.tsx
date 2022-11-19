@@ -177,14 +177,22 @@ const App = () => {
       //console.log("пришло:", data.error, allData.type, data);
       switch (allData.type) {
         case "phases":
+          let flagChange = false;
           for (let i = 0; i < data.phases.length; i++) {
             for (let j = 0; j < massfaz.length; j++) {
-              if (massfaz[j].idevice === data.phases[i].device)
-                massfaz[j].fazaSist = data.phases[i].phase;
+              if (massfaz[j].idevice === data.phases[i].device) {
+                if (massfaz[j].fazaSist !== data.phases[i].phase) {
+                  massfaz[j].fazaSist = data.phases[i].phase;
+                  flagChange = true;
+                }
+              }
             }
           }
-          dispatch(massfazCreate(massfaz));
-          setTrigger(!trigger);
+          if (flagChange) {
+            console.log("Изменение MASSFAZ");
+            dispatch(massfazCreate(massfaz));
+            setTrigger(!trigger);
+          }
           break;
         case "mapInfo":
           dateMapGl = JSON.parse(JSON.stringify(data));
@@ -247,8 +255,6 @@ const App = () => {
     Initialisation();
     flagInit = false;
   }
-
-  //console.log("!!!!!!",massFaz,massDk,)
 
   return (
     <Grid container sx={{ height: "100vh", width: "100%", bgcolor: "#E9F5D8" }}>
