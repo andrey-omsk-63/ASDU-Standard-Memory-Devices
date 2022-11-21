@@ -16,8 +16,8 @@ import GsErrorMessage from './GsComponents/GsErrorMessage';
 
 import { getMultiRouteOptions, StrokaHelp } from './MapServiceFunctions';
 import { getReferencePoints, CenterCoord } from './MapServiceFunctions';
-import { GetPointData, GetPointOptions1 } from './MapServiceFunctions';
-import { ErrorHaveVertex } from './MapServiceFunctions';
+import { getPointData, getPointOptions1 } from './MapServiceFunctions';
+import { getPointOptions2, ErrorHaveVertex } from './MapServiceFunctions';
 import { StrokaMenuGlob } from './MapServiceFunctions';
 
 import { SendSocketUpdateRoute } from './MapSocketFunctions';
@@ -44,17 +44,23 @@ let widthMap = '99.9%';
 let modeToDo = 0;
 let newCenter: any = [];
 
-const MainMapGs = (props: { trigger: boolean }) => {
+const MainMapGs = (props: {trigger: boolean}) => {
   //== Piece of Redux =======================================
   const map = useSelector((state: any) => {
     const { mapReducer } = state;
     return mapReducer.map.dateMap;
   });
+  //console.log("map", map);
   let massdk = useSelector((state: any) => {
     const { massdkReducer } = state;
     return massdkReducer.massdk;
   });
   //console.log("massdk", massdk);
+  // let massfaz = useSelector((state: any) => {
+  //   const { massfazReducer } = state;
+  //   return massfazReducer.massfaz;
+  // });
+  // console.log("MainMAPmassfaz", massfaz);
   let massmode = useSelector((state: any) => {
     const { massmodeReducer } = state;
     return massmodeReducer.massmode;
@@ -201,32 +207,31 @@ const MainMapGs = (props: { trigger: boolean }) => {
   };
 
   const PlacemarkDo = () => {
-    let pA = -1;
-    let pB = -1;
+    let pAaI = -1;
+    let pBbI = -1;
     if (massMem.length >= 1) {
-      pA = massMem[0];
-      pB = massMem[massMem.length - 1];
+      pAaI = massMem[0];
+      pBbI = massMem[massMem.length - 1];
     }
 
     const DoPlacemarkDo = (props: { coordinate: any; idx: number }) => {
-      let num = map.tflight[props.idx].tlsost.num.toString();
-      let id = props.idx;
-      const GetPointOptions = React.useCallback((num: string) => {
-        return GetPointOptions1(debug, num);
-      }, []);
-
+      let aaa = massMem.indexOf(props.idx);
       const MemoPlacemarkDo = React.useMemo(
         () => (
           <Placemark
-            key={id}
+            key={props.idx}
             geometry={props.coordinate}
-            properties={GetPointData(id, pA, pB, massdk, map, massMem)}
-            options={GetPointOptions(num)}
+            properties={getPointData(props.idx, pAaI, pBbI, massdk)}
+            options={
+              (massMem.length === aaa + 1 && massMem.length) || (!aaa && massMem.length > 1)
+                ? getPointOptions2(props.idx, massMem)
+                : getPointOptions1(debug, props.idx, map)
+            }
             modules={['geoObject.addon.balloon', 'geoObject.addon.hint']}
-            onClick={() => OnPlacemarkClickPoint(id)}
+            onClick={() => OnPlacemarkClickPoint(props.idx)}
           />
         ),
-        [props.coordinate, id, GetPointOptions, num],
+        [props.coordinate, props.idx, aaa],
       );
       return MemoPlacemarkDo;
     };
@@ -348,7 +353,6 @@ const MainMapGs = (props: { trigger: boolean }) => {
 
   const MenuGl = (mod: number) => {
     let soobHelp = 'Выберите перекрёстки для создания нового маршрута';
-    let soobHelpFiest = 'Добавьте/удалите перекрёстки для создания маршрута';
     let soobInfo = 'Подготовка к выпонению режима';
     if (modeToDo === 2) soobInfo = 'Происходит выполнение режима';
 
@@ -357,19 +361,17 @@ const MainMapGs = (props: { trigger: boolean }) => {
         {modeToDo > 0 && <>{StrokaHelp(soobInfo)}</>}
         {modeToDo === 0 && (
           <>
-            {StrokaMenuGlob('Существующие ЗУ', PressButton, 42)}
+            {StrokaMenuGlob('Существующие режимы ЗУ', PressButton, 42)}
             {massMem.length < 2 && helper && <>{StrokaHelp(soobHelp)}</>}
-
             {massMem.length > 1 && (
               <>
                 {newMode < 0 && <>{StrokaMenuGlob('Обработка режима', PressButton, 44)}</>}
-                {newMode < 0 && <>{StrokaHelp(soobHelpFiest)}</>}
                 {newMode >= 0 && (
                   <>
                     {StrokaMenuGlob('Создать режим', PressButton, 43)}
-                    {StrokaMenuGlob('Удалить режим', PressButton, 41)}
                     {StrokaMenuGlob('Редактировать фазы', PressButton, 44)}
                     {StrokaMenuGlob('Выполнить режим', PressButton, 45)}
+                    {StrokaMenuGlob('Удалить режим', PressButton, 41)}
                   </>
                 )}
               </>
@@ -451,8 +453,3 @@ const MainMapGs = (props: { trigger: boolean }) => {
 };
 
 export default MainMapGs;
-// (massMem.length === massMem.indexOf(props.idx) + 1 &&
-//   massMem.length) ||
-//   (!massMem.indexOf(props.idx) && massMem.length >= 1)
-//   ? GetPointOptions2(props.idx, massMem)
-//   : GetPointOptions1(debug, props.idx, map);

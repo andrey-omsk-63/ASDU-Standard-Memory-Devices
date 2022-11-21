@@ -1,20 +1,19 @@
-import * as React from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { massfazCreate } from "../../redux/actions";
+import * as React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { massfazCreate } from '../../redux/actions';
 
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
 
-import { Fazer } from "./../../App";
+import { Fazer } from './../../App';
 
-import { OutputFazaImg, OutputVertexImg } from "../MapServiceFunctions";
-import { SendSocketRoute, SendSocketDispatch } from "../MapSocketFunctions";
+import { OutputFazaImg, OutputVertexImg } from '../MapServiceFunctions';
+import { SendSocketRoute, SendSocketDispatch } from '../MapSocketFunctions';
 
-import { styleModalEnd } from "../MainMapStyle";
-import { styleModalMenu, styleStrokaTablImg } from "./GsComponentsStyle";
-import { styleToDoMode, styleStrokaTabl } from "./GsComponentsStyle";
-import { styleStrokaTakt } from "./GsComponentsStyle";
+import { styleModalEnd } from '../MainMapStyle';
+import { styleModalMenu, styleStrokaTablImg } from './GsComponentsStyle';
+import { styleToDoMode, styleStrokaTabl } from './GsComponentsStyle';
 
 let toDoMode = false;
 let init = true;
@@ -25,14 +24,13 @@ let massInt: any[][] = [];
 const GsToDoMode = (props: {
   newMode: number;
   massMem: Array<number>;
-  funcMode: Function;
-  funcSize: Function;
-  funcCenter: Function;
-  funcHelper: Function;
+  funcMode: any;
+  funcSize: any;
+  funcCenter: any;
+  funcHelper: any;
   trigger: boolean;
-  //massFaz: any;
 }) => {
-  //console.log('2@@@massFaz',props.massFaz)
+  //console.log("2TRIGGER:", props.trigger);
   //== Piece of Redux ======================================
   const map = useSelector((state: any) => {
     const { mapReducer } = state;
@@ -56,17 +54,19 @@ const GsToDoMode = (props: {
   const dispatch = useDispatch();
   //========================================================
   const [trigger, setTrigger] = React.useState(true);
+  //const timer = React.useRef<any>(null);
   let newMode = props.newMode;
 
   //=== инициализация ======================================
   const MakeMaskFaz = (i: number) => {
+    //let im: Array<string | null> = [];
     let maskFaz: Fazer = {
       idx: 0,
       faza: 1,
       fazaSist: -1,
       phases: [],
       idevice: 0,
-      name: "",
+      name: '',
       starRec: false,
       runRec: false,
       img: [],
@@ -93,6 +93,8 @@ const GsToDoMode = (props: {
     for (let i = 0; i < props.massMem.length; i++) {
       massInt.push(JSON.parse(JSON.stringify(timerId)));
     }
+    console.log('timerId', timerId);
+    console.log('MassInt', massInt);
     init = false;
     dispatch(massfazCreate(massfaz));
   }
@@ -126,24 +128,28 @@ const GsToDoMode = (props: {
           timerId[i] = null;
         }
       }
-      console.log("Финиш", timerId, massInt);
+      console.log('Финиш', timerId, massInt);
       for (let i = 0; i < massfaz.length; i++) {
         if (massfaz[i].runRec) {
           SendSocketDispatch(debug, ws, massfaz[i].idevice, 9, 9);
-          //massfaz[mode].runRec = !massfaz[mode].runRec;
+          massfaz[mode].runRec = !massfaz[mode].runRec;
         }
       }
-      //dispatch(massfazCreate(massfaz));
+      dispatch(massfazCreate(massfaz));
       SendSocketRoute(debug, ws, massIdevice, false);
       props.funcMode(mode); // закончить исполнение
       props.funcHelper(true);
       handleCloseSetEnd();
+
+      //console.log('000timerId:', timerId);
+      //if(timerId) clearInterval(timerId);
+      //timerId = null;
     }
   };
 
   const StrokaHeader = (xss: number, soob: string) => {
     return (
-      <Grid item xs={xss} sx={{ fontSize: 14, textAlign: "center" }}>
+      <Grid item xs={xss} sx={{ fontSize: 14, textAlign: 'center' }}>
         <b>{soob}</b>
       </Grid>
     );
@@ -153,18 +159,19 @@ const GsToDoMode = (props: {
     const ClickKnop = (mode: number) => {
       let coor = map.routes[newMode].listTL[mode].point;
       let coord = [coor.Y, coor.X];
-      //massfaz[mode].starRec = !massfaz[mode].starRec;
+      massfaz[mode].starRec = !massfaz[mode].starRec;
       props.funcCenter(coord);
       setTrigger(!trigger);
     };
 
     const ClickVertex = (mode: number) => {
       let fazer = massfaz[mode];
+
       if (!fazer.runRec) {
         SendSocketDispatch(debug, ws, fazer.idevice, 9, fazer.faza);
-        timerId[mode] = setInterval(() => DoTimerId(mode), 60000);
+        timerId[mode] = setInterval(() => DoTimerId(mode), 10000);
         massInt[mode].push(timerId[mode]);
-        console.log(mode + 1 + "-й светофор пошёл", timerId[mode], massInt);
+        console.log(mode + 1 + '-й светофор пошёл', timerId[mode], massInt);
       } else {
         SendSocketDispatch(debug, ws, fazer.idevice, 9, 9);
         for (let i = 0; i < massInt[mode].length; i++) {
@@ -174,7 +181,7 @@ const GsToDoMode = (props: {
           }
         }
         timerId[mode] = null;
-        console.log(mode + 1 + "-й светофор закрыт", timerId[mode], massInt);
+        console.log(mode + 1 + '-й светофор закрыт', timerId[mode], massInt);
       }
       massfaz[mode].runRec = !massfaz[mode].runRec;
       dispatch(massfazCreate(massfaz));
@@ -184,93 +191,93 @@ const GsToDoMode = (props: {
     let resStr = [];
 
     for (let i = 0; i < massfaz.length; i++) {
-      let bull = " ";
-      if (massfaz[i].runRec) bull = " •";
-      let host = "https://localhost:3000/18.svg";
+      let bull = ' ';
+      if (massfaz[i].runRec) bull = ' •';
+      let host = 'https://localhost:3000/18.svg';
       if (!debug) {
         let num = map.tflight[massfaz[i].idx].tlsost.num.toString();
-        host =
-          window.location.origin + "/free/img/trafficLights/" + num + ".svg";
+        host = window.location.origin + '/free/img/trafficLights/' + num + '.svg';
       }
-      let star = "";
-      if (massfaz[i].starRec) star = "*";
-      let takt: number | string = "";
+      let star = '';
+      if (massfaz[i].starRec) star = '*';
+      let takt: number | string = '';
       let pad = 1.2;
       let fazaImg: null | string = null;
       if (massfaz[i].fazaSist > 0) {
         takt = massfaz[i].fazaSist;
         if (takt === 9) {
-          takt = "пром такт";
+          takt = 'пром такт';
           pad = 0;
         }
-        if (takt <= massfaz[i].img.length)
-          fazaImg = massfaz[i].img[massfaz[i].fazaSist - 1];
+        if (takt <= massfaz[i].img.length) fazaImg = massfaz[i].img[massfaz[i].fazaSist - 1];
       }
 
       resStr.push(
         <Grid key={i} container sx={{ marginTop: 1 }}>
-          <Grid item xs={1} sx={{ paddingTop: 0.7, textAlign: "center" }}>
-            <Button
-              variant="contained"
-              sx={styleStrokaTabl}
-              onClick={() => ClickKnop(i)}
-            >
+          <Grid item xs={1} sx={{ paddingTop: 0.7, textAlign: 'center' }}>
+            <Button variant="contained" sx={styleStrokaTabl} onClick={() => ClickKnop(i)}>
               {i + 1}
             </Button>
           </Grid>
 
-          <Grid item xs={1.2} sx={{ fontSize: 27, textAlign: "right" }}>
+          <Grid item xs={1.2} sx={{ fontSize: 27, textAlign: 'right' }}>
             {star}
           </Grid>
           <Grid item xs={1.0} sx={{}}>
             {!toDoMode && <>{OutputVertexImg(host)}</>}
             {toDoMode && (
-              <Button
-                variant="contained"
-                sx={styleStrokaTablImg}
-                onClick={() => ClickVertex(i)}
-              >
+              <Button variant="contained" sx={styleStrokaTablImg} onClick={() => ClickVertex(i)}>
                 {OutputVertexImg(host)}
               </Button>
             )}
           </Grid>
-          <Grid item xs={0.4} sx={{ fontSize: 30, marginLeft: 1 }}>
+          <Grid item xs={0.4} sx={{ border: 0, fontSize: 30, marginLeft: 1 }}>
             {bull}
           </Grid>
 
-          <Grid item xs={1.1} sx={styleStrokaTakt}>
+          <Grid item xs={1.1} sx={{ fontSize: 12, paddingTop: 1.7, textAlign: 'right' }}>
             {takt}
           </Grid>
-          <Grid item xs={2} sx={{ paddingTop: pad, textAlign: "center" }}>
+          <Grid item xs={2} sx={{ paddingTop: pad, textAlign: 'center' }}>
+            {/* {OutputFazaImg(massfaz[i].img[massfaz[i].faza - 1])} */}
             {OutputFazaImg(fazaImg)}
           </Grid>
 
           <Grid item xs sx={{ fontSize: 14 }}>
             {massfaz[i].name}
           </Grid>
-        </Grid>
+        </Grid>,
       );
     }
     return resStr;
   };
 
   const DoTimerId = (mode: number) => {
-    let fazer = massfaz[mode];
-    console.log("Отправка " + String(mode + 1), timerId);
-    SendSocketDispatch(debug, ws, fazer.idevice, 9, fazer.faza);
+    console.log('Отправка ' + String(mode + 1), timerId, massInt);
     for (let i = 0; i < massInt[mode].length - 1; i++) {
       if (massInt[mode][i]) {
         clearInterval(massInt[mode][i]);
         massInt[mode][i] = null;
       }
     }
+    //console.log('MassInt', timerId, massInt);
     massInt[mode] = massInt[mode].filter(function (el: any) {
       return el !== null;
     });
   };
 
+  // const TimerId = () => {
+  //   console.log("111121", massInt);
+  //   if (massfaz[0].runRec) {
+  //     timerId[0] = setInterval(() => DoTimerId(), 10000);
+  //     massInt[0].push(timerId[0]);
+  //     console.log("222221", massInt);
+  //   }
+  // };
+
   return (
     <>
+      {/* {toDoMode && <>{TimerId()}</>} */}
       <Box sx={styleToDoMode}>
         {!toDoMode && (
           <Button sx={styleModalEnd} onClick={handleCloseSetEnd}>
@@ -278,24 +285,24 @@ const GsToDoMode = (props: {
           </Button>
         )}
 
-        <Grid container>
-          <Grid item xs sx={{ fontSize: 18, textAlign: "center" }}>
+        <Grid container sx={{ marginTop: 0 }}>
+          <Grid item xs sx={{ fontSize: 18, textAlign: 'center' }}>
             Режим: <b>{map.routes[newMode].description}</b>
           </Grid>
         </Grid>
 
         <Box sx={{ marginTop: 1 }}>
-          <Grid container sx={{ bgcolor: "#C0E2C3" }}>
-            {StrokaHeader(1, "Номер")}
-            {StrokaHeader(3.6, "Состояние")}
-            {StrokaHeader(2.4, "Фаза")}
-            {StrokaHeader(5.0, "ДК")}
+          <Grid container sx={{ bgcolor: '#C0E2C3' }}>
+            {StrokaHeader(1, 'Номер')}
+            {StrokaHeader(3.6, 'Состояние')}
+            {StrokaHeader(1.9, 'Фаза')}
+            {StrokaHeader(5.5, 'ДК')}
           </Grid>
 
-          <Box sx={{ overflowX: "auto", height: "81vh" }}>{StrokaTabl()}</Box>
+          <Box sx={{ overflowX: 'auto', height: '81vh' }}>{StrokaTabl()}</Box>
 
           {!toDoMode && (
-            <Box sx={{ marginTop: 1.5, textAlign: "center" }}>
+            <Box sx={{ marginTop: 1.5, textAlign: 'center' }}>
               <Button sx={styleModalMenu} onClick={() => ToDoMode(2)}>
                 Начать исполнение
               </Button>
@@ -303,7 +310,7 @@ const GsToDoMode = (props: {
           )}
 
           {toDoMode && (
-            <Box sx={{ marginTop: 1.5, textAlign: "center" }}>
+            <Box sx={{ marginTop: 1.5, textAlign: 'center' }}>
               <Button sx={styleModalMenu} onClick={() => ToDoMode(0)}>
                 Закончить исполнение
               </Button>
@@ -316,3 +323,18 @@ const GsToDoMode = (props: {
 };
 
 export default GsToDoMode;
+
+// React.useEffect(() => {
+//   if (toDoMode) {
+//     const timer = setInterval(() => {
+//       for (let i = 0; i < massfaz.length; i++) {
+//         if (massfaz[i].runRec) {
+//           let faz = massfaz[i];
+//           SendSocketDispatch(debug, ws, faz.idevice, 9, faz.faza);
+//         }
+//       }
+//       console.log("Отправка");
+//     }, 1000);
+//     return () => clearInterval(timer);
+//   }
+// });

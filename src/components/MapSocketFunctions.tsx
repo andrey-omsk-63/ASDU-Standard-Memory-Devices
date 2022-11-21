@@ -25,7 +25,7 @@ export const SendSocketCreateRoute = (debug: boolean, ws: WebSocket, maskRoutes:
 };
 
 export const SendSocketUpdateRoute = (debug: boolean, ws: WebSocket, maskRoutes: any) => {
-  console.log('maskRoutes:', debug, ws, maskRoutes);
+  console.log('maskRoutes:', maskRoutes);
   const handleSendOpen = () => {
     if (!debug) {
       if (ws.readyState === WebSocket.OPEN) {
@@ -103,7 +103,7 @@ export const SendSocketDispatch = (
   cmdd: number,
   faza: number,
 ) => {
-  console.log('DispatchProps:', idevice, cmdd, faza);
+  console.log('dispatchProps:', debug, idevice, cmdd, faza);
   const handleSendOpen = () => {
     if (!debug) {
       if (ws.readyState === WebSocket.OPEN) {
