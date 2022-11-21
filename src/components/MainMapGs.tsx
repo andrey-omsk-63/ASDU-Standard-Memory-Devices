@@ -16,8 +16,8 @@ import GsErrorMessage from "./GsComponents/GsErrorMessage";
 
 import { getMultiRouteOptions, StrokaHelp } from "./MapServiceFunctions";
 import { getReferencePoints, CenterCoord } from "./MapServiceFunctions";
-import { getPointData, GetPointOptions1 } from "./MapServiceFunctions";
-import { GetPointOptions2, ErrorHaveVertex } from "./MapServiceFunctions";
+import { GetPointData, GetPointOptions1 } from "./MapServiceFunctions";
+import { ErrorHaveVertex } from "./MapServiceFunctions";
 import { StrokaMenuGlob } from "./MapServiceFunctions";
 
 import { SendSocketUpdateRoute } from "./MapSocketFunctions";
@@ -50,17 +50,11 @@ const MainMapGs = (props: { trigger: boolean }) => {
     const { mapReducer } = state;
     return mapReducer.map.dateMap;
   });
-  //console.log("map", map);
   let massdk = useSelector((state: any) => {
     const { massdkReducer } = state;
     return massdkReducer.massdk;
   });
   //console.log("massdk", massdk);
-  // let massfaz = useSelector((state: any) => {
-  //   const { massfazReducer } = state;
-  //   return massfazReducer.massfaz;
-  // });
-  // console.log("MainMAPmassfaz", massfaz);
   let massmode = useSelector((state: any) => {
     const { massmodeReducer } = state;
     return massmodeReducer.massmode;
@@ -215,26 +209,30 @@ const MainMapGs = (props: { trigger: boolean }) => {
     }
 
     const DoPlacemarkDo = (props: { coordinate: any; idx: number }) => {
-      const GetPointOptions = React.useCallback(() => {
-        return (massMem.length === massMem.indexOf(props.idx) + 1 &&
-          massMem.length) ||
-          (!massMem.indexOf(props.idx) && massMem.length > 1)
-          ? GetPointOptions2(props.idx, massMem)
-          : GetPointOptions1(debug, props.idx, map);
-      }, [props.idx]);
+      let num = map.tflight[props.idx].tlsost.num.toString();
+      const GetPointOptions = React.useCallback((num: string) => {
+        return GetPointOptions1(debug, num);
+      }, [num]);
 
       const MemoPlacemarkDo = React.useMemo(
         () => (
           <Placemark
             key={props.idx}
             geometry={props.coordinate}
-            properties={getPointData(props.idx, pAaI, pBbI, massdk)}
-            options={GetPointOptions()}
+            properties={GetPointData(
+              props.idx,
+              pAaI,
+              pBbI,
+              massdk,
+              map,
+              massMem
+            )}
+            options={GetPointOptions(num)}
             modules={["geoObject.addon.balloon", "geoObject.addon.hint"]}
             onClick={() => OnPlacemarkClickPoint(props.idx)}
           />
         ),
-        [props.coordinate, props.idx, GetPointOptions]
+        [props.coordinate, props.idx, GetPointOptions, num]
       );
       return MemoPlacemarkDo;
     };
@@ -465,3 +463,8 @@ const MainMapGs = (props: { trigger: boolean }) => {
 };
 
 export default MainMapGs;
+// (massMem.length === massMem.indexOf(props.idx) + 1 &&
+//   massMem.length) ||
+//   (!massMem.indexOf(props.idx) && massMem.length >= 1)
+//   ? GetPointOptions2(props.idx, massMem)
+//   : GetPointOptions1(debug, props.idx, map);

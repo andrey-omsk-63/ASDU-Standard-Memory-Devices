@@ -3,7 +3,7 @@ import Button from "@mui/material/Button";
 import CardMedia from "@mui/material/CardMedia";
 
 import { Pointer } from "./../App";
-import { DateMAP } from "./../interfaceMAP.d";
+//import { DateMAP } from "./../interfaceMAP.d";
 
 import { styleInfoSoob } from "./MainMapStyle";
 
@@ -60,26 +60,33 @@ export const CenterCoord = (aY: number, aX: number, bY: number, bX: number) => {
 };
 
 //=== Placemark =====================================
-export const getPointData = (
+export const GetPointData = (
   index: number,
   pointAaIndex: number,
   pointBbIndex: number,
-  massdk: any
+  massdk: any,
+  map: any,
+  massMem: any
 ) => {
+  let cont1 = massdk[index].nameCoordinates + "<br/>";
+  let cont3 = map.tflight[index].tlsost.description + "<br/>";
+  let cont2 = "[" + massdk[index].region + ", " + massdk[index].area;
+  cont2 += ", " + massdk[index].ID + ", " + map.tflight[index].idevice + "]";
   let textBalloon = "";
-  if (index === pointBbIndex) textBalloon = "Конец";
-  if (index === pointAaIndex) textBalloon = "Начало";
+  let nomInRoute = massMem.indexOf(index);
+  if (nomInRoute > 0)
+    textBalloon = "Промежуточная точка маршрута №" + (nomInRoute + 1);
+  if (index === pointBbIndex) textBalloon = "Конец маршрута";
+  if (index === pointAaIndex) textBalloon = "Начало маршрута";
 
   return {
-    hintContent: "ID:" + massdk[index].ID + " " + massdk[index].nameCoordinates, //balloonContent: PressBalloon(index), iconCaption: textBalloon,
-    iconContent: textBalloon,
+    hintContent: cont1 + cont3 + cont2 + cont3 + textBalloon,
   };
 };
 
-export const GetPointOptions1 = (debug: boolean, idx: number, map: DateMAP) => {
+export const GetPointOptions1 = (debug: boolean, num: any) => {
   let host = "https://localhost:3000/18.svg";
   if (!debug) {
-    let num = map.tflight[idx].tlsost.num.toString();
     host = window.location.origin + "/free/img/trafficLights/" + num + ".svg";
   }
   return {
@@ -91,83 +98,24 @@ export const GetPointOptions1 = (debug: boolean, idx: number, map: DateMAP) => {
   };
 };
 
-// export const getPointOptions11 = React.useCallback(
-//   (debug: boolean, idx: number, map: DateMAP) => {
-//     let host = "https://localhost:3000/18.svg";
-//     if (!debug) {
-//       let num = map.tflight[idx].tlsost.num.toString();
-//       host = window.location.origin + "/free/img/trafficLights/" + num + ".svg";
+// export const GetPointOptions2 = (index: number, massMem: Array<number>) => {
+//   let colorBalloon = "islands#violetCircleDotIcon";
+//   let aaa = massMem.indexOf(index);
+
+//   if (aaa >= 0) {
+//     colorBalloon = "islands#redCircleDotIcon";
+//     if (massMem.length === aaa + 1 && massMem.length) {
+//       colorBalloon = "islands#darkBlueStretchyIcon";
 //     }
-//     return {
-//       iconLayout: "default#image",
-//       //https://192.168.115.25/free/img/trafficLights/18.svg
-//       iconImageHref: host,
-//       iconImageSize: [30, 38],
-//       iconImageOffset: [-15, -38],
-//     };
-//   },
-//   [map]
-// );
+//     if (!aaa && massMem.length) {
+//       colorBalloon = "islands#redStretchyIcon";
+//     }
+//   }
 
-export const GetPointOptions12 = (
-  debug: boolean,
-  idx: number,
-  map: DateMAP
-) => {
-  const GetPointOptions = React.useCallback(() => {
-    let host = "https://localhost:3000/18.svg";
-    if (!debug) {
-      let num = map.tflight[idx].tlsost.num.toString();
-      host = window.location.origin + "/free/img/trafficLights/" + num + ".svg";
-    }
-    return {
-      iconLayout: "default#image",
-      //https://192.168.115.25/free/img/trafficLights/18.svg
-      iconImageHref: host,
-      iconImageSize: [30, 38],
-      iconImageOffset: [-15, -38],
-    };
-  }, [map, idx, debug]);
-  return GetPointOptions();
-};
-
-export const GetPointOptions14 = (debug: boolean, idx: number, map: DateMAP) => {
-  const GetPointOptions = React.useCallback(() => {
-    let host = "https://localhost:3000/18.svg";
-    if (!debug) {
-      let num = map.tflight[idx].tlsost.num.toString();
-      host = window.location.origin + "/free/img/trafficLights/" + num + ".svg";
-    }
-    return host;
-  }, [debug, idx, map.tflight]);
-
-  return {
-    iconLayout: "default#image",
-    //https://192.168.115.25/free/img/trafficLights/18.svg
-    iconImageHref: GetPointOptions(),
-    iconImageSize: [30, 38],
-    iconImageOffset: [-15, -38],
-  };
-};
-
-export const GetPointOptions2 = (index: number, massMem: Array<number>) => {
-  let colorBalloon = "islands#violetCircleDotIcon";
-  let aaa = massMem.indexOf(index);
-
-  if (aaa >= 0) {
-    colorBalloon = "islands#redCircleDotIcon";
-    if (massMem.length === aaa + 1 && massMem.length) {
-      colorBalloon = "islands#darkBlueStretchyIcon";
-    }
-    if (!aaa && massMem.length) {
-      colorBalloon = "islands#redStretchyIcon";
-    }
-  }
-
-  return {
-    preset: colorBalloon,
-  };
-};
+//   return {
+//     preset: colorBalloon,
+//   };
+// };
 
 export const ErrorHaveVertex = (rec: any) => {
   alert(
@@ -236,16 +184,6 @@ export const OutputVertexImg = (host: string) => {
   );
 };
 //=== Разное =======================================
-// export const RecevKeySvg = (recMassroute: any) => {
-//   let keySvg =
-//     recMassroute.region.toString() +
-//     "-" +
-//     recMassroute.area.toString() +
-//     "-" +
-//     recMassroute.id.toString();
-//   return keySvg;
-// };
-
 export const StrokaMenuGlob = (soob: string, func: any, mode: number) => {
   let dlSoob = (soob.length + 5) * 8;
   const styleApp01 = {

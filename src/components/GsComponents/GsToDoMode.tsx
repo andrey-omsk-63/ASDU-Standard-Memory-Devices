@@ -30,7 +30,9 @@ const GsToDoMode = (props: {
   funcCenter: Function;
   funcHelper: Function;
   trigger: boolean;
+  //massFaz: any;
 }) => {
+  //console.log('2@@@massFaz',props.massFaz)
   //== Piece of Redux ======================================
   const map = useSelector((state: any) => {
     const { mapReducer } = state;
@@ -254,7 +256,7 @@ const GsToDoMode = (props: {
 
   const DoTimerId = (mode: number) => {
     let fazer = massfaz[mode];
-    console.log("Отправка " + String(mode + 1), timerId, massInt);
+    console.log("Отправка " + String(mode + 1), timerId);
     SendSocketDispatch(debug, ws, fazer.idevice, 9, fazer.faza);
     for (let i = 0; i < massInt[mode].length - 1; i++) {
       if (massInt[mode][i]) {

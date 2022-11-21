@@ -88,6 +88,10 @@ let flagInit = false;
 
 const App = () => {
   // //== Piece of Redux ======================================
+  // const map = useSelector((state: any) => {
+  //   const { mapReducer } = state;
+  //   return mapReducer.map.dateMap;
+  // });
   let massdk = useSelector((state: any) => {
     const { massdkReducer } = state;
     return massdkReducer.massdk;
@@ -176,21 +180,41 @@ const App = () => {
       let data = allData.data;
       //console.log("пришло:", data.error, allData.type, data);
       switch (allData.type) {
+        case "tflight":
+          console.log("Tflight:", data, data.tflight);
+          for (let j = 0; j < data.tflight.length; j++) {
+            for (let i = 0; i < dateMapGl.tflight.length; i++) {
+              if (data.tflight[j].idevice === dateMapGl.tflight[i].idevice) {
+                dateMapGl.tflight[i].tlsost = data.tflight[j].tlsost;
+              }
+            }
+          }
+          dispatch(mapCreate(dateMapGl));
+          setTrigger(!trigger);
+          break;
         case "phases":
           let flagChange = false;
           for (let i = 0; i < data.phases.length; i++) {
             for (let j = 0; j < massfaz.length; j++) {
               if (massfaz[j].idevice === data.phases[i].device) {
                 if (massfaz[j].fazaSist !== data.phases[i].phase) {
+                  console.log(
+                    "Изменение MASSFAZ",
+                    massfaz[j].idevice,
+                    massfaz[j].fazaSist,
+                    data.phases[i].phase
+                  );
                   massfaz[j].fazaSist = data.phases[i].phase;
+
                   flagChange = true;
                 }
               }
             }
           }
           if (flagChange) {
-            console.log("Изменение MASSFAZ");
+            //console.log("Изменение MASSFAZ");
             dispatch(massfazCreate(massfaz));
+            massFaz = massfaz;
             setTrigger(!trigger);
           }
           break;
@@ -261,6 +285,7 @@ const App = () => {
       <Grid item xs>
         {openSetErr && <AppSocketError sErr={soob} setOpen={setOpenSetErr} />}
         {openMapInfo && <MainMapGS trigger={trigger} />}
+        {/* {openMapInfo && <MainMapGS massFaz={massFaz} />} */}
       </Grid>
     </Grid>
   );
