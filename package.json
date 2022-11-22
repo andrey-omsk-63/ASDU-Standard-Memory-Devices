@@ -9,6 +9,7 @@
     "@mui/lab": "^5.0.0-alpha.54",
     "@mui/material": "^5.1.0",
     "@mui/x-data-grid": "^5.0.1",
+    "@reduxjs/toolkit": "^1.9.0",
     "@types/jest": "^27.4.0",
     "@types/node": "^17.0.9",
     "@types/react": "^17.0.38",

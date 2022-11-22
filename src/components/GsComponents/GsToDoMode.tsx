@@ -44,7 +44,7 @@ const GsToDoMode = (props: {
     const { massfazReducer } = state;
     return massfazReducer.massfaz;
   });
-  //console.log("TODOmassfaz", massfaz);
+  console.log("TODOmassfaz", massfaz);
   let datestat = useSelector((state: any) => {
     const { statsaveReducer } = state;
     return statsaveReducer.datestat;
@@ -169,7 +169,7 @@ const GsToDoMode = (props: {
 
       if (!fazer.runRec) {
         SendSocketDispatch(debug, ws, fazer.idevice, 9, fazer.faza);
-        timerId[mode] = setInterval(() => DoTimerId(mode), 10000);
+        timerId[mode] = setInterval(() => DoTimerId(mode), 60000);
         massInt[mode].push(timerId[mode]);
         console.log(mode + 1 + '-й светофор пошёл', timerId[mode], massInt);
       } else {
@@ -199,7 +199,7 @@ const GsToDoMode = (props: {
         host = window.location.origin + '/free/img/trafficLights/' + num + '.svg';
       }
       let star = '';
-      if (massfaz[i].starRec) star = '*';
+      // if (massfaz[i].starRec) star = '*';
       let takt: number | string = '';
       let pad = 1.2;
       let fazaImg: null | string = null;
@@ -239,7 +239,6 @@ const GsToDoMode = (props: {
             {takt}
           </Grid>
           <Grid item xs={2} sx={{ paddingTop: pad, textAlign: 'center' }}>
-            {/* {OutputFazaImg(massfaz[i].img[massfaz[i].faza - 1])} */}
             {OutputFazaImg(fazaImg)}
           </Grid>
 

@@ -82,17 +82,29 @@ export const GetPointData = (
   };
 };
 
-export const GetPointOptions1 = (debug: boolean, num: any) => {
+export const GetPointOptions1 = (debug: boolean, mapp: any) => {
+  //let num = map.tflight[idx].tlsost.num.toString();
+  // const Hoster = React.useCallback(() => {
+  //   let num = mapp.tlsost.num.toString();
+  //   let host = 'https://localhost:3000/18.svg';
+  //   if (!debug) {
+  //     host = window.location.origin + '/free/img/trafficLights/' + num + '.svg';
+  //   }
+  //   return host;
+  // },[debug, mapp.tlsost.num]);
+  let num = mapp.tlsost.num.toString();
   let host = 'https://localhost:3000/18.svg';
   if (!debug) {
     host = window.location.origin + '/free/img/trafficLights/' + num + '.svg';
   }
   return {
-    iconLayout: 'default#image',
+    //iconLayout: 'default#image',
     //https://192.168.115.25/free/img/trafficLights/18.svg
     iconImageHref: host,
+    //iconImageHref: Hoster(),
     iconImageSize: [30, 38],
     iconImageOffset: [-15, -38],
+    iconLayout: 'default#image',
   };
 };
 

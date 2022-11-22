@@ -152,6 +152,7 @@ const App = () => {
   const [openSetErr, setOpenSetErr] = React.useState(false);
   const [openMapInfo, setOpenMapInfo] = React.useState(false);
   const [trigger, setTrigger] = React.useState(false);
+  const [needRend, setNeedRend] = React.useState(true);
   //=== инициализация ======================================
   if (flagOpenWS) {
     WS = new WebSocket(host);
@@ -186,11 +187,13 @@ const App = () => {
             for (let i = 0; i < dateMapGl.tflight.length; i++) {
               if (data.tflight[j].idevice === dateMapGl.tflight[i].idevice) {
                 dateMapGl.tflight[i].tlsost = data.tflight[j].tlsost;
+                console.log("Изменение MAP",dateMapGl.tflight[i].tlsost);
               }
             }
           }
           dispatch(mapCreate(dateMapGl));
           setTrigger(!trigger);
+          setNeedRend(true);
           break;
         case "phases":
           let flagChange = false;
@@ -205,7 +208,6 @@ const App = () => {
                     data.phases[i].phase
                   );
                   massfaz[j].fazaSist = data.phases[i].phase;
-
                   flagChange = true;
                 }
               }
@@ -214,8 +216,9 @@ const App = () => {
           if (flagChange) {
             //console.log("Изменение MASSFAZ");
             dispatch(massfazCreate(massfaz));
-            massFaz = massfaz;
+            //massFaz = massfaz;
             setTrigger(!trigger);
+            setNeedRend(false);
           }
           break;
         case "mapInfo":
@@ -284,8 +287,7 @@ const App = () => {
     <Grid container sx={{ height: "100vh", width: "100%", bgcolor: "#E9F5D8" }}>
       <Grid item xs>
         {openSetErr && <AppSocketError sErr={soob} setOpen={setOpenSetErr} />}
-        {openMapInfo && <MainMapGS trigger={trigger} />}
-        {/* {openMapInfo && <MainMapGS massFaz={massFaz} />} */}
+        {openMapInfo && <MainMapGS trigger={trigger} needRend={needRend} />}
       </Grid>
     </Grid>
   );
