@@ -265,15 +265,7 @@ const GsToDoMode = (props: {
     });
   };
 
-  // const TimerId = () => {
-  //   console.log("111121", massInt);
-  //   if (massfaz[0].runRec) {
-  //     timerId[0] = setInterval(() => DoTimerId(), 10000);
-  //     massInt[0].push(timerId[0]);
-  //     console.log("222221", massInt);
-  //   }
-  // };
-
+  
   return (
     <>
       {/* {toDoMode && <>{TimerId()}</>} */}

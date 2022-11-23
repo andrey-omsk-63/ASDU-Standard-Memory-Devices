@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { mapCreate, massmodeCreate } from "../redux/actions";
 
 import Grid from "@mui/material/Grid";
+//import CardMedia from "@mui/material/CardMedia";
 
 import { YMaps, Map, Placemark, FullscreenControl } from "react-yandex-maps";
 import { GeolocationControl, YMapsApi } from "react-yandex-maps";
@@ -16,7 +17,8 @@ import GsErrorMessage from "./GsComponents/GsErrorMessage";
 
 import { getMultiRouteOptions, StrokaHelp } from "./MapServiceFunctions";
 import { getReferencePoints, CenterCoord } from "./MapServiceFunctions";
-import { GetPointData, GetPointOptions1 } from "./MapServiceFunctions";
+import { GetPointData } from "./MapServiceFunctions";
+//import { GetPointOptions1 } from "./MapServiceFunctions";
 import { ErrorHaveVertex } from "./MapServiceFunctions";
 import { StrokaMenuGlob } from "./MapServiceFunctions";
 
@@ -44,8 +46,8 @@ let widthMap = "99.9%";
 let modeToDo = 0;
 let newCenter: any = [];
 
-const MainMapGs = (props: { trigger: boolean; needRend: boolean; }) => {
-  console.log("NeedRend:", props.needRend);
+const MainMapGs = (props: { trigger: boolean; needRend: boolean }) => {
+  //console.log("NeedRend:", props.needRend);
   //== Piece of Redux =======================================
   const map = useSelector((state: any) => {
     const { mapReducer } = state;
@@ -208,13 +210,29 @@ const MainMapGs = (props: { trigger: boolean; needRend: boolean; }) => {
       pA = massMem[0];
       pB = massMem[massMem.length - 1];
     }
+    //let needRend = props.needRend;
 
     const DoPlacemarkDo = (props: { coordinate: any; idx: number }) => {
-      //let num = map.tflight[props.idx].tlsost.num.toString();
       let id = props.idx;
-      const GetPointOptions = React.useCallback(() => {
-        return GetPointOptions1(debug, map.tflight[id]);
-      },[id]);
+      let mapp = map.tflight[id].tlsost.num.toString();
+     
+      const Hoster = React.useCallback(() => {
+        let host = "https://localhost:3000/18.svg";
+        if (!debug) {
+          host =
+            window.location.origin + "/free/img/trafficLights/" + mapp + ".svg";
+        }
+        return host;
+      }, [mapp]);
+      
+      // const Hoster = () => {
+      //   let host = "https://localhost:3000/18.svg";
+      //   if (!debug) {
+      //     host =
+      //       window.location.origin + "/free/img/trafficLights/" + mapp + ".svg";
+      //   }
+      //   return host;
+      // };
 
       const MemoPlacemarkDo = React.useMemo(
         () => (
@@ -222,12 +240,18 @@ const MainMapGs = (props: { trigger: boolean; needRend: boolean; }) => {
             key={id}
             geometry={props.coordinate}
             properties={GetPointData(id, pA, pB, massdk, map, massMem)}
-            options={GetPointOptions()}
+            options={{
+              //iconLayout: GetPointOptions(),
+              iconLayout: "default#image",
+              iconImageHref: Hoster(),
+              iconImageSize: [30, 38],
+              iconImageOffset: [-15, -38],
+            }}
             modules={["geoObject.addon.balloon", "geoObject.addon.hint"]}
             onClick={() => OnPlacemarkClickPoint(id)}
           />
         ),
-        [props.coordinate, id, GetPointOptions]
+        [props.coordinate, id, Hoster]
       );
       return MemoPlacemarkDo;
     };
@@ -415,7 +439,6 @@ const MainMapGs = (props: { trigger: boolean; needRend: boolean; }) => {
                   <TypeSelector options={{ float: "right" }} />
                   <ZoomControl options={{ float: "right" }} />
                   {/* служебные компоненты */}
-                  {props.needRend && <PlacemarkDo />}
                   <PlacemarkDo />
                   {selectMD && (
                     <GsSelectMD
