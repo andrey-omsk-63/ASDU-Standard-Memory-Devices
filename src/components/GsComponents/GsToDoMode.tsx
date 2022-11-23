@@ -44,7 +44,7 @@ const GsToDoMode = (props: {
     const { massfazReducer } = state;
     return massfazReducer.massfaz;
   });
-  console.log("TODOmassfaz", massfaz);
+  //console.log("TODOmassfaz", massfaz);
   let datestat = useSelector((state: any) => {
     const { statsaveReducer } = state;
     return statsaveReducer.datestat;

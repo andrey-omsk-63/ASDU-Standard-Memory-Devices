@@ -210,12 +210,12 @@ const MainMapGs = (props: { trigger: boolean; needRend: boolean }) => {
       pA = massMem[0];
       pB = massMem[massMem.length - 1];
     }
-    //let needRend = props.needRend;
 
     const DoPlacemarkDo = (props: { coordinate: any; idx: number }) => {
       let id = props.idx;
       let mapp = map.tflight[id].tlsost.num.toString();
-     
+      let mappp = map.tflight[id];
+
       const Hoster = React.useCallback(() => {
         let host = "https://localhost:3000/18.svg";
         if (!debug) {
@@ -224,15 +224,86 @@ const MainMapGs = (props: { trigger: boolean; needRend: boolean }) => {
         }
         return host;
       }, [mapp]);
-      
-      // const Hoster = () => {
-      //   let host = "https://localhost:3000/18.svg";
-      //   if (!debug) {
-      //     host =
-      //       window.location.origin + "/free/img/trafficLights/" + mapp + ".svg";
-      //   }
-      //   return host;
-      // };
+
+      const createChipsLayout = React.useCallback(
+        (calcFunc: Function, currnum: number, rotateDeg?: number) => {
+          const Chips = ymaps?.templateLayoutFactory.createClass(
+            '<div class="placemark"  ' +
+              `style="background-image:url(${Hoster()}); ` +
+              `background-size: 100%; transform: rotate(${
+                rotateDeg ?? 0
+              }deg);\n"></div>`,
+            {
+              build: function () {
+                Chips.superclass.build.call(this);
+                const map = this.getData().geoObject.getMap();
+                if (!this.inited) {
+                  this.inited = true;
+                  // Получим текущий уровень зума.
+                  let zoom = map.getZoom();
+                  // Подпишемся на событие изменения области просмотра карты.
+                  map.events.add(
+                    "boundschange",
+                    function () {
+                      // Запустим перестраивание макета при изменении уровня зума.
+                      const currentZoom = map.getZoom();
+                      if (currentZoom !== zoom) {
+                        zoom = currentZoom;
+                        //@ts-ignore
+                        this.rebuild();
+                      }
+                    },
+                    this
+                  );
+                }
+                const options = this.getData().options,
+                  // Получим размер метки в зависимости от уровня зума.
+                  size = calcFunc(map.getZoom()),
+                  element =
+                    this.getParentElement().getElementsByClassName(
+                      "placemark"
+                    )[0],
+                  // По умолчанию при задании своего HTML макета фигура активной области не задается,
+                  // и её нужно задать самостоятельно.
+                  // Создадим фигуру активной области "Круг".
+                  circleShape = {
+                    type: "Circle",
+                    coordinates: [0, 0],
+                    radius: size / 2,
+                  };
+                // Зададим высоту и ширину метки.
+                element.style.width = element.style.height = size + "px";
+                // Зададим смещение.
+                element.style.marginLeft = element.style.marginTop =
+                  -size / 2 + "px";
+                // Зададим фигуру активной области.
+                options.set("shape", circleShape);
+              },
+            }
+          );
+          return Chips;
+        },
+        [Hoster]
+      );
+
+      const calculate = function (zoom: number): number {
+        switch (zoom) {
+          case 14:
+            return 30;
+          case 15:
+            return 35;
+          case 16:
+            return 50;
+          case 17:
+            return 60;
+          case 18:
+            return 80;
+          case 19:
+            return 130;
+          default:
+            return 25;
+        }
+      };
 
       const MemoPlacemarkDo = React.useMemo(
         () => (
@@ -241,17 +312,13 @@ const MainMapGs = (props: { trigger: boolean; needRend: boolean }) => {
             geometry={props.coordinate}
             properties={GetPointData(id, pA, pB, massdk, map, massMem)}
             options={{
-              //iconLayout: GetPointOptions(),
-              iconLayout: "default#image",
-              iconImageHref: Hoster(),
-              iconImageSize: [30, 38],
-              iconImageOffset: [-15, -38],
+              iconLayout: createChipsLayout(calculate, mappp.tlsost.num),
             }}
             modules={["geoObject.addon.balloon", "geoObject.addon.hint"]}
             onClick={() => OnPlacemarkClickPoint(id)}
           />
         ),
-        [props.coordinate, id, Hoster]
+        [props.coordinate, createChipsLayout, id, mappp.tlsost.num]
       );
       return MemoPlacemarkDo;
     };
@@ -269,12 +336,6 @@ const MainMapGs = (props: { trigger: boolean; needRend: boolean }) => {
   const InstanceRefDo = (ref: React.Ref<any>) => {
     if (ref) {
       mapp.current = ref;
-      // mapp.current.events.add("contextmenu", function (e: any) {
-      //   if (mapp.current.hint) {
-      //     newPointCoord = e.get("coords"); // нажата правая кнопка мыши (созд-е новой точки)
-      //     setOpenSetCreate(true);
-      //   }
-      // });
       mapp.current.events.add("mousedown", function (e: any) {
         pointCenter = mapp.current.getCenter(); // нажата левая/правая кнопка мыши 0, 1 или 2 в зависимости от того, какая кнопка мыши нажата (В IE значение может быть от 0 до 7).
       });
@@ -421,7 +482,11 @@ const MainMapGs = (props: { trigger: boolean; needRend: boolean }) => {
                 }}
               >
                 <Map
-                  modules={["multiRouter.MultiRoute", "Polyline"]}
+                  modules={[
+                    "multiRouter.MultiRoute",
+                    "Polyline",
+                    "templateLayoutFactory",
+                  ]}
                   state={mapState}
                   instanceRef={(ref) => InstanceRefDo(ref)}
                   onLoad={(ref) => {
