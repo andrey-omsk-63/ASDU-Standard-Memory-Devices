@@ -142,7 +142,6 @@ const GsSetPhase = (props: {
   };
 
   const SaveFaz = () => {
-    console.log('props.newMode:', props.newMode);
     for (let i = 0; i < massFaz.length; i++) {
       map.routes[props.newMode].listTL[i].phase = massFaz[i].faza;
     }
