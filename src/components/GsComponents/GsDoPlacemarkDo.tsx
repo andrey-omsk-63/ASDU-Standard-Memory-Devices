@@ -118,11 +118,11 @@ const GsDoPlacemarkDo = (props: {
       case 17:
         return 60;
       case 18:
-        return 80;
+        return 70;
       case 19:
-        return 130;
+        return 80;
       default:
-        return 25;
+        return 30;
     }
   };
 

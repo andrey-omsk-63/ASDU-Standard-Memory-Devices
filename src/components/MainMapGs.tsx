@@ -17,7 +17,7 @@ import GsDoPlacemarkDo from "./GsComponents/GsDoPlacemarkDo";
 
 import { getMultiRouteOptions, StrokaHelp } from "./MapServiceFunctions";
 import { getReferencePoints, CenterCoord } from "./MapServiceFunctions";
-import { ErrorHaveVertex } from "./MapServiceFunctions";
+import { ErrorHaveVertex, Distance } from "./MapServiceFunctions";
 import { StrokaMenuGlob } from "./MapServiceFunctions";
 
 import { SendSocketUpdateRoute } from "./MapSocketFunctions";
@@ -43,6 +43,7 @@ let widthMap = "99.9%";
 
 let modeToDo = 0;
 let newCenter: any = [];
+let rightCoord: Array<number> = [0, 0];
 
 const MainMapGs = (props: { trigger: boolean }) => {
   //== Piece of Redux =======================================
@@ -77,6 +78,7 @@ const MainMapGs = (props: { trigger: boolean }) => {
   const [toDoMode, setToDoMode] = React.useState(false);
   const [flagCenter, setFlagCenter] = React.useState(false);
   const [openSoobErr, setOpenSoobErr] = React.useState(false);
+  const [risovka, setRisovka] = React.useState(false);
 
   const [ymaps, setYmaps] = React.useState<YMapsApi | null>(null);
   const mapp = React.useRef<any>(null);
@@ -135,7 +137,6 @@ const MainMapGs = (props: { trigger: boolean }) => {
         for (let i = 1; i < massCoord.length - 1; i++) {
           between.push(i);
         }
-        console.log("between:", between);
         multiRoute = new ymaps.multiRouter.MultiRoute(
           {
             referencePoints: massCoord,
@@ -205,7 +206,6 @@ const MainMapGs = (props: { trigger: boolean }) => {
       <>
         {flagOpen &&
           coordinates.map((coordinate: any, idx: any) => (
-            // <DoPlacemarkDo key={idx} coordinate={coordinate} idx={idx} />
             <GsDoPlacemarkDo
               key={idx}
               ymaps={ymaps}
@@ -219,9 +219,53 @@ const MainMapGs = (props: { trigger: boolean }) => {
     );
   };
   //========================================================
+  const FindVertex = (coord: Array<number>) => {
+    const RecMinDist = (i: number) => {
+      minDist = dister;
+      nomInMap = i;
+    };
+    let dister = 0;
+    let minDist = 0;
+    let nomInMap = -1;
+    if (coord[0] !== rightCoord[0] || coord[1] !== rightCoord[1]) {
+      rightCoord = coord;
+      minDist = -1;
+      nomInMap = -1;
+      for (let i = 0; i < map.tflight.length; i++) {
+        let corFromMap = [map.tflight[i].points.Y, map.tflight[i].points.X];
+        dister = Distance(coord, corFromMap);
+        if (dister < 100) {
+          if (minDist < dister) RecMinDist(i);
+        }
+      }
+      if (nomInMap < 0) {
+        alert("В радиусе 100м от указанной точки светофоры отсутствуют");
+      } else {
+        console.log("@@@", nomInMap, minDist,massMem);
+        massMem.push(nomInMap);
+        massCoord.push(coord);
+        console.log("!!!", massMem, massCoord);
+        setRisovka(true)
+      }
+    }
+  };
+
+  const Pererisovka = () => {
+    if (risovka) {
+      ymaps && addRoute(ymaps, false); // перерисовка связей
+      setRisovka(false)
+    }
+    
+  }
+
   const InstanceRefDo = (ref: React.Ref<any>) => {
     if (ref) {
       mapp.current = ref;
+      mapp.current.events.add("contextmenu", function (e: any) {
+        if (mapp.current.hint) {
+          FindVertex(e.get("coords")); // нажата правая кнопка мыши
+        }
+      });
       mapp.current.events.add("mousedown", function (e: any) {
         pointCenter = mapp.current.getCenter(); // нажата левая/правая кнопка мыши 0, 1 или 2 в зависимости от того, какая кнопка мыши нажата (В IE значение может быть от 0 до 7).
       });
@@ -392,6 +436,7 @@ const MainMapGs = (props: { trigger: boolean }) => {
                   <TypeSelector options={{ float: "right" }} />
                   <ZoomControl options={{ float: "right" }} />
                   {/* служебные компоненты */}
+                  {Pererisovka()}
                   <PlacemarkDo />
                   {selectMD && (
                     <GsSelectMD
