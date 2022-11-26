@@ -220,29 +220,28 @@ const MainMapGs = (props: { trigger: boolean }) => {
   };
   //=== обработка instanceRef ==============================
   const FindNearVertex = (coord: Array<number>) => {
-    let dister = 0;
-    let minDist = 0;
     let nomInMap = -1;
     if (coord[0] !== rightCoord[0] || coord[1] !== rightCoord[1]) {
       rightCoord = coord;
-      minDist = -1;
+      let minDist = 999999;
       nomInMap = -1;
       for (let i = 0; i < map.tflight.length; i++) {
         let corFromMap = [map.tflight[i].points.Y, map.tflight[i].points.X];
-        dister = Distance(coord, corFromMap);
-        if (dister < 100 && minDist < dister) {
+        let dister = Distance(coord, corFromMap);
+        if (dister < 100 && minDist > dister) {
           minDist = dister;
           nomInMap = i;
         }
       }
       if (nomInMap < 0) {
-        alert('В радиусе 100м от указанной точки управляемые перекрёстки отсутствуют');
+        soobErr = 'В радиусе 100м от указанной точки управляемые перекрёстки отсутствуют';
+        setOpenSoobErr(true);
       } else {
         if (massMem.indexOf(nomInMap) >= 0) {
-          let soob = 'Перекрёсток [' + massdk[nomInMap].region + ', ';
-          soob += massdk[nomInMap].area + ', ' + massdk[nomInMap].ID + ', ';
-          soob += map.tflight[nomInMap].idevice + '] уже используется';
-          alert(soob);
+          soobErr = 'Перекрёсток [' + massdk[nomInMap].region + ', ';
+          soobErr += massdk[nomInMap].area + ', ' + massdk[nomInMap].ID + ', ';
+          soobErr += map.tflight[nomInMap].idevice + '] уже используется';
+          setOpenSoobErr(true);
         } else {
           massMem.push(nomInMap);
           massCoord.push(coord);

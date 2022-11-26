@@ -1,9 +1,9 @@
-import * as React from "react";
-import { useSelector } from "react-redux";
+import * as React from 'react';
+import { useSelector } from 'react-redux';
 
-import { Placemark, YMapsApi } from "react-yandex-maps";
+import { Placemark, YMapsApi } from 'react-yandex-maps';
 
-import { GetPointData } from "../MapServiceFunctions";
+import { GetPointData } from '../MapServiceFunctions';
 
 const GsDoPlacemarkDo = (props: {
   ymaps: YMapsApi | null;
@@ -38,10 +38,9 @@ const GsDoPlacemarkDo = (props: {
   }
 
   const Hoster = React.useCallback(() => {
-    let host = "https://localhost:3000/18.svg";
+    let host = 'https://localhost:3000/18.svg';
     if (!debug) {
-      host =
-        window.location.origin + "/free/img/trafficLights/" + mapp + ".svg";
+      host = window.location.origin + '/free/img/trafficLights/' + mapp + '.svg';
     }
     return host;
   }, [mapp, debug]);
@@ -51,9 +50,7 @@ const GsDoPlacemarkDo = (props: {
       const Chips = props.ymaps?.templateLayoutFactory.createClass(
         '<div class="placemark"  ' +
           `style="background-image:url(${Hoster()}); ` +
-          `background-size: 100%; transform: rotate(${
-            rotateDeg ?? 0
-          }deg);\n"></div>`,
+          `background-size: 100%; transform: rotate(${rotateDeg ?? 0}deg);\n"></div>`,
         {
           build: function () {
             Chips.superclass.build.call(this);
@@ -64,7 +61,7 @@ const GsDoPlacemarkDo = (props: {
               let zoom = map.getZoom();
               // Подпишемся на событие изменения области просмотра карты.
               map.events.add(
-                "boundschange",
+                'boundschange',
                 function () {
                   // Запустим перестраивание макета при изменении уровня зума.
                   const currentZoom = map.getZoom();
@@ -74,37 +71,36 @@ const GsDoPlacemarkDo = (props: {
                     this.rebuild();
                   }
                 },
-                this
+                this,
               );
             }
             const options = this.getData().options,
               // Получим размер метки в зависимости от уровня зума.
               size = calcFunc(map.getZoom()) + 6,
-              element =
-                this.getParentElement().getElementsByClassName("placemark")[0],
+              element = this.getParentElement().getElementsByClassName('placemark')[0],
               // По умолчанию при задании своего HTML макета фигура активной области не задается,
               // и её нужно задать самостоятельно.
               // Создадим фигуру активной области "Круг".
               circleShape = {
-                type: "Circle",
+                type: 'Circle',
                 coordinates: [0, 0],
                 radius: size / 2,
               };
             // Зададим высоту и ширину метки.
-            element.style.width = element.style.height = size + "px";
+            element.style.width = element.style.height = size + 'px';
             // Зададим смещение.
             //element.style.marginLeft = element.style.marginTop =
             //-size / 2 + "px";
-            element.style.marginLeft = -size / 2.0 + "px";
-            element.style.marginTop = -size / 1.97 + "px";
+            element.style.marginLeft = -size / 2.0 + 'px';
+            element.style.marginTop = -size / 1.97 + 'px';
             // Зададим фигуру активной области.
-            options.set("shape", circleShape);
+            options.set('shape', circleShape);
           },
-        }
+        },
       );
       return Chips;
     },
-    [Hoster, props.ymaps?.templateLayoutFactory]
+    [Hoster, props.ymaps?.templateLayoutFactory],
   );
 
   const calculate = function (zoom: number): number {
@@ -114,15 +110,15 @@ const GsDoPlacemarkDo = (props: {
       case 15:
         return 35;
       case 16:
-        return 50;
+        return 40;
       case 17:
-        return 60;
+        return 45;
       case 18:
-        return 70;
+        return 50;
       case 19:
-        return 80;
+        return 55;
       default:
-        return 30;
+        return 25;
     }
   };
 
@@ -135,11 +131,11 @@ const GsDoPlacemarkDo = (props: {
         options={{
           iconLayout: createChipsLayout(calculate, mappp.tlsost.num),
         }}
-        modules={["geoObject.addon.balloon", "geoObject.addon.hint"]}
+        modules={['geoObject.addon.balloon', 'geoObject.addon.hint']}
         onClick={() => props.OnPlacemarkClickPoint(id)}
       />
     ),
-    [createChipsLayout, id, mappp.tlsost.num, pA, pB, massdk, map, props]
+    [createChipsLayout, id, mappp.tlsost.num, pA, pB, massdk, map, props],
   );
   return MemoPlacemarkDo;
 };
