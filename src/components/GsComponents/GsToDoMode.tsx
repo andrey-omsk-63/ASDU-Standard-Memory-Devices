@@ -59,7 +59,6 @@ const GsToDoMode = (props: {
 
   //=== инициализация ======================================
   const MakeMaskFaz = (i: number) => {
-    //let im: Array<string | null> = [];
     let maskFaz: Fazer = {
       idx: 0,
       faza: 1,
@@ -76,11 +75,17 @@ const GsToDoMode = (props: {
     maskFaz.phases = massdk[maskFaz.idx].phases;
     maskFaz.idevice = map.tflight[maskFaz.idx].idevice;
     maskFaz.faza = map.routes[newMode].listTL[i].phase;
-    if (!maskFaz.phases.length) {
-      maskFaz.img = [null, null, null];
-    } else {
-      maskFaz.img = massdk[maskFaz.idx].phSvg;
-    }
+    if (
+      map.tflight[maskFaz.idx].points.X !==
+      map.routes[newMode].listTL[i].point.X ||
+      map.tflight[maskFaz.idx].points.Y !==
+      map.routes[newMode].listTL[i].point.Y
+    ) maskFaz.starRec = true; // было изменение координат
+      if (!maskFaz.phases.length) {
+        maskFaz.img = [null, null, null];
+      } else {
+        maskFaz.img = massdk[maskFaz.idx].phSvg;
+      }
     return maskFaz;
   };
   if (init) {
@@ -153,7 +158,7 @@ const GsToDoMode = (props: {
     const ClickKnop = (mode: number) => {
       let coor = map.routes[newMode].listTL[mode].point;
       let coord = [coor.Y, coor.X];
-      massfaz[mode].starRec = !massfaz[mode].starRec;
+      //massfaz[mode].starRec = !massfaz[mode].starRec;
       props.funcCenter(coord);
       setTrigger(!trigger);
     };
@@ -193,7 +198,7 @@ const GsToDoMode = (props: {
           window.location.origin + "/free/img/trafficLights/" + num + ".svg";
       }
       let star = "";
-      // if (massfaz[i].starRec) star = '*';
+      if (massfaz[i].starRec) star = '*';
       let takt: number | string = "";
       let pad = 1.2;
       let fazaImg: null | string = null;
@@ -275,7 +280,6 @@ const GsToDoMode = (props: {
 
   return (
     <>
-      {/* {toDoMode && <>{TimerId()}</>} */}
       <Box sx={styleToDoMode}>
         {!toDoMode && (
           <Button sx={styleModalEnd} onClick={handleCloseSetEnd}>

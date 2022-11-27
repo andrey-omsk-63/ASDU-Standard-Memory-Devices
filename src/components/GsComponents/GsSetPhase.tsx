@@ -31,6 +31,7 @@ const GsSetPhase = (props: {
   setOpen: any;
   newMode: number;
   massMem: Array<number>;
+  massCoord: any;
   func: any;
 }) => {
   //== Piece of Redux ======================================
@@ -173,12 +174,17 @@ const GsSetPhase = (props: {
           },
           listTL: [{}],
         };
+        console.log('props.massCoord',props.massCoord,massFaz)
         for (let i = 0; i < massFaz.length; i++) {
+          let pointt = {Y: 0,X: 0}
+          pointt.Y = props.massCoord[i][0];
+          pointt.X = props.massCoord[i][1];
           let maskListTL = {
             num: i,
             description: massFaz[i].name,
             phase: massFaz[i].faza,
-            point: map.tflight[massFaz[i].idx].points,
+            //point: map.tflight[massFaz[i].idx].points,
+            point: pointt,
             pos: {
               region: map.tflight[massFaz[i].idx].region.num,
               area: map.tflight[massFaz[i].idx].area.num,
@@ -191,6 +197,7 @@ const GsSetPhase = (props: {
             maskRoutes.listTL[0] = maskListTL;
           }
         }
+        console.log('maskRoutes',maskRoutes)
         map.routes.push(maskRoutes);
         dispatch(mapCreate(map));
         SendSocketCreateRoute(debug, ws, maskRoutes);
