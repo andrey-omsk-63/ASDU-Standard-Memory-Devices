@@ -174,9 +174,8 @@ const GsSetPhase = (props: {
           },
           listTL: [{}],
         };
-        console.log('props.massCoord',props.massCoord,massFaz)
         for (let i = 0; i < massFaz.length; i++) {
-          let pointt = {Y: 0,X: 0}
+          let pointt = { Y: 0, X: 0 };
           pointt.Y = props.massCoord[i][0];
           pointt.X = props.massCoord[i][1];
           let maskListTL = {
@@ -197,7 +196,6 @@ const GsSetPhase = (props: {
             maskRoutes.listTL[0] = maskListTL;
           }
         }
-        console.log('maskRoutes',maskRoutes)
         map.routes.push(maskRoutes);
         dispatch(mapCreate(map));
         SendSocketCreateRoute(debug, ws, maskRoutes);

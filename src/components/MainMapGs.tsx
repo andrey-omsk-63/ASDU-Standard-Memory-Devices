@@ -51,7 +51,6 @@ const MainMapGs = (props: { trigger: boolean }) => {
     const { mapReducer } = state;
     return mapReducer.map.dateMap;
   });
-  console.log("map", map);
   let massdk = useSelector((state: any) => {
     const { massdkReducer } = state;
     return massdkReducer.massdk;
@@ -104,10 +103,9 @@ const MainMapGs = (props: { trigger: boolean }) => {
         ErrorHaveVertex(map.routes[mode].listTL[i].pos);
         massErrRec.push(i);
       } else {
-        let masscoord: any = []
-        masscoord[0] = map.routes[mode].listTL[i].point.Y
-        masscoord[1] = map.routes[mode].listTL[i].point.X
-        console.log('@@@@@@',coordinates[idx],map.routes[mode].listTL[i].point )
+        let masscoord: any = [];
+        masscoord[0] = map.routes[mode].listTL[i].point.Y;
+        masscoord[1] = map.routes[mode].listTL[i].point.X;
         massMem.push(idx);
         massCoord.push(masscoord);
       }
@@ -250,7 +248,6 @@ const MainMapGs = (props: { trigger: boolean }) => {
         } else {
           massMem.push(nomInMap);
           massCoord.push(coord);
-          console.log('massCoord:',massCoord)
           setRisovka(true);
         }
       }
