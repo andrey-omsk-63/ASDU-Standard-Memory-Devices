@@ -51,11 +51,11 @@ const MainMapGs = (props: { trigger: boolean }) => {
     const { mapReducer } = state;
     return mapReducer.map.dateMap;
   });
+  //console.log("Map", map);
   let massdk = useSelector((state: any) => {
     const { massdkReducer } = state;
     return massdkReducer.massdk;
   });
-  //console.log("massdk", massdk);
   let massmode = useSelector((state: any) => {
     const { massmodeReducer } = state;
     return massmodeReducer.massmode;
