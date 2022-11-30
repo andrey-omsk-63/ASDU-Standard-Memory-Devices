@@ -150,3 +150,28 @@ export const SendSocketGetPhases = (
   handleSendOpen();
 };
 
+export const SendSocketRouteHistory = (
+  debugging: boolean,
+  ws: WebSocket,
+  descr: string,
+) => {
+  console.log("GetRouteHistory:", descr);
+  const handleSendOpen = () => {
+    if (!debugging) {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(
+          JSON.stringify({
+            type: 'getRouteHistory',
+            description: descr,
+          }),
+        );
+      } else {
+        setTimeout(() => {
+          handleSendOpen();
+        }, 1000);
+      }
+    }
+  };
+  handleSendOpen();
+};
+

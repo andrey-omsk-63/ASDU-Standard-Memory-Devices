@@ -146,6 +146,7 @@ const App = () => {
 
   const [openSetErr, setOpenSetErr] = React.useState(false);
   const [openMapInfo, setOpenMapInfo] = React.useState(false);
+  const [history, setHistory] = React.useState(null);
   const [trigger, setTrigger] = React.useState(false);
   //=== инициализация ======================================
   if (flagOpenWS) {
@@ -238,8 +239,12 @@ const App = () => {
             }
           }
           break;
+          case "getRouteHistory":
+            console.log("getRouteHistory:", data, data.history);
+            setHistory(data.history)
+          break;
         default:
-          console.log("data_default:", data);
+          console.log("data_default:",allData.type, data);
       }
     };
   }, [dispatch, massdk, massfaz, trigger]);
@@ -270,7 +275,7 @@ const App = () => {
     <Grid container sx={{ height: "100vh", width: "100%", bgcolor: "#E9F5D8" }}>
       <Grid item xs>
         {openSetErr && <AppSocketError sErr={soob} setOpen={setOpenSetErr} />}
-        {openMapInfo && <MainMapGS trigger={trigger} />}
+        {openMapInfo && <MainMapGS trigger={trigger} history={history} />}
       </Grid>
     </Grid>
   );

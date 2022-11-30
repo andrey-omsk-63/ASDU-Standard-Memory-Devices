@@ -9,6 +9,7 @@ import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
 
 import { SendSocketDeleteRoute } from "../MapSocketFunctions";
+import { SendSocketRouteHistory } from "../MapSocketFunctions";
 
 import { styleModalEnd } from "../MainMapStyle";
 import GsErrorMessage from "./GsErrorMessage";
@@ -16,7 +17,13 @@ import GsErrorMessage from "./GsErrorMessage";
 let knop2 = "удалить";
 let soobErr = "";
 
-const GsSelectMD = (props: { setOpen: any; receive: any; funcHelper: any }) => {
+const GsSelectMD = (props: {
+  setOpen: Function;
+  receive: any;
+  history: any;
+  funcHelper: Function;
+}) => {
+  console.log("!!!History:",props.history)
   //== Piece of Redux =======================================
   const map = useSelector((state: any) => {
     const { mapReducer } = state;
@@ -42,7 +49,7 @@ const GsSelectMD = (props: { setOpen: any; receive: any; funcHelper: any }) => {
     marginTop: 4,
     marginLeft: 6,
     marginRight: "auto",
-    width: 444,
+    width: 580,
     bgcolor: "background.paper",
     border: "3px solid #000",
     borderColor: "primary.main",
@@ -83,6 +90,10 @@ const GsSelectMD = (props: { setOpen: any; receive: any; funcHelper: any }) => {
   };
 
   const ClickKnop2 = (idx: number) => {
+    SendSocketRouteHistory(debug, ws, massmode[idx].name);
+  };
+
+  const ClickKnop3 = (idx: number) => {
     massmode[idx].delRec = !massmode[idx].delRec;
     dispatch(massmodeCreate(massmode));
     setTrigger(!trigger);
@@ -96,7 +107,7 @@ const GsSelectMD = (props: { setOpen: any; receive: any; funcHelper: any }) => {
         massRab.push(massmode[i]);
         massRoute.push(map.routes[i]);
       } else {
-        SendSocketDeleteRoute(debug,ws,map.routes[i])
+        SendSocketDeleteRoute(debug, ws, map.routes[i]);
       }
     }
     massmode = massRab;
@@ -153,7 +164,7 @@ const GsSelectMD = (props: { setOpen: any; receive: any; funcHelper: any }) => {
       };
       resStr.push(
         <Grid key={i} container>
-          <Grid item xs={8.9} sx={{ border: 0, textAlign: "center" }}>
+          <Grid item xs={7.0} sx={{ border: 0, textAlign: "center" }}>
             <Button
               variant="contained"
               sx={styleBut01}
@@ -162,11 +173,22 @@ const GsSelectMD = (props: { setOpen: any; receive: any; funcHelper: any }) => {
               {massmode[i].name}
             </Button>
           </Grid>
-          <Grid item xs sx={{ border: 0, textAlign: "center" }}>
+
+          <Grid item xs={2.5} sx={{ border: 0, textAlign: "center" }}>
             <Button
               variant="contained"
               sx={styleBut02}
               onClick={() => ClickKnop2(i)}
+            >
+              история
+            </Button>
+          </Grid>
+
+          <Grid item xs sx={{ border: 0, textAlign: "center" }}>
+            <Button
+              variant="contained"
+              sx={styleBut02}
+              onClick={() => ClickKnop3(i)}
             >
               {knop2}
             </Button>

@@ -11,6 +11,7 @@ const GsErrorMessage = (props: { sErr: string; setOpen: any }) => {
   const [openSet, setOpenSet] = React.useState(true);
 
   const styleSetInf = {
+    outline: "none",
     position: 'absolute',
     marginTop: '15vh',
     marginLeft: '24vh',
