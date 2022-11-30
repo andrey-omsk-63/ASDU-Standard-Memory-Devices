@@ -8,14 +8,19 @@ import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
 
+import GsErrorMessage from "./GsErrorMessage";
+import GsLookHistory from "./GsLookHistory";
+
 import { SendSocketDeleteRoute } from "../MapSocketFunctions";
 import { SendSocketRouteHistory } from "../MapSocketFunctions";
 
 import { styleModalEnd } from "../MainMapStyle";
-import GsErrorMessage from "./GsErrorMessage";
+import { styleSetSelect, styleModalMenuSelect } from "./GsComponentsStyle";
 
 let knop2 = "удалить";
 let soobErr = "";
+let oldHistory: any = null;
+let history: any = null;
 
 const GsSelectMD = (props: {
   setOpen: Function;
@@ -23,7 +28,8 @@ const GsSelectMD = (props: {
   history: any;
   funcHelper: Function;
 }) => {
-  console.log("!!!History:",props.history)
+  console.log("!!!History:", props.history);
+  //history = props.history;
   //== Piece of Redux =======================================
   const map = useSelector((state: any) => {
     const { mapReducer } = state;
@@ -37,35 +43,20 @@ const GsSelectMD = (props: {
     const { statsaveReducer } = state;
     return statsaveReducer.datestat;
   });
+  console.log('datestat:',datestat)
   const debug = datestat.debug;
   const ws = datestat.ws;
   const dispatch = useDispatch();
   //===========================================================
   const [trigger, setTrigger] = React.useState(true);
   const [openSoobErr, setOpenSoobErr] = React.useState(false);
-
-  const styleSetInf = {
-    position: "relative",
-    marginTop: 4,
-    marginLeft: 6,
-    marginRight: "auto",
-    width: 580,
-    bgcolor: "background.paper",
-    border: "3px solid #000",
-    borderColor: "primary.main",
-    borderRadius: 2,
-    boxShadow: 24,
-    p: 1.5,
-  };
-
-  const styleModalMenu = {
-    marginRight: 1,
-    backgroundColor: "#E6F5D6",
-    textTransform: "unset !important",
-    color: "black",
-  };
-
+  const [lookHistory, setLookHistory] = React.useState(false);
   const [openSetMode, setOpenSetMode] = React.useState(true);
+
+  if (oldHistory !== props.history) {
+    setLookHistory(true);
+    oldHistory = props.history;
+  }
 
   const handleCloseSetEnd = () => {
     props.setOpen(false);
@@ -91,6 +82,13 @@ const GsSelectMD = (props: {
 
   const ClickKnop2 = (idx: number) => {
     SendSocketRouteHistory(debug, ws, massmode[idx].name);
+    //========================================================
+    if (debug) {
+      history = datestat.hist; // для отладки
+      console.log('history!!!:',history)
+      setLookHistory(true);
+    }
+    //========================================================
   };
 
   const ClickKnop3 = (idx: number) => {
@@ -201,7 +199,7 @@ const GsSelectMD = (props: {
 
   return (
     <Modal open={openSetMode} onClose={handleCloseSetEnd} hideBackdrop>
-      <Box sx={styleSetInf}>
+      <Box sx={styleSetSelect}>
         <Button sx={styleModalEnd} onClick={handleCloseSetEnd}>
           <b>&#10006;</b>
         </Button>
@@ -212,10 +210,13 @@ const GsSelectMD = (props: {
         <Box sx={{ overflowX: "auto", height: "69vh" }}>{StrokaTabl()}</Box>
         {LookDel() > 0 && (
           <Box sx={{ marginTop: 1, textAlign: "center" }}>
-            <Button sx={styleModalMenu} onClick={() => DeleteRec()}>
+            <Button sx={styleModalMenuSelect} onClick={() => DeleteRec()}>
               Удалить отмеченные
             </Button>
           </Box>
+        )}
+        {lookHistory && (
+          <GsLookHistory setOpen={setLookHistory} history={history} />
         )}
         {openSoobErr && (
           <GsErrorMessage setOpen={setOpenSoobErr} sErr={soobErr} />

@@ -91,4 +91,25 @@ export const styleStrokaTakt = {
   paddingTop: 1.7,
   textAlign: "right",
 };
+//=== GsSelectMD =========================================
+export const styleSetSelect = {
+  position: "relative",
+  marginTop: 4,
+  marginLeft: 6,
+  marginRight: "auto",
+  width: 580,
+  bgcolor: "background.paper",
+  border: "3px solid #000",
+  borderColor: "primary.main",
+  borderRadius: 2,
+  boxShadow: 24,
+  p: 1.5,
+};
+
+export const styleModalMenuSelect = {
+  marginRight: 1,
+  backgroundColor: "#E6F5D6",
+  textTransform: "unset !important",
+  color: "black",
+};
 //========================================================

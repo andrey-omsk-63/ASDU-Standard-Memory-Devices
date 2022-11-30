@@ -15,16 +15,17 @@ import { SendSocketGetPhases } from "./components/MapSocketFunctions";
 
 import { dataMap } from "./otladkaMaps";
 import { imgFaza } from "./otladkaRoutes";
+import { dataHistory } from "./otladkaHistory"; // для отладки
 
 export let dateMapGl: any;
 export let dateRouteGl: any;
 export let dateRouteProGl: any;
-
 export interface Stater {
   ws: any;
   debug: boolean;
   region: string;
   phSvg: string | null;
+  hist: any;
 }
 
 export let dateStat: Stater = {
@@ -32,6 +33,7 @@ export let dateStat: Stater = {
   debug: false,
   region: "0",
   phSvg: null,
+  hist: dataHistory, // для отладки
 };
 
 export interface Pointer {
@@ -239,12 +241,12 @@ const App = () => {
             }
           }
           break;
-          case "getRouteHistory":
-            console.log("getRouteHistory:", data, data.history);
-            setHistory(data.history)
+        case "getRouteHistory":
+          console.log("getRouteHistory:", data, data.history);
+          setHistory(data.history);
           break;
         default:
-          console.log("data_default:",allData.type, data);
+          console.log("data_default:", allData.type, data);
       }
     };
   }, [dispatch, massdk, massfaz, trigger]);
@@ -264,6 +266,11 @@ const App = () => {
     flagInit = true;
     flagOpen = false;
     setOpenMapInfo(true);
+    let dd = dateStat.hist.history[0].tm
+    let ddd = new Date(dd)
+    let d1 = new Date(dd).toLocaleDateString()
+    let d2 = new Date(dd).toLocaleTimeString()
+    console.log('Date:',d1,d2,ddd)
   }
 
   if (flagInit && !flagOpenWS) {
