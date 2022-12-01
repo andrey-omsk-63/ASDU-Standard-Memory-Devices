@@ -28,8 +28,6 @@ const GsSelectMD = (props: {
   history: any;
   funcHelper: Function;
 }) => {
-  console.log("!!!History:", props.history);
-  //history = props.history;
   //== Piece of Redux =======================================
   const map = useSelector((state: any) => {
     const { mapReducer } = state;
@@ -43,7 +41,7 @@ const GsSelectMD = (props: {
     const { statsaveReducer } = state;
     return statsaveReducer.datestat;
   });
-  console.log('datestat:',datestat)
+  //console.log('datestat:',datestat)
   const debug = datestat.debug;
   const ws = datestat.ws;
   const dispatch = useDispatch();
@@ -52,6 +50,7 @@ const GsSelectMD = (props: {
   const [openSoobErr, setOpenSoobErr] = React.useState(false);
   const [lookHistory, setLookHistory] = React.useState(false);
   const [openSetMode, setOpenSetMode] = React.useState(true);
+  if (!debug) history = props.history;
 
   if (oldHistory !== props.history) {
     setLookHistory(true);
@@ -85,7 +84,6 @@ const GsSelectMD = (props: {
     //========================================================
     if (debug) {
       history = datestat.hist; // для отладки
-      console.log('history!!!:',history)
       setLookHistory(true);
     }
     //========================================================

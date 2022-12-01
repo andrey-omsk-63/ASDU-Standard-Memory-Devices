@@ -112,4 +112,53 @@ export const styleModalMenuSelect = {
   textTransform: "unset !important",
   color: "black",
 };
+//=== GsLookHistory ======================================
+export const styleSetHist = {
+  position: "relative",
+  marginTop: 6,
+  marginLeft: 8,
+  marginRight: "auto",
+  width: 430,
+  bgcolor: "background.paper",
+  border: "3px solid #000",
+  borderColor: "primary.main",
+  borderRadius: 2,
+  boxShadow: 24,
+  p: 1.5,
+};
+
+export const styleButLook = {
+  fontSize: 13.4,
+  marginTop: 1,
+  border: "2px solid #000",
+  bgcolor: "#E6F5D6",
+  width: "150px",
+  maxHeight: "20px",
+  minHeight: "20px",
+  borderColor: "#E6F5D6",
+  borderRadius: 2,
+  color: "black",
+  textTransform: "unset !important",
+};
+
+export const styleGridLook = {
+  border: 0,
+  marginTop: 1,
+  fontSize: 14,
+  textAlign: "left",
+};
+//=== GsLookFaza =========================================
+export const styleSetFaza = {
+  position: "relative",
+  marginTop: 8,
+  marginLeft: 10,
+  marginRight: "auto",
+  width: 430,
+  bgcolor: "background.paper",
+  border: "3px solid #000",
+  borderColor: "primary.main",
+  borderRadius: 2,
+  boxShadow: 24,
+  p: 1.5,
+};
 //========================================================

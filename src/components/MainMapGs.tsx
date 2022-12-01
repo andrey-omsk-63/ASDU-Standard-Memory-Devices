@@ -46,7 +46,6 @@ let newCenter: any = [];
 let rightCoord: Array<number> = [0, 0];
 
 const MainMapGs = (props: { trigger: boolean; history: any; }) => {
-  console.log("History:",props.history)
   //== Piece of Redux =======================================
   const map = useSelector((state: any) => {
     const { mapReducer } = state;
