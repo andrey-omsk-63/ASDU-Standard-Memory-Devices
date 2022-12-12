@@ -220,8 +220,13 @@ const GsSetPhase = (props: {
         handleCloseSetEnd();
       }
     } else {
-      massFaz = [];
-      handleCloseSetEnd();
+      if (mode === 1) {
+        massFaz = []; // очистить таблицу
+        handleCloseSetEnd();
+      } else {
+        //Удалть помеченные
+      }
+
     }
   };
 
@@ -437,6 +442,10 @@ const GsSetPhase = (props: {
             <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
               <Button sx={styleModalMenu} onClick={() => SaveRec(0)}>
                 Сохранить режим
+              </Button>
+
+              <Button sx={styleModalMenu} onClick={() => SaveRec(2)}>
+                Удалть помеченные
               </Button>
 
               <Button sx={styleModalMenu} onClick={() => SaveRec(1)}>
