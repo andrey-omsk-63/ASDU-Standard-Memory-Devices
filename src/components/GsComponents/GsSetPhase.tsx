@@ -29,6 +29,7 @@ let nameMode = "";
 let soobErr = "";
 let chFaz = 0;
 let xsFaza = 2;
+//let afterDel = false;
 
 const GsSetPhase = (props: {
   setOpen: any;
@@ -88,7 +89,7 @@ const GsSetPhase = (props: {
     }
     return maskFaz;
   };
-
+  //console.log("@@@:", afterDel, newInput, props.newMode);
   if (props.newMode >= 0) {
     if (newInput) {
       massFaz = []; // существующий режим
@@ -107,19 +108,23 @@ const GsSetPhase = (props: {
       newInput = false;
       setChDel(0);
     } else {
-      let massRab: any = [];
-      for (let i = 0; i < props.massMem.length; i++) {
-        let flagHave = false;
-        for (let j = 0; j < massFaz.length; j++) {
-          if (massFaz[j].idx === props.massMem[i]) {
-            massRab.push(massFaz[j]);
-            flagHave = true;
-            break;
+      // if (afterDel) {
+      //   afterDel = false; // новый режим после удаления
+      // } else {
+        let massRab: any = [];
+        for (let i = 0; i < props.massMem.length; i++) {
+          let flagHave = false;
+          for (let j = 0; j < massFaz.length; j++) {
+            if (massFaz[j].idx === props.massMem[i]) {
+              massRab.push(massFaz[j]);
+              flagHave = true;
+              break;
+            }
           }
+          if (!flagHave) massRab.push(MakeMaskFaz(i));
         }
-        if (!flagHave) massRab.push(MakeMaskFaz(i));
-      }
-      massFaz = massRab;
+        massFaz = massRab;
+      // }
     }
   }
   //========================================================
@@ -222,11 +227,15 @@ const GsSetPhase = (props: {
     } else {
       if (mode === 1) {
         massFaz = []; // очистить таблицу
-        handleCloseSetEnd();
-      } else {
-        //Удалть помеченные
-      }
-
+        //handleCloseSetEnd();
+      } 
+      //else {
+       // handleCloseSetEnd(); //УдалИть помеченные
+        // if (chDel) DelRec();
+        // afterDel = true;
+        // setTrigger(!trigger);
+      //}
+      handleCloseSetEnd();
     }
   };
 
@@ -444,9 +453,11 @@ const GsSetPhase = (props: {
                 Сохранить режим
               </Button>
 
-              <Button sx={styleModalMenu} onClick={() => SaveRec(2)}>
-                Удалть помеченные
-              </Button>
+              {chDel > 0 && (
+                <Button sx={styleModalMenu} onClick={() => SaveRec(2)}>
+                  Удалить помеченные
+                </Button>
+              )}
 
               <Button sx={styleModalMenu} onClick={() => SaveRec(1)}>
                 Очистить таблицу
