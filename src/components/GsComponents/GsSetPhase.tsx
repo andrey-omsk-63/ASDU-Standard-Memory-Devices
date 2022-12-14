@@ -227,14 +227,8 @@ const GsSetPhase = (props: {
     } else {
       if (mode === 1) {
         massFaz = []; // очистить таблицу
-        //handleCloseSetEnd();
+        
       } 
-      //else {
-       // handleCloseSetEnd(); //УдалИть помеченные
-        // if (chDel) DelRec();
-        // afterDel = true;
-        // setTrigger(!trigger);
-      //}
       handleCloseSetEnd();
     }
   };

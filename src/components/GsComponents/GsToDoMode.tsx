@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { massfazCreate } from "../../redux/actions";
+import { massfazCreate, statsaveCreate } from "../../redux/actions";
 
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -29,8 +29,9 @@ const GsToDoMode = (props: {
   funcCenter: any;
   funcHelper: any;
   trigger: boolean;
+  changeFaz: boolean;
 }) => {
-  //console.log("2TRIGGER:", props.trigger);
+  console.log("2changeFaz:", props.changeFaz);
   //== Piece of Redux ======================================
   const map = useSelector((state: any) => {
     const { mapReducer } = state;
@@ -44,11 +45,12 @@ const GsToDoMode = (props: {
     const { massfazReducer } = state;
     return massfazReducer.massfaz;
   });
-  //console.log("TODOmassfaz", massfaz);
+  console.log("TODOmassfaz", massfaz);
   let datestat = useSelector((state: any) => {
     const { statsaveReducer } = state;
     return statsaveReducer.datestat;
   });
+  //console.log("TODOdatestat", datestat);
   const debug = datestat.debug;
   const ws = datestat.ws;
   const dispatch = useDispatch();
@@ -77,18 +79,21 @@ const GsToDoMode = (props: {
     maskFaz.faza = map.routes[newMode].listTL[i].phase;
     if (
       map.tflight[maskFaz.idx].points.X !==
-      map.routes[newMode].listTL[i].point.X ||
+        map.routes[newMode].listTL[i].point.X ||
       map.tflight[maskFaz.idx].points.Y !==
-      map.routes[newMode].listTL[i].point.Y
-    ) maskFaz.starRec = true; // было изменение координат
-      if (!maskFaz.phases.length) {
-        maskFaz.img = [null, null, null];
-      } else {
-        maskFaz.img = massdk[maskFaz.idx].phSvg;
-      }
+        map.routes[newMode].listTL[i].point.Y
+    )
+      maskFaz.starRec = true; // было изменение координат
+    if (!maskFaz.phases.length) {
+      maskFaz.img = [null, null, null];
+    } else {
+      maskFaz.img = massdk[maskFaz.idx].phSvg;
+    }
     return maskFaz;
   };
+  console.log("Init", init);
   if (init) {
+    console.log("!!!massfaz", massfaz);
     massfaz = [];
     timerId = [];
     for (let i = 0; i < props.massMem.length; i++) {
@@ -105,17 +110,22 @@ const GsToDoMode = (props: {
   const handleCloseSetEnd = () => {
     props.funcSize(11.99);
     toDoMode = false;
+    datestat.toDoMode = false;
+    dispatch(statsaveCreate(datestat));
     init = true;
   };
 
   const ToDoMode = (mode: number) => {
     let massIdevice: Array<number> = [];
     if (mode) {
+      ClickKnop(0) // ставим на первый светофор
       for (let i = 0; i < massfaz.length; i++) {
         massIdevice.push(massfaz[i].idevice);
       }
       SendSocketRoute(debug, ws, massIdevice, true);
       toDoMode = true; // выполнение режима
+      datestat.toDoMode = true;
+      dispatch(statsaveCreate(datestat));
       props.funcMode(mode);
       setTrigger(!trigger);
     } else {
@@ -154,17 +164,19 @@ const GsToDoMode = (props: {
     );
   };
 
-  const StrokaTabl = () => {
-    const ClickKnop = (mode: number) => {
-      let coor = map.routes[newMode].listTL[mode].point;
-      let coord = [coor.Y, coor.X];
-      //massfaz[mode].starRec = !massfaz[mode].starRec;
-      props.funcCenter(coord);
-      setTrigger(!trigger);
-    };
+  const ClickKnop = (mode: number) => {
+    console.log('MODE',mode)
+    let coor = map.routes[newMode].listTL[mode].point;
+    let coord = [coor.Y, coor.X];
+    //massfaz[mode].starRec = !massfaz[mode].starRec;
+    props.funcCenter(coord);
+    setTrigger(!trigger);
+  };
 
+  const StrokaTabl = () => {
     const ClickVertex = (mode: number) => {
       let fazer = massfaz[mode];
+      ClickKnop(mode);
       if (!fazer.runRec) {
         console.log(mode + 1 + "-й светофор пошёл", timerId[mode]);
         SendSocketDispatch(debug, ws, fazer.idevice, 9, fazer.faza);
@@ -198,7 +210,7 @@ const GsToDoMode = (props: {
           window.location.origin + "/free/img/trafficLights/" + num + ".svg";
       }
       let star = "";
-      if (massfaz[i].starRec) star = '*';
+      if (massfaz[i].starRec) star = "*";
       let takt: number | string = "";
       let pad = 1.2;
       let fazaImg: null | string = null;
@@ -211,6 +223,7 @@ const GsToDoMode = (props: {
         if (takt <= massfaz[i].img.length)
           fazaImg = massfaz[i].img[massfaz[i].fazaSist - 1];
       }
+      if (debug) fazaImg = datestat.phSvg; // для отладки
 
       resStr.push(
         <Grid key={i} container sx={{ marginTop: 1 }}>
@@ -239,7 +252,7 @@ const GsToDoMode = (props: {
               </Button>
             )}
           </Grid>
-          <Grid item xs={0.4} sx={{ border: 0, fontSize: 30, marginLeft: 1 }}>
+          <Grid item xs={0.4} sx={{ fontSize: 30, marginLeft: 1 }}>
             {bull}
           </Grid>
 
@@ -325,18 +338,3 @@ const GsToDoMode = (props: {
 };
 
 export default GsToDoMode;
-
-// React.useEffect(() => {
-//   if (toDoMode) {
-//     const timer = setInterval(() => {
-//       for (let i = 0; i < massfaz.length; i++) {
-//         if (massfaz[i].runRec) {
-//           let faz = massfaz[i];
-//           SendSocketDispatch(debug, ws, faz.idevice, 9, faz.faza);
-//         }
-//       }
-//       console.log("Отправка");
-//     }, 1000);
-//     return () => clearInterval(timer);
-//   }
-// });

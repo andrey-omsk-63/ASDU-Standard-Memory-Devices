@@ -26,6 +26,7 @@ export interface Stater {
   region: string;
   phSvg: string | null;
   hist: any;
+  toDoMode: boolean;
 }
 
 export let dateStat: Stater = {
@@ -34,6 +35,7 @@ export let dateStat: Stater = {
   region: "0",
   phSvg: null,
   hist: dataHistory, // для отладки
+  toDoMode: false,
 };
 
 export interface Pointer {

@@ -1,4 +1,5 @@
 import * as React from "react";
+
 import Button from "@mui/material/Button";
 import CardMedia from "@mui/material/CardMedia";
 
@@ -85,7 +86,7 @@ export const GetPointData = (
   pointBbIndex: number,
   massdk: any,
   map: any,
-  massMem: any
+  massMem: any,
 ) => {
   let cont1 = massdk[index].nameCoordinates + "<br/>";
   let cont3 = map.tflight[index].tlsost.description + "<br/>";
@@ -97,6 +98,8 @@ export const GetPointData = (
     textBalloon = "Промежуточная точка маршрута №" + (nomInRoute + 1);
   if (index === pointBbIndex) textBalloon = "Конец маршрута";
   if (index === pointAaIndex) textBalloon = "Начало маршрута";
+
+  //if (textBalloon) console.log("!!!massfaz", MassFaz);
 
   return {
     hintContent: cont1 + cont3 + cont2 + "<br/>" + textBalloon,
