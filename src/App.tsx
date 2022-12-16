@@ -50,6 +50,8 @@ export interface Pointer {
 export let massDk: Pointer[] = [];
 
 export interface Fazer {
+  kolOpen: number;
+  runRec: boolean;
   idx: number;
   faza: number;
   fazaSist: number;
@@ -57,12 +59,13 @@ export interface Fazer {
   idevice: number;
   name: string;
   starRec: boolean;
-  runRec: boolean;
   img: Array<string | null>;
 }
 export let massFaz: Fazer[] = [];
 
 let maskFaz: Fazer = {
+  kolOpen: 0,
+  runRec: false,
   idx: 0,
   faza: 1,
   fazaSist: -1,
@@ -70,13 +73,13 @@ let maskFaz: Fazer = {
   idevice: 0,
   name: '',
   starRec: false,
-  runRec: false,
   img: [],
 };
 
 export interface NameMode {
   name: string;
   delRec: boolean;
+  kolOpen: number;
 }
 export let massMode: NameMode[] = [];
 
@@ -125,6 +128,7 @@ const App = () => {
       let maskName = {
         name: nameZU,
         delRec: false,
+        kolOpen: 0,
       };
       massmode.push(maskName);
     }

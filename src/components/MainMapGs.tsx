@@ -270,22 +270,32 @@ const MainMapGs = (props: { trigger: boolean; history: any }) => {
         }
       }
     } else {
-      if (massfaz.length > 1) {
-        if (coord[0] !== rightCoord[0] || coord[1] !== rightCoord[1]) {
-          rightCoord = coord;
-          let nomInMass = -1;
-          for (let i = 0; i < massMem.length; i++) {
-            if (massfaz[i].runRec) {
-              nomInMass = i;
-              break;
+      const FindGoodMassfaz = () => {
+        let fishka = true;
+        for (let i = 0; i < massfaz.length; i++) {
+          if (massfaz[i].idx !== massMem[i]) fishka = false;
+        }
+        return fishka;
+      };
+      if (massfaz.length === massMem.length) {
+        if (FindGoodMassfaz() && massfaz[0].kolOpen === massmode[newMode].kolOpen) {
+          //console.log('3FindNearVertex', massfaz, rightCoord, coord);
+          if (coord[0] !== rightCoord[0] || coord[1] !== rightCoord[1]) {
+            rightCoord = coord;
+            let nomInMass = -1;
+            for (let i = 0; i < massMem.length; i++) {
+              if (massfaz[i].runRec) {
+                nomInMass = i;
+                break;
+              }
             }
-          }
-          //console.log('FindNearVertex выкл фазу', nomInMass, massMem, massfaz);
-          if (nomInMass >= 0) {
-            massfaz[nomInMass].runRec = false;
-            dispatch(massfazCreate(massfaz));
-            setChangeFaz(!changeFaz);
-            setRisovka(true);
+            console.log('2FindNearVertex выкл фазу', nomInMass, massMem, massfaz);
+            if (nomInMass >= 0) {
+              massfaz[nomInMass].runRec = false;
+              dispatch(massfazCreate(massfaz));
+              setChangeFaz(!changeFaz);
+              setRisovka(true);
+            }
           }
         }
       }
