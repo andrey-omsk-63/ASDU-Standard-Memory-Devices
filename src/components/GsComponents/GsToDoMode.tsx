@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { massfazCreate, statsaveCreate } from '../../redux/actions';
-import { massmodeCreate } from '../../redux/actions';
+//import { massmodeCreate } from '../../redux/actions';
 
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -52,10 +52,10 @@ const GsToDoMode = (props: {
     return statsaveReducer.datestat;
   });
   //console.log("TODOdatestat", datestat);
-  let massmode = useSelector((state: any) => {
-    const { massmodeReducer } = state;
-    return massmodeReducer.massmode;
-  });
+  // let massmode = useSelector((state: any) => {
+  //   const { massmodeReducer } = state;
+  //   return massmodeReducer.massmode;
+  // });
   const debug = datestat.debug;
   const ws = datestat.ws;
   const dispatch = useDispatch();
@@ -78,7 +78,7 @@ const GsToDoMode = (props: {
       starRec: false,
       img: [],
     };
-    maskFaz.kolOpen = massmode[newMode].kolOpen;
+    //maskFaz.kolOpen = massmode[newMode].kolOpen;
     maskFaz.idx = props.massMem[i];
     maskFaz.name = massdk[maskFaz.idx].nameCoordinates;
     maskFaz.phases = massdk[maskFaz.idx].phases;
@@ -108,7 +108,7 @@ const GsToDoMode = (props: {
     }
     init = false;
     dispatch(massfazCreate(massfaz));
-    console.log('INIT', props.massMem, massfaz);
+    //console.log('INIT', props.massMem, massfaz);
     //datestat.toDoMode = true;
     //dispatch(statsaveCreate(datestat));
   }
@@ -125,7 +125,6 @@ const GsToDoMode = (props: {
 
   const ToDoMode = (mode: number) => {
     let massIdevice: Array<number> = [];
-    console.log('ToDoMode', mode, props.massMem, massfaz);
     if (mode) {
       ClickKnop(0); // ставим на первый светофор
       for (let i = 0; i < massfaz.length; i++) {
@@ -133,8 +132,8 @@ const GsToDoMode = (props: {
         massfaz[i].kolOpen++;
       }
       dispatch(massfazCreate(massfaz));
-      massmode[newMode].kolOpen++;
-      dispatch(massmodeCreate(massmode));
+      // massmode[newMode].kolOpen++;
+      // dispatch(massmodeCreate(massmode));
       SendSocketRoute(debug, ws, massIdevice, true);
       toDoMode = true; // выполнение режима
       datestat.toDoMode = true;
@@ -207,7 +206,7 @@ const GsToDoMode = (props: {
       }
       massfaz[mode].runRec = !massfaz[mode].runRec;
       dispatch(massfazCreate(massfaz));
-      console.log('MASSFAZ:', mode, massfaz);
+      //console.log('MASSFAZ:', mode, massfaz);
       setTrigger(!trigger);
     };
 

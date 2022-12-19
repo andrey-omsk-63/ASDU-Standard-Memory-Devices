@@ -105,10 +105,9 @@ export const GetPointData = (
 };
 
 export const GetPointOptions1 = (Hoster: any) => {
-  
-  let imger = window.location.origin + "/free/img/notImage.png";
+  let imger = window.location.origin + '/free/img/notImage.png';
   if (Hoster) imger = 'data:image/png;base64,' + Hoster;
-  console.log("###", imger,Hoster );
+  //console.log("###", imger,Hoster );
 
   return {
     // данный тип макета
