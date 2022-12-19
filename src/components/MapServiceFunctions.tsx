@@ -105,21 +105,18 @@ export const GetPointData = (
 };
 
 export const GetPointOptions1 = (Hoster: any) => {
-  // const element = document.createElement('a');
-  // const file = new Blob([Hoster], { type: 'image/png' });
-  // element.href = URL.createObjectURL(file);
-  // console.log('!!!', element.href);
-  // element.download = 'faza.png';
-  // document.body.appendChild(element); // Required for this to work in FireFox
-  // element.click();
-  // console.log('£££', element);
+  
+  let imger = window.location.origin + "/free/img/notImage.png";
+  if (Hoster) imger = 'data:image/png;base64,' + Hoster;
+  console.log("###", imger,Hoster );
 
   return {
     // данный тип макета
     iconLayout: 'default#image',
     // изображение иконки метки
-    //iconImageHref: Hoster,
-    iconImageHref: '/faza.png',
+    //iconImageHref: '/faza.png',
+    // iconImageHref: 'data:image/png;base64,' + Hoster,
+    iconImageHref: imger,
     // размеры метки
     iconImageSize: [50, 50],
     // её "ножки" (точки привязки)
