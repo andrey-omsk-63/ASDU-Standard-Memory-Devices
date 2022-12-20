@@ -1,20 +1,21 @@
-import * as React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { massfazCreate, statsaveCreate } from '../../redux/actions';
+import * as React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { massfazCreate, statsaveCreate } from "../../redux/actions";
 //import { massmodeCreate } from '../../redux/actions';
 
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
 
-import { Fazer } from './../../App';
+import { Fazer } from "./../../App";
 
-import { OutputFazaImg, OutputVertexImg } from '../MapServiceFunctions';
-import { SendSocketRoute, SendSocketDispatch } from '../MapSocketFunctions';
+import { OutputFazaImg, OutputVertexImg } from "../MapServiceFunctions";
+import { SendSocketRoute, SendSocketDispatch } from "../MapSocketFunctions";
 
-import { styleModalEnd } from '../MainMapStyle';
-import { styleModalMenu, styleStrokaTablImg } from './GsComponentsStyle';
-import { styleToDoMode, styleStrokaTabl } from './GsComponentsStyle';
+import { styleModalEnd } from "../MainMapStyle";
+import { styleModalMenu, styleStrokaTablImg } from "./GsComponentsStyle";
+import { styleToDoMode, styleStrokaTabl } from "./GsComponentsStyle";
+import { styleToDo01, styleToDo02 } from "./GsComponentsStyle";
 
 let toDoMode = false;
 let init = true;
@@ -74,7 +75,7 @@ const GsToDoMode = (props: {
       fazaSist: -1,
       phases: [],
       idevice: 0,
-      name: '',
+      name: "",
       starRec: false,
       img: [],
     };
@@ -85,8 +86,10 @@ const GsToDoMode = (props: {
     maskFaz.idevice = map.tflight[maskFaz.idx].idevice;
     maskFaz.faza = map.routes[newMode].listTL[i].phase;
     if (
-      map.tflight[maskFaz.idx].points.X !== map.routes[newMode].listTL[i].point.X ||
-      map.tflight[maskFaz.idx].points.Y !== map.routes[newMode].listTL[i].point.Y
+      map.tflight[maskFaz.idx].points.X !==
+        map.routes[newMode].listTL[i].point.X ||
+      map.tflight[maskFaz.idx].points.Y !==
+        map.routes[newMode].listTL[i].point.Y
     )
       maskFaz.starRec = true; // было изменение координат
     if (!maskFaz.phases.length) {
@@ -153,7 +156,7 @@ const GsToDoMode = (props: {
           timerId[i] = null;
         }
       }
-      console.log('Финиш', timerId, massInt);
+      //console.log("Финиш", timerId, massInt);
       for (let i = 0; i < massfaz.length; i++) {
         if (massfaz[i].runRec) {
           SendSocketDispatch(debug, ws, massfaz[i].idevice, 9, 9);
@@ -170,7 +173,7 @@ const GsToDoMode = (props: {
 
   const StrokaHeader = (xss: number, soob: string) => {
     return (
-      <Grid item xs={xss} sx={{ fontSize: 14, textAlign: 'center' }}>
+      <Grid item xs={xss} sx={{ fontSize: 14, textAlign: "center" }}>
         <b>{soob}</b>
       </Grid>
     );
@@ -187,14 +190,14 @@ const GsToDoMode = (props: {
   const StrokaTabl = () => {
     const ClickVertex = (mode: number) => {
       let fazer = massfaz[mode];
-      ClickKnop(mode);
+      // ClickKnop(mode);
       if (!fazer.runRec) {
-        console.log(mode + 1 + '-й светофор пошёл', timerId[mode]);
+        console.log(mode + 1 + "-й светофор пошёл", timerId[mode]);
         SendSocketDispatch(debug, ws, fazer.idevice, 9, fazer.faza);
         timerId[mode] = setInterval(() => DoTimerId(mode), 60000);
         massInt[mode].push(timerId[mode]);
       } else {
-        console.log(mode + 1 + '-й светофор закрыт', timerId[mode]);
+        console.log(mode + 1 + "-й светофор закрыт", timerId[mode]);
         SendSocketDispatch(debug, ws, fazer.idevice, 9, 9);
         for (let i = 0; i < massInt[mode].length; i++) {
           if (massInt[mode][i]) {
@@ -207,68 +210,82 @@ const GsToDoMode = (props: {
       massfaz[mode].runRec = !massfaz[mode].runRec;
       dispatch(massfazCreate(massfaz));
       //console.log('MASSFAZ:', mode, massfaz);
-      setTrigger(!trigger);
+      ClickKnop(mode);
+      // setTrigger(!trigger);
     };
 
     let resStr = [];
 
     for (let i = 0; i < massfaz.length; i++) {
-      let bull = ' ';
-      if (massfaz[i].runRec) bull = ' •';
-      let host = 'https://localhost:3000/18.svg';
+      let bull = " ";
+      if (massfaz[i].runRec) bull = " •";
+      let host = "https://localhost:3000/18.svg";
       if (!debug) {
         let num = map.tflight[massfaz[i].idx].tlsost.num.toString();
-        host = window.location.origin + '/free/img/trafficLights/' + num + '.svg';
+        host =
+          window.location.origin + "/free/img/trafficLights/" + num + ".svg";
       }
-      let star = '';
-      if (massfaz[i].starRec) star = '*';
-      let takt: number | string = '';
+      let star = "";
+      if (massfaz[i].starRec) star = "*";
+      let takt: number | string = massfaz[i].faza;
       let pad = 1.2;
+      // if (massfaz[i].fazaSist > 0) {
+      //   takt = massfaz[i].fazaSist;
+      //   if (takt === 9) {
+      //     takt = "пром такт";
+      //     pad = 0;
+      //   }
+      //   if (takt <= massfaz[i].img.length)
+      //     fazaImg = massfaz[i].img[massfaz[i].fazaSist - 1];
+      // }
+      //console.log(massfaz)
       let fazaImg: null | string = null;
-      if (massfaz[i].fazaSist > 0) {
-        takt = massfaz[i].fazaSist;
-        if (takt === 9) {
-          takt = 'пром такт';
-          pad = 0;
-        }
-        if (takt <= massfaz[i].img.length) fazaImg = massfaz[i].img[massfaz[i].fazaSist - 1];
-      }
-      if (debug) fazaImg = datestat.phSvg; // для отладки
+      massfaz[i].img.length > massfaz[i].faza &&
+        (fazaImg = massfaz[i].img[massfaz[i].faza - 1]);
+      debug && (fazaImg = datestat.phSvg); // для отладки
 
       resStr.push(
         <Grid key={i} container sx={{ marginTop: 1 }}>
-          <Grid item xs={1} sx={{ paddingTop: 0.7, textAlign: 'center' }}>
-            <Button variant="contained" sx={styleStrokaTabl} onClick={() => ClickKnop(i)}>
+          <Grid item xs={1} sx={{ paddingTop: 0.7, textAlign: "center" }}>
+            <Button
+              variant="contained"
+              sx={styleStrokaTabl}
+              onClick={() => ClickKnop(i)}
+            >
               {i + 1}
             </Button>
           </Grid>
 
-          <Grid item xs={1.2} sx={{ fontSize: 27, textAlign: 'right' }}>
+          <Grid item xs={1.2} sx={{ fontSize: 27, textAlign: "right" }}>
             {star}
           </Grid>
           <Grid item xs={1.0} sx={{}}>
             {!toDoMode && <>{OutputVertexImg(host)}</>}
             {toDoMode && (
-              <Button variant="contained" sx={styleStrokaTablImg} onClick={() => ClickVertex(i)}>
+              <Button
+                variant="contained"
+                sx={styleStrokaTablImg}
+                onClick={() => ClickVertex(i)}
+              >
                 {OutputVertexImg(host)}
               </Button>
             )}
           </Grid>
-          <Grid item xs={0.4} sx={{ fontSize: 30, marginLeft: 1 }}>
+          <Grid item xs={0.4} sx={styleToDo02}>
             {bull}
           </Grid>
 
-          <Grid item xs={1.1} sx={{ fontSize: 12, paddingTop: 1.7, textAlign: 'right' }}>
+          <Grid item xs={1.1} sx={styleToDo01}>
             {takt}
           </Grid>
-          <Grid item xs={2} sx={{ paddingTop: pad, textAlign: 'center' }}>
+          <Grid item xs={2} sx={{ paddingTop: pad, textAlign: "center" }}>
             {OutputFazaImg(fazaImg)}
           </Grid>
 
           <Grid item xs sx={{ fontSize: 14 }}>
             {massfaz[i].name}
           </Grid>
-        </Grid>,
+        </Grid>
       );
     }
     return resStr;
@@ -276,7 +293,7 @@ const GsToDoMode = (props: {
 
   const DoTimerId = (mode: number) => {
     let fazer = massfaz[mode];
-    console.log('Отправка с ' + String(mode + 1) + '-го', timerId);
+    console.log("Отправка с " + String(mode + 1) + "-го", timerId);
     SendSocketDispatch(debug, ws, fazer.idevice, 9, fazer.faza);
     for (let i = 0; i < massInt[mode].length - 1; i++) {
       if (massInt[mode][i]) {
@@ -299,23 +316,23 @@ const GsToDoMode = (props: {
         )}
 
         <Grid container sx={{ marginTop: 0 }}>
-          <Grid item xs sx={{ fontSize: 18, textAlign: 'center' }}>
+          <Grid item xs sx={{ fontSize: 18, textAlign: "center" }}>
             Режим: <b>{map.routes[newMode].description}</b>
           </Grid>
         </Grid>
 
         <Box sx={{ marginTop: 1 }}>
-          <Grid container sx={{ bgcolor: '#C0E2C3' }}>
-            {StrokaHeader(1, 'Номер')}
-            {StrokaHeader(3.6, 'Состояние')}
-            {StrokaHeader(1.9, 'Фаза')}
-            {StrokaHeader(5.5, 'ДК')}
+          <Grid container sx={{ bgcolor: "#C0E2C3" }}>
+            {StrokaHeader(1, "Номер")}
+            {StrokaHeader(3.6, "Состояние")}
+            {StrokaHeader(1.9, "Фаза")}
+            {StrokaHeader(5.5, "ДК")}
           </Grid>
 
-          <Box sx={{ overflowX: 'auto', height: '79vh' }}>{StrokaTabl()}</Box>
+          <Box sx={{ overflowX: "auto", height: "79vh" }}>{StrokaTabl()}</Box>
 
           {!toDoMode && (
-            <Box sx={{ marginTop: 1.5, textAlign: 'center' }}>
+            <Box sx={{ marginTop: 1.5, textAlign: "center" }}>
               <Button sx={styleModalMenu} onClick={() => ToDoMode(2)}>
                 Начать исполнение
               </Button>
@@ -323,7 +340,7 @@ const GsToDoMode = (props: {
           )}
 
           {toDoMode && (
-            <Box sx={{ marginTop: 1.5, textAlign: 'center' }}>
+            <Box sx={{ marginTop: 1.5, textAlign: "center" }}>
               <Button sx={styleModalMenu} onClick={() => ToDoMode(0)}>
                 Закончить исполнение
               </Button>

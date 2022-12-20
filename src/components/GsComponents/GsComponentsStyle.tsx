@@ -91,6 +91,18 @@ export const styleStrokaTakt = {
   paddingTop: 1.7,
   textAlign: "right",
 };
+
+export const styleToDo01 = {
+  fontSize: 12,
+  paddingTop: 1.7,
+  textAlign: "right",
+};
+
+export const styleToDo02 = {
+  color: "blue",
+  fontSize: 30,
+  marginLeft: 1,
+ };
 //=== GsSelectMD =========================================
 export const styleSetSelect = {
   position: "relative",

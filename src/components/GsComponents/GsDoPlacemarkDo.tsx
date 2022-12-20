@@ -43,14 +43,18 @@ const GsDoPlacemarkDo = (props: {
     pB = props.massMem[props.massMem.length - 1];
     if (datestat.toDoMode) pC = props.massMem.indexOf(props.idx);
   }
-  let imgFaza = datestat.phSvg;
+  let fazaImg: null | string = null;
   if (!debug && pC >= 0) {
     let idv = mappp.idevice;
     for (let i = 0; i < massfaz.length; i++) {
       if (idv === massfaz[i].idevice)
-        imgFaza = massfaz[i].img[massfaz[i].faza - 1];
+        if (massfaz[i].fazaSist > 0) {
+          if (massfaz[i].fazaSist <= massfaz[i].img.length)
+            fazaImg = massfaz[i].img[massfaz[i].fazaSist - 1];
+        }
     }
   }
+  debug && (fazaImg = datestat.phSvg); // для отладки
 
   const Hoster = React.useCallback(() => {
     let host = "https://localhost:3000/18.svg";
@@ -59,6 +63,7 @@ const GsDoPlacemarkDo = (props: {
         window.location.origin + "/free/img/trafficLights/" + mapp + ".svg";
     }
     return host;
+    //return datestat.phSvg
   }, [mapp, debug]);
 
   const createChipsLayout = React.useCallback(
@@ -67,6 +72,7 @@ const GsDoPlacemarkDo = (props: {
       const Chips = props.ymaps?.templateLayoutFactory.createClass(
         '<div class="placemark"  ' +
           `style="background-image:url(${Hoster()}); ` +
+          //`style="background-image:'data:image/png;base64(${datestat.phSvg})'; ` +
           `background-size: 100%; transform: rotate(${
             rotateDeg ?? 0
           }deg);\n"></div>`,
@@ -153,7 +159,7 @@ const GsDoPlacemarkDo = (props: {
             ? {
                 iconLayout: createChipsLayout(calculate, mappp.tlsost.num),
               }
-            : GetPointOptions1(imgFaza)
+            : GetPointOptions1(fazaImg)
         }
         modules={["geoObject.addon.balloon", "geoObject.addon.hint"]}
         onClick={() => props.OnPlacemarkClickPoint(id)}
@@ -167,7 +173,7 @@ const GsDoPlacemarkDo = (props: {
       pB,
       massdk,
       map,
-      imgFaza,
+      fazaImg,
       pC,
       props,
     ]
