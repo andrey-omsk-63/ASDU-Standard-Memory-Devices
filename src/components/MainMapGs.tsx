@@ -375,9 +375,11 @@ const MainMapGs = (props: { trigger: boolean; history: any }) => {
           soobErr = "Данный режим помечен к удалению";
           setOpenSoobErr(true);
         } else {
-          xsMap = 7.8;
-          xsTab = 4.2;
-          widthMap = "99.8%";
+          //xsMap = 7.8;
+          //xsTab = 4.2;
+          xsMap = 7.7;
+          xsTab = 4.3;
+          widthMap = "99.9%";
           modeToDo = 1;
           setToDoMode(true);
           setFlagPusk(!flagPusk);
@@ -465,7 +467,7 @@ const MainMapGs = (props: { trigger: boolean; history: any }) => {
                     ref && setYmaps(ref);
                   }}
                   width={widthMap}
-                  height={"99.9%"}
+                  height={"99.6%"}
                 >
                   {/* сервисы Яндекса */}
                   <FullscreenControl />

@@ -156,7 +156,6 @@ const GsToDoMode = (props: {
           timerId[i] = null;
         }
       }
-      //console.log("Финиш", timerId, massInt);
       for (let i = 0; i < massfaz.length; i++) {
         if (massfaz[i].runRec) {
           SendSocketDispatch(debug, ws, massfaz[i].idevice, 9, 9);
@@ -182,7 +181,6 @@ const GsToDoMode = (props: {
   const ClickKnop = (mode: number) => {
     let coor = map.routes[newMode].listTL[mode].point;
     let coord = [coor.Y, coor.X];
-    //massfaz[mode].starRec = !massfaz[mode].starRec;
     props.funcCenter(coord);
     setTrigger(!trigger);
   };
@@ -190,7 +188,6 @@ const GsToDoMode = (props: {
   const StrokaTabl = () => {
     const ClickVertex = (mode: number) => {
       let fazer = massfaz[mode];
-      // ClickKnop(mode);
       if (!fazer.runRec) {
         console.log(mode + 1 + "-й светофор пошёл", timerId[mode]);
         SendSocketDispatch(debug, ws, fazer.idevice, 9, fazer.faza);
@@ -209,9 +206,7 @@ const GsToDoMode = (props: {
       }
       massfaz[mode].runRec = !massfaz[mode].runRec;
       dispatch(massfazCreate(massfaz));
-      //console.log('MASSFAZ:', mode, massfaz);
       ClickKnop(mode);
-      // setTrigger(!trigger);
     };
 
     let resStr = [];
