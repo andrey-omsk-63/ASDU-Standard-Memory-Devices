@@ -5,7 +5,7 @@ import { mapCreate, massmodeCreate } from '../../redux/actions';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-import Modal from '@mui/material/Modal';
+//import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
@@ -59,7 +59,7 @@ const GsSetPhase = (props: {
   const ws = datestat.ws;
   const dispatch = useDispatch();
   //========================================================
-  const [openSetMode, setOpenSetMode] = React.useState(true);
+  //const [openSetMode, setOpenSetMode] = React.useState(true);
   const [openSoobErr, setOpenSoobErr] = React.useState(false);
   const [trigger, setTrigger] = React.useState(true);
   const [chDel, setChDel] = React.useState(0);
@@ -132,7 +132,7 @@ const GsSetPhase = (props: {
     if (chDel) DelRec();
     props.func(massFaz);
     props.setOpen(false);
-    setOpenSetMode(false);
+    //setOpenSetMode(false);
     newInput = true;
   };
 
@@ -375,83 +375,83 @@ const GsSetPhase = (props: {
   if (props.newMode < 0) xsFaza = 0.7;
 
   return (
-    <Modal open={openSetMode} onClose={handleCloseSetEnd} hideBackdrop>
-      <Box sx={styleSetInf}>
-        <Button sx={styleModalEnd} onClick={handleCloseSetEnd}>
-          <b>&#10006;</b>
-        </Button>
+    // <Modal open={openSetMode} onClose={handleCloseSetEnd} hideBackdrop>
+    <Box sx={styleSetInf}>
+      <Button sx={styleModalEnd} onClick={handleCloseSetEnd}>
+        <b>&#10006;</b>
+      </Button>
+
+      {props.newMode < 0 && (
+        <Grid container sx={{ marginTop: 1 }}>
+          <Grid item xs={3.7} sx={{ border: 0, textAlign: 'center' }}>
+            <b>Введите название нового ЗУ:</b>
+          </Grid>
+          <Grid item xs sx={{ border: 0, textAlign: 'center' }}>
+            <Box sx={styleSet}>
+              <Box component="form" sx={styleBoxFormName}>
+                <TextField
+                  size="small"
+                  onKeyPress={handleKey} //отключение Enter
+                  inputProps={{ style: { fontSize: 14 } }}
+                  value={valuen}
+                  onChange={handleChange}
+                  variant="standard"
+                />
+              </Box>
+            </Box>
+          </Grid>
+        </Grid>
+      )}
+
+      {props.newMode >= 0 && (
+        <Grid container sx={{ marginTop: 1 }}>
+          <Grid item xs sx={{ fontSize: 18, textAlign: 'center' }}>
+            Режим: <b>{map.routes[props.newMode].description}</b>
+          </Grid>
+        </Grid>
+      )}
+
+      <Typography variant="h6" sx={{ marginTop: 1, textAlign: 'center' }}>
+        Таблица фаз
+      </Typography>
+      <Box sx={{ marginTop: 0.5 }}>
+        <Grid container sx={{ bgcolor: '#C0E2C3' }}>
+          {StrokaHeader(8.3, 'Описание')}
+          {StrokaHeader(xsFaza + 1, 'Фаза')}
+          {props.newMode < 0 && <>{StrokaHeader(2, 'Действие')}</>}
+        </Grid>
+
+        <Box sx={{ overflowX: 'auto', height: '69vh' }}>{StrokaTabl()}</Box>
 
         {props.newMode < 0 && (
-          <Grid container sx={{ marginTop: 1 }}>
-            <Grid item xs={3.7} sx={{ border: 0, textAlign: 'center' }}>
-              <b>Введите название нового ЗУ:</b>
-            </Grid>
-            <Grid item xs sx={{ border: 0, textAlign: 'center' }}>
-              <Box sx={styleSet}>
-                <Box component="form" sx={styleBoxFormName}>
-                  <TextField
-                    size="small"
-                    onKeyPress={handleKey} //отключение Enter
-                    inputProps={{ style: { fontSize: 14 } }}
-                    value={valuen}
-                    onChange={handleChange}
-                    variant="standard"
-                  />
-                </Box>
-              </Box>
-            </Grid>
-          </Grid>
+          <Box sx={{ marginTop: 0.5, textAlign: 'center' }}>
+            <Button sx={styleModalMenu} onClick={() => SaveRec(0)}>
+              Сохранить режим
+            </Button>
+
+            {chDel > 0 && (
+              <Button sx={styleModalMenu} onClick={() => SaveRec(2)}>
+                Удалить помеченные
+              </Button>
+            )}
+
+            <Button sx={styleModalMenu} onClick={() => SaveRec(1)}>
+              Очистить таблицу
+            </Button>
+          </Box>
         )}
 
-        {props.newMode >= 0 && (
-          <Grid container sx={{ marginTop: 1 }}>
-            <Grid item xs sx={{ fontSize: 18, textAlign: 'center' }}>
-              Режим: <b>{map.routes[props.newMode].description}</b>
-            </Grid>
-          </Grid>
+        {props.newMode >= 0 && chFaz > 0 && (
+          <Box sx={{ marginTop: 0.5, textAlign: 'center' }}>
+            <Button sx={styleModalMenu} onClick={() => SaveFaz()}>
+              Сохранить изменения
+            </Button>
+          </Box>
         )}
-
-        <Typography variant="h6" sx={{ marginTop: 1, textAlign: 'center' }}>
-          Таблица фаз
-        </Typography>
-        <Box sx={{ marginTop: 0.5 }}>
-          <Grid container sx={{ bgcolor: '#C0E2C3' }}>
-            {StrokaHeader(8.3, 'Описание')}
-            {StrokaHeader(xsFaza + 1, 'Фаза')}
-            {props.newMode < 0 && <>{StrokaHeader(2, 'Действие')}</>}
-          </Grid>
-
-          <Box sx={{ overflowX: 'auto', height: '69vh' }}>{StrokaTabl()}</Box>
-
-          {props.newMode < 0 && (
-            <Box sx={{ marginTop: 0.5, textAlign: 'center' }}>
-              <Button sx={styleModalMenu} onClick={() => SaveRec(0)}>
-                Сохранить режим
-              </Button>
-
-              {chDel > 0 && (
-                <Button sx={styleModalMenu} onClick={() => SaveRec(2)}>
-                  Удалить помеченные
-                </Button>
-              )}
-
-              <Button sx={styleModalMenu} onClick={() => SaveRec(1)}>
-                Очистить таблицу
-              </Button>
-            </Box>
-          )}
-
-          {props.newMode >= 0 && chFaz > 0 && (
-            <Box sx={{ marginTop: 0.5, textAlign: 'center' }}>
-              <Button sx={styleModalMenu} onClick={() => SaveFaz()}>
-                Сохранить изменения
-              </Button>
-            </Box>
-          )}
-        </Box>
-        {openSoobErr && <GsErrorMessage setOpen={setOpenSoobErr} sErr={soobErr} />}
       </Box>
-    </Modal>
+      {openSoobErr && <GsErrorMessage setOpen={setOpenSoobErr} sErr={soobErr} />}
+    </Box>
+    // </Modal>
   );
 };
 
