@@ -1,14 +1,14 @@
 //=== GsSetPhase =========================================
 export const styleSetInf = {
-  // position: 'relative',
-  // marginTop: 4,
-  // marginLeft: 'auto',
-  // marginRight: 69,
+  position: 'relative',
+  marginTop: 4,
+  marginLeft: 'auto',
+  marginRight: 69,
   //======
-  position: 'absolute',
-  left: '30%',
-  top: '48%',
-  transform: 'translate(-50%, -50%)',
+  // position: 'absolute',
+  // left: '30%',
+  // top: '48%',
+  // transform: 'translate(-50%, -50%)',
   //======
   width: 777,
   bgcolor: 'background.paper',
@@ -112,15 +112,15 @@ export const styleToDo02 = {
 };
 //=== GsSelectMD =========================================
 export const styleSetSelect = {
-  // position: "relative",
-  // marginTop: 4,
-  // marginLeft: 6,
-  // marginRight: "auto",
+  position: 'relative',
+  marginTop: 4,
+  marginLeft: 6,
+  marginRight: 'auto',
   //======
-  position: 'absolute',
-  left: '23%',
-  top: '43%',
-  transform: 'translate(-50%, -50%)',
+  // position: 'absolute',
+  // left: '23%',
+  // top: '43%',
+  // transform: 'translate(-50%, -50%)',
   //======
   width: 580,
   bgcolor: 'background.paper',

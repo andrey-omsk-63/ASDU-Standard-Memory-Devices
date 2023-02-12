@@ -5,7 +5,7 @@ import { mapCreate, massmodeCreate } from '../../redux/actions';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-//import Modal from '@mui/material/Modal';
+import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 
 import GsErrorMessage from './GsErrorMessage';
@@ -49,7 +49,7 @@ const GsSelectMD = (props: {
   const [trigger, setTrigger] = React.useState(true);
   const [openSoobErr, setOpenSoobErr] = React.useState(false);
   const [lookHistory, setLookHistory] = React.useState(false);
-  //const [openSetMode, setOpenSetMode] = React.useState(true);
+  const [openSetMode, setOpenSetMode] = React.useState(true);
   if (!debug) history = props.history;
 
   if (oldHistory !== props.history) {
@@ -60,7 +60,7 @@ const GsSelectMD = (props: {
   const handleCloseSetEnd = () => {
     props.setOpen(false);
     props.funcHelper(true);
-    //setOpenSetMode(false);
+    setOpenSetMode(false);
   };
 
   const ClickKnop1 = (idx: number) => {
@@ -74,7 +74,7 @@ const GsSelectMD = (props: {
       } else {
         props.receive(idx);
         props.setOpen(false);
-        //setOpenSetMode(false);
+        setOpenSetMode(false);
       }
     }
   };
@@ -184,27 +184,27 @@ const GsSelectMD = (props: {
   };
 
   return (
-    // <Modal open={openSetMode} onClose={handleCloseSetEnd} hideBackdrop>
-    <Box sx={styleSetSelect}>
-      <Button sx={styleModalEnd} onClick={handleCloseSetEnd}>
-        <b>&#10006;</b>
-      </Button>
+    <Modal open={openSetMode} onClose={handleCloseSetEnd} hideBackdrop>
+      <Box sx={styleSetSelect}>
+        <Button sx={styleModalEnd} onClick={handleCloseSetEnd}>
+          <b>&#10006;</b>
+        </Button>
 
-      <Typography variant="h6" sx={{ textAlign: 'center' }}>
-        Выбор режима ЗУ
-      </Typography>
-      <Box sx={{ overflowX: 'auto', height: '69vh' }}>{StrokaTabl()}</Box>
-      {LookDel() > 0 && (
-        <Box sx={{ marginTop: 1, textAlign: 'center' }}>
-          <Button sx={styleModalMenuSelect} onClick={() => DeleteRec()}>
-            Удалить отмеченные
-          </Button>
-        </Box>
-      )}
-      {lookHistory && <GsLookHistory setOpen={setLookHistory} history={history} />}
-      {openSoobErr && <GsErrorMessage setOpen={setOpenSoobErr} sErr={soobErr} />}
-    </Box>
-    // </Modal>
+        <Typography variant="h6" sx={{ textAlign: 'center' }}>
+          Выбор режима ЗУ
+        </Typography>
+        <Box sx={{ overflowX: 'auto', height: '69vh' }}>{StrokaTabl()}</Box>
+        {LookDel() > 0 && (
+          <Box sx={{ marginTop: 1, textAlign: 'center' }}>
+            <Button sx={styleModalMenuSelect} onClick={() => DeleteRec()}>
+              Удалить отмеченные
+            </Button>
+          </Box>
+        )}
+        {lookHistory && <GsLookHistory setOpen={setLookHistory} history={history} />}
+        {openSoobErr && <GsErrorMessage setOpen={setOpenSoobErr} sErr={soobErr} />}
+      </Box>
+    </Modal>
   );
 };
 
