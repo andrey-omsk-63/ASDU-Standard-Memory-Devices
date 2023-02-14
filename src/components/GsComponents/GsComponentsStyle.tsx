@@ -1,22 +1,22 @@
 //=== GsSetPhase =========================================
 export const styleSetInf = {
-  position: 'relative',
-  marginTop: 4,
-  marginLeft: 'auto',
-  marginRight: 69,
+  // position: 'relative',
+  // marginTop: 4,
+  // marginLeft: 'auto',
+  // marginRight: 69,
   //======
-  // position: 'absolute',
-  // left: '30%',
-  // top: '48%',
-  // transform: 'translate(-50%, -50%)',
+  position: 'absolute',
+  left: '421px',
+  top: '355px',
+  transform: 'translate(-50%, -50%)',
   //======
-  width: 777,
+  width: 730,
   bgcolor: 'background.paper',
   border: '3px solid #000',
   borderColor: 'primary.main',
   borderRadius: 2,
   boxShadow: 24,
-  p: 1.5,
+  p: 1,
 };
 
 export const styleModalMenu = {
@@ -36,7 +36,7 @@ export const styleBoxFormFaza = {
 };
 
 export const styleSet = {
-  width: '512px',
+  width: '495px',
   maxHeight: '4px',
   minHeight: '4px',
   bgcolor: '#FFFBE5',
@@ -49,7 +49,7 @@ export const styleBoxFormName = {
   '& > :not(style)': {
     marginTop: '-9px',
     marginLeft: '-8px',
-    width: '530px',
+    width: '510px',
   },
 };
 //=== GsToDoMode =========================================

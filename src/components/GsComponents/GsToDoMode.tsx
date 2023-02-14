@@ -120,6 +120,7 @@ const GsToDoMode = (props: {
     props.funcSize(11.99);
     toDoMode = false;
     datestat.toDoMode = false;
+    datestat.working = false;
     dispatch(statsaveCreate(datestat));
     massfaz = [];
     dispatch(massfazCreate(massfaz));
