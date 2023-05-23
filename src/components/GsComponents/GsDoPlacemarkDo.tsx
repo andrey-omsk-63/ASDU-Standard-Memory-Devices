@@ -71,7 +71,7 @@ const GsDoPlacemarkDo = (props: {
     }
   }
   debug && (fazaImg = datestat.phSvg); // для отладки
-//Memo
+
   const Hoster = React.useCallback(() => {
     let host = 'https://localhost:3000/18.svg';
     if (!debug) {
