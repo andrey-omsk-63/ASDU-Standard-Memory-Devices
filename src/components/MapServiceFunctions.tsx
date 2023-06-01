@@ -119,7 +119,7 @@ export const GetPointOptions1 = (Hoster: any) => {
     // размеры метки
     iconImageSize: [50, 50],
     // её "ножки" (точки привязки)
-    iconImageOffset: [-15, -38],
+    iconImageOffset: [-25, -25],
   };
 };
 
