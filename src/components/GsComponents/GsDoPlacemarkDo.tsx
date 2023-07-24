@@ -49,10 +49,6 @@ const GsDoPlacemarkDo = (props: {
     let idv = mappp.idevice;
     for (let i = 0; i < massfaz.length; i++) {
       if (idv === massfaz[i].idevice) {
-        //   if (massfaz[i].fazaSist > 0) {
-        //     if (massfaz[i].fazaSist <= massfaz[i].img.length)
-        //       fazaImg = massfaz[i].img[massfaz[i].fazaSist - 1];
-        //}
         if (massfaz[i].fazaSist === 11 || massfaz[i].fazaSist === 15) {
           nomSvg = 12; // ОС
           pC = -1;
