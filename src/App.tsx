@@ -57,6 +57,7 @@ export interface Fazer {
   idx: number;
   faza: number;
   fazaSist: number;
+  fazaSistOld: number;
   phases: Array<number>;
   idevice: number;
   name: string;
@@ -71,6 +72,7 @@ let maskFaz: Fazer = {
   idx: 0,
   faza: 1,
   fazaSist: -1,
+  fazaSistOld: -1,
   phases: [],
   idevice: 0,
   name: "",

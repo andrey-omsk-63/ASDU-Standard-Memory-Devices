@@ -1,25 +1,26 @@
-import * as React from 'react';
+import * as React from "react";
 
-import Button from '@mui/material/Button';
-import CardMedia from '@mui/material/CardMedia';
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import CardMedia from "@mui/material/CardMedia";
 
-import { Pointer } from './../App';
+import { Pointer } from "./../App";
 //import { DateMAP } from "./../interfaceMAP.d";
 
-import { styleInfoSoob } from './MainMapStyle';
+import { styleInfoSoob } from "./MainMapStyle";
 
 export const MasskPoint = (debug: boolean, rec: any, imgFaza: string) => {
   let masskPoint: Pointer = {
     ID: -1,
     coordinates: [],
-    nameCoordinates: '',
+    nameCoordinates: "",
     region: 0,
     area: 0,
     phases: [],
     phSvg: [],
   };
   let img = null;
-  if (debug) img = imgFaza;
+  //if (debug) img = imgFaza;
   masskPoint.ID = rec.ID;
   masskPoint.coordinates[0] = rec.points.Y;
   masskPoint.coordinates[1] = rec.points.X;
@@ -34,11 +35,11 @@ export const MasskPoint = (debug: boolean, rec: any, imgFaza: string) => {
 };
 
 export const DecodingCoord = (coord: string) => {
-  return coord.split(',').map(Number);
+  return coord.split(",").map(Number);
 };
 
 export const CodingCoord = (coord: Array<number>) => {
-  return String(coord[0]) + ',' + String(coord[1]);
+  return String(coord[0]) + "," + String(coord[1]);
 };
 
 export const DoublRoute = (massroute: any, pointA: any, pointB: any) => {
@@ -46,7 +47,8 @@ export const DoublRoute = (massroute: any, pointA: any, pointB: any) => {
   let pointAcod = CodingCoord(pointA);
   let pointBcod = CodingCoord(pointB);
   for (let i = 0; i < massroute.length; i++) {
-    if (massroute[i].starts === pointAcod && massroute[i].stops === pointBcod) flDubl = true;
+    if (massroute[i].starts === pointAcod && massroute[i].stops === pointBcod)
+      flDubl = true;
   }
   return flDubl;
 };
@@ -85,43 +87,44 @@ export const GetPointData = (
   pointBbIndex: number,
   massdk: any,
   map: any,
-  massMem: any,
+  massMem: any
 ) => {
-  let cont1 = massdk[index].nameCoordinates + '<br/>';
-  let cont3 = map.tflight[index].tlsost.description + '<br/>';
-  let cont2 = '[' + massdk[index].region + ', ' + massdk[index].area;
-  cont2 += ', ' + massdk[index].ID + ', ' + map.tflight[index].idevice + ']';
-  let textBalloon = '';
+  let cont1 = massdk[index].nameCoordinates + "<br/>";
+  let cont3 = map.tflight[index].tlsost.description + "<br/>";
+  let cont2 = "[" + massdk[index].region + ", " + massdk[index].area;
+  cont2 += ", " + massdk[index].ID + ", " + map.tflight[index].idevice + "]";
+  let textBalloon = "";
   let nomInRoute = massMem.indexOf(index);
-  if (nomInRoute > 0) textBalloon = 'Промежуточная точка маршрута №' + (nomInRoute + 1);
-  if (index === pointBbIndex) textBalloon = 'Конец маршрута';
-  if (index === pointAaIndex) textBalloon = 'Начало маршрута';
+  if (nomInRoute > 0)
+    textBalloon = "Промежуточная точка маршрута №" + (nomInRoute + 1);
+  if (index === pointBbIndex) textBalloon = "Конец маршрута";
+  if (index === pointAaIndex) textBalloon = "Начало маршрута";
 
   //if (textBalloon) console.log("!!!massfaz", MassFaz);
 
   return {
-    hintContent: cont1 + cont3 + cont2 + '<br/>' + textBalloon,
+    hintContent: cont1 + cont3 + cont2 + "<br/>" + textBalloon,
   };
 };
 
-export const GetPointOptions1 = (Hoster: any) => {
-  let imger = window.location.origin + '/free/img/notImage.png';
-  if (Hoster) imger = 'data:image/png;base64,' + Hoster;
-  //console.log("###", imger,Hoster );
+// export const GetPointOptions1 = (Hoster: any) => {
+//   let imger = window.location.origin + '/free/img/notImage.png';
+//   if (Hoster) imger = 'data:image/png;base64,' + Hoster;
+//   //console.log("###", imger,Hoster );
 
-  return {
-    // данный тип макета
-    iconLayout: 'default#image',
-    // изображение иконки метки
-    //iconImageHref: '/faza.png',
-    // iconImageHref: 'data:image/png;base64,' + Hoster,
-    iconImageHref: imger,
-    // размеры метки
-    iconImageSize: [50, 50],
-    // её "ножки" (точки привязки)
-    iconImageOffset: [-25, -25],
-  };
-};
+//   return {
+//     // данный тип макета
+//     iconLayout: 'default#image',
+//     // изображение иконки метки
+//     //iconImageHref: '/faza.png',
+//     // iconImageHref: 'data:image/png;base64,' + Hoster,
+//     iconImageHref: imger,
+//     // размеры метки
+//     iconImageSize: [50, 50],
+//     // её "ножки" (точки привязки)
+//     iconImageOffset: [-25, -25],
+//   };
+// };
 
 // export const GetPointOptions2 = (index: number, massMem: Array<number>) => {
 //   let colorBalloon = "islands#violetCircleDotIcon";
@@ -144,13 +147,13 @@ export const GetPointOptions1 = (Hoster: any) => {
 
 export const ErrorHaveVertex = (rec: any) => {
   alert(
-    'Не существует светофор: Регион ' +
+    "Не существует светофор: Регион " +
       rec.region +
-      ' Район ' +
+      " Район " +
       rec.area +
-      ' ID ' +
+      " ID " +
       rec.id +
-      '. Устройство будет проигнорировано и удалёно из плана',
+      ". Устройство будет проигнорировано и удалёно из плана"
   );
 };
 
@@ -173,26 +176,46 @@ export const getMultiRouteOptions = () => {
 //=== GsSetPhase ===================================
 export const NameMode = () => {
   let nameMode =
-    '(' + new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString() + ')';
+    "(" +
+    new Date().toLocaleDateString() +
+    " " +
+    new Date().toLocaleTimeString() +
+    ")";
   return nameMode;
 };
 //=== GsToDoMode ===================================
-export const OutputFazaImg = (img: any) => {
+export const OutputFazaImg = (img: any, i: number) => {
   let widthHeight = 60;
   if (!img) widthHeight = 30;
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      xmlnsXlink="http://www.w3.org/1999/xlink"
-      style={{ width: widthHeight, height: widthHeight }}>
-      <image width={'100%'} height={'100%'} xlinkHref={'data:image/png;base64,' + img} />
-    </svg>
+    <>
+      {img && (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          xmlnsXlink="http://www.w3.org/1999/xlink"
+          style={{ width: widthHeight, height: widthHeight }}
+        >
+          <image
+            width={"100%"}
+            height={"100%"}
+            xlinkHref={"data:image/png;base64," + img}
+          />
+        </svg>
+      )}
+      {!img && (
+        <Box sx={{ fontSize: 27, marginTop: -0.5, marginLeft: 1 }}>{i}</Box>
+      )}
+    </>
   );
 };
 
 export const OutputVertexImg = (host: string) => {
   return (
-    <CardMedia component="img" sx={{ textAlign: 'center', height: 40, width: 30 }} image={host} />
+    <CardMedia
+      component="img"
+      sx={{ textAlign: "center", height: 40, width: 30 }}
+      image={host}
+    />
   );
 };
 //=== Разное =======================================
@@ -203,11 +226,11 @@ export const StrokaMenuGlob = (soob: string, func: any, mode: number) => {
     marginRight: 0.1,
     maxWidth: dlSoob,
     minWidth: dlSoob,
-    maxHeight: '21px',
-    minHeight: '21px',
-    backgroundColor: '#D7F1C0',
-    color: 'black',
-    textTransform: 'unset !important',
+    maxHeight: "21px",
+    minHeight: "21px",
+    backgroundColor: "#D7F1C0",
+    color: "black",
+    textTransform: "unset !important",
   };
 
   return (

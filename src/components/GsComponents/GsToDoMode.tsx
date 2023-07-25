@@ -43,6 +43,7 @@ const GsToDoMode = (props: {
     const { massdkReducer } = state;
     return massdkReducer.massdk;
   });
+  //console.log('TODOmassdk', massdk);
   let massfaz = useSelector((state: any) => {
     const { massfazReducer } = state;
     return massfazReducer.massfaz;
@@ -52,11 +53,6 @@ const GsToDoMode = (props: {
     const { statsaveReducer } = state;
     return statsaveReducer.datestat;
   });
-  //console.log("TODOdatestat", datestat);
-  // let massmode = useSelector((state: any) => {
-  //   const { massmodeReducer } = state;
-  //   return massmodeReducer.massmode;
-  // });
   const debug = datestat.debug;
   const ws = datestat.ws;
   const dispatch = useDispatch();
@@ -73,12 +69,14 @@ const GsToDoMode = (props: {
       idx: 0,
       faza: 1,
       fazaSist: -1,
+      fazaSistOld: -1,
       phases: [],
       idevice: 0,
       name: "",
       starRec: false,
       img: [],
     };
+    if (debug) maskFaz.fazaSist = 1;
     //maskFaz.kolOpen = massmode[newMode].kolOpen;
     maskFaz.idx = props.massMem[i];
     maskFaz.name = massdk[maskFaz.idx].nameCoordinates;
@@ -99,6 +97,7 @@ const GsToDoMode = (props: {
     }
     return maskFaz;
   };
+
   if (init) {
     massfaz = [];
     timerId = [];
@@ -111,9 +110,6 @@ const GsToDoMode = (props: {
     }
     init = false;
     dispatch(massfazCreate(massfaz));
-    //console.log('INIT', props.massMem, massfaz);
-    //datestat.toDoMode = true;
-    //dispatch(statsaveCreate(datestat));
   }
   //========================================================
   const handleCloseSetEnd = () => {
@@ -225,16 +221,6 @@ const GsToDoMode = (props: {
       if (massfaz[i].starRec) star = "*";
       let takt: number | string = massfaz[i].faza;
       let pad = 1.2;
-      // if (massfaz[i].fazaSist > 0) {
-      //   takt = massfaz[i].fazaSist;
-      //   if (takt === 9) {
-      //     takt = "пром такт";
-      //     pad = 0;
-      //   }
-      //   if (takt <= massfaz[i].img.length)
-      //     fazaImg = massfaz[i].img[massfaz[i].fazaSist - 1];
-      // }
-      //console.log(massfaz)
       let fazaImg: null | string = null;
       massfaz[i].img.length > massfaz[i].faza &&
         (fazaImg = massfaz[i].img[massfaz[i].faza - 1]);
@@ -275,7 +261,7 @@ const GsToDoMode = (props: {
             {takt}
           </Grid>
           <Grid item xs={2} sx={{ paddingTop: pad, textAlign: "center" }}>
-            {OutputFazaImg(fazaImg)}
+            {OutputFazaImg(fazaImg,massfaz[i].faza)}
           </Grid>
 
           <Grid item xs sx={{ fontSize: 14 }}>

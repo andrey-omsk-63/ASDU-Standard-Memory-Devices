@@ -119,9 +119,8 @@ const MainMapGs = (props: { trigger: boolean; history: any }) => {
     if (massErrRec.length) {
       let massRabMap = []; // редактируем у себя map
       for (let i = 0; i < map.routes[mode].listTL.length; i++) {
-        if (!massErrRec.includes(i)) {
+        if (!massErrRec.includes(i))
           massRabMap.push(map.routes[mode].listTL[i]);
-        }
       }
       map.routes[mode].listTL = massRabMap;
       SendSocketUpdateRoute(debug, ws, map.routes[mode]);
@@ -143,9 +142,7 @@ const MainMapGs = (props: { trigger: boolean; history: any }) => {
         );
       } else {
         let between = [];
-        for (let i = 1; i < massCoord.length - 1; i++) {
-          between.push(i);
-        }
+        for (let i = 1; i < massCoord.length - 1; i++) between.push(i);
         multiRoute = new ymaps.multiRouter.MultiRoute(
           {
             referencePoints: massCoord,
@@ -277,12 +274,6 @@ const MainMapGs = (props: { trigger: boolean; history: any }) => {
       if (nomInMass >= 0) {
         massfaz[nomInMass].runRec = false;
         dispatch(massfazCreate(massfaz));
-        // if (nomInMass + 1 < massMem.length) {
-        //   let masscoord: any = [];
-        //   masscoord[0] = map.tflight[massMem[nomInMass + 1]].points.Y;
-        //   masscoord[1] = map.tflight[massMem[nomInMass + 1]].points.X;
-        //   NewPointCenter(masscoord);
-        // }
         setChangeFaz(!changeFaz);
         setRisovka(true);
       }
@@ -306,7 +297,6 @@ const MainMapGs = (props: { trigger: boolean; history: any }) => {
         }
       };
       mapp.current.events.add("contextmenu", funcContex);
-      //mapp.current.events.stopPropagation();
       mapp.current.events.remove("boundschange", funcBound);
       funcBound = function () {
         pointCenter = mapp.current.getCenter();
@@ -378,8 +368,6 @@ const MainMapGs = (props: { trigger: boolean; history: any }) => {
           soobErr = "Данный режим помечен к удалению";
           setOpenSoobErr(true);
         } else {
-          //xsMap = 7.8;
-          //xsTab = 4.2;
           xsMap = 7.7;
           xsTab = 4.3;
           widthMap = "99.9%";

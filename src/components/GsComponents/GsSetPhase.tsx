@@ -64,6 +64,7 @@ const GsSetPhase = (props: {
   const [openSoobErr, setOpenSoobErr] = React.useState(false);
   const [trigger, setTrigger] = React.useState(true);
   const [chDel, setChDel] = React.useState(0);
+  const [valuen, setValuen] = React.useState(nameMode);
   let massCoord = props.massCoord;
   //=== инициализация ======================================
   const MakeMaskFaz = (i: number) => {
@@ -356,7 +357,12 @@ const GsSetPhase = (props: {
           </Grid>
           <Grid item xs={1} sx={{ border: 0 }}>
             {!massFaz[i].delRec && (
-              <>{OutputFazaImg(massFaz[i].img[massFaz[i].faza - 1])} </>
+              <>
+                {OutputFazaImg(
+                  massFaz[i].img[massFaz[i].faza - 1],
+                  massFaz[i].faza
+                )}{" "}
+              </>
             )}
           </Grid>
 
@@ -392,8 +398,6 @@ const GsSetPhase = (props: {
     }
   };
 
-  const [valuen, setValuen] = React.useState(nameMode);
-
   xsFaza = 2.7;
   if (props.newMode < 0) xsFaza = 0.7;
 
@@ -415,7 +419,10 @@ const GsSetPhase = (props: {
                 <TextField
                   size="small"
                   onKeyPress={handleKey} //отключение Enter
-                  InputProps={{disableUnderline: true, style: { fontSize: 12.9 } }}
+                  InputProps={{
+                    disableUnderline: true,
+                    style: { fontSize: 12.9 },
+                  }}
                   value={valuen}
                   onChange={handleChange}
                   variant="standard"
