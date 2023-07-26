@@ -33,7 +33,6 @@ const GsToDoMode = (props: {
   trigger: boolean;
   changeFaz: boolean;
 }) => {
-  //console.log('GsToDoMode:', props.newMode);
   //== Piece of Redux ======================================
   const map = useSelector((state: any) => {
     const { mapReducer } = state;
@@ -43,12 +42,10 @@ const GsToDoMode = (props: {
     const { massdkReducer } = state;
     return massdkReducer.massdk;
   });
-  //console.log('TODOmassdk', massdk);
   let massfaz = useSelector((state: any) => {
     const { massfazReducer } = state;
     return massfazReducer.massfaz;
   });
-  //console.log('TODOmassfaz', massfaz);
   let datestat = useSelector((state: any) => {
     const { statsaveReducer } = state;
     return statsaveReducer.datestat;
@@ -58,9 +55,7 @@ const GsToDoMode = (props: {
   const dispatch = useDispatch();
   //========================================================
   const [trigger, setTrigger] = React.useState(true);
-  //const timer = React.useRef<any>(null);
   let newMode = props.newMode;
-
   //=== инициализация ======================================
   const MakeMaskFaz = (i: number) => {
     let maskFaz: Fazer = {
@@ -77,7 +72,6 @@ const GsToDoMode = (props: {
       img: [],
     };
     if (debug) maskFaz.fazaSist = 1;
-    //maskFaz.kolOpen = massmode[newMode].kolOpen;
     maskFaz.idx = props.massMem[i];
     maskFaz.name = massdk[maskFaz.idx].nameCoordinates;
     maskFaz.phases = massdk[maskFaz.idx].phases;
@@ -132,8 +126,6 @@ const GsToDoMode = (props: {
         massfaz[i].kolOpen++;
       }
       dispatch(massfazCreate(massfaz));
-      // massmode[newMode].kolOpen++;
-      // dispatch(massmodeCreate(massmode));
       SendSocketRoute(debug, ws, massIdevice, true);
       toDoMode = true; // выполнение режима
       datestat.toDoMode = true;

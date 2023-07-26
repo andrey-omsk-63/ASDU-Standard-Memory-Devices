@@ -106,7 +106,6 @@ const App = () => {
     const { massfazReducer } = state;
     return massfazReducer.massfaz;
   });
-  //console.log("APPmassfaz", massfaz);
   let coordinates = useSelector((state: any) => {
     const { coordinatesReducer } = state;
     return coordinatesReducer.coordinates;
@@ -167,7 +166,6 @@ const App = () => {
     if (WS.url === "wss://localhost:3000/W") dateStat.debug = true;
     dispatch(statsaveCreate(dateStat));
     flagOpenWS = false;
-    //flagInit = true;
   }
 
   React.useEffect(() => {
@@ -250,7 +248,6 @@ const App = () => {
               }
             }
           }
-          // console.log(' massdk:', massdk)
           break;
         case "getRouteHistory":
           console.log("getRouteHistory:", data, data.history);

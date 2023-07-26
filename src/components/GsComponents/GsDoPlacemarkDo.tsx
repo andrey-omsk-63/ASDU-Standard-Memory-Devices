@@ -176,8 +176,8 @@ const GsDoPlacemarkDo = (props: {
   const GetPointOptions1 = React.useCallback(
     (hoster: any) => {
       let Hoster = hoster;
-      if (!Hoster)
-        console.log("Картинка фазы:", Hoster, nomInMassfaz, FAZASIST, massfaz);
+      // if (!Hoster)
+      //   console.log("Картинка фазы:", Hoster, nomInMassfaz, FAZASIST, massfaz);
       //let imger = window.location.origin + "/free/img/notImage.png";
       let imger = "";
       let FZSIST = FAZASIST;
@@ -202,8 +202,6 @@ const GsDoPlacemarkDo = (props: {
         // данный тип макета
         iconLayout: "default#image",
         // изображение иконки метки
-        //iconImageHref: '/faza.png',
-        // iconImageHref: 'data:image/png;base64,' + Hoster,
         iconImageHref: imger,
         // размеры метки
         iconImageSize: [iconSize, iconSize],
