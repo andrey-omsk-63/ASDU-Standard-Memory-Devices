@@ -195,7 +195,7 @@ const GsDoPlacemarkDo = (props: {
             ? "https://localhost:3000/" + FZSIST + ".jpg"
             : window.location.origin + "/free/img/" + FZSIST + ".jpg";
         }
-        console.log("Fазы:", imger);
+        //console.log("Fазы:", imger);
       }
 
       return {

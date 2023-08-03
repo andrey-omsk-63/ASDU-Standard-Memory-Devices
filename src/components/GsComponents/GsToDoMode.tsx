@@ -62,6 +62,7 @@ const GsToDoMode = (props: {
       kolOpen: 0,
       runRec: false,
       idx: 0,
+      coordinates: [],
       faza: 1,
       fazaSist: -1,
       fazaSistOld: -1,
@@ -77,6 +78,8 @@ const GsToDoMode = (props: {
     maskFaz.phases = massdk[maskFaz.idx].phases;
     maskFaz.idevice = map.tflight[maskFaz.idx].idevice;
     maskFaz.faza = map.routes[newMode].listTL[i].phase;
+    maskFaz.coordinates[0] = map.tflight[maskFaz.idx].points.Y;
+    maskFaz.coordinates[1] = map.tflight[maskFaz.idx].points.X;
     if (
       map.tflight[maskFaz.idx].points.X !==
         map.routes[newMode].listTL[i].point.X ||
@@ -253,7 +256,7 @@ const GsToDoMode = (props: {
             {takt}
           </Grid>
           <Grid item xs={2} sx={{ paddingTop: pad, textAlign: "center" }}>
-            {OutputFazaImg(fazaImg,massfaz[i].faza)}
+            {OutputFazaImg(fazaImg, massfaz[i].faza)}
           </Grid>
 
           <Grid item xs sx={{ fontSize: 14 }}>

@@ -20,7 +20,6 @@ export const MasskPoint = (debug: boolean, rec: any, imgFaza: string) => {
     phSvg: [],
   };
   let img = null;
-  //if (debug) img = imgFaza;
   masskPoint.ID = rec.ID;
   masskPoint.coordinates[0] = rec.points.Y;
   masskPoint.coordinates[1] = rec.points.X;
@@ -100,8 +99,6 @@ export const GetPointData = (
   if (index === pointBbIndex) textBalloon = "Конец маршрута";
   if (index === pointAaIndex) textBalloon = "Начало маршрута";
 
-  //if (textBalloon) console.log("!!!massfaz", MassFaz);
-
   return {
     hintContent: cont1 + cont3 + cont2 + "<br/>" + textBalloon,
   };
@@ -147,9 +144,7 @@ export const GetPointData = (
 
 export const ErrorHaveVertex = (rec: any) => {
   alert(
-    "Не существует светофор: Регион " +
-      rec.region +
-      " Район " +
+    "Не существует светофор: Район " +
       rec.area +
       " ID " +
       rec.id +

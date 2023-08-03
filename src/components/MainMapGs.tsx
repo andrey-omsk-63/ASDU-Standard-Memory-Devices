@@ -236,8 +236,8 @@ const MainMapGs = (props: { trigger: boolean; history: any }) => {
   //=== обработка instanceRef ==============================
   const FindNearVertex = (coord: Array<number>) => {
     let nomInMap = -1;
+    let minDist = 999999;
     if (!datestat.toDoMode) {
-      let minDist = 999999;
       nomInMap = -1;
       for (let i = 0; i < map.tflight.length; i++) {
         let corFromMap = [map.tflight[i].points.Y, map.tflight[i].points.X];
@@ -264,15 +264,27 @@ const MainMapGs = (props: { trigger: boolean; history: any }) => {
         }
       }
     } else {
-      let nomInMass = -1;
+      //let nomInMass = -1;
       for (let i = 0; i < massMem.length; i++) {
-        if (massfaz[i].runRec) {
-          nomInMass = i;
-          break;
+        let corFromMap = [massfaz[i].coordinates[0], massfaz[i].coordinates[1]];
+        let dister = Distance(coord, corFromMap);
+        if (dister < 200 && minDist > dister) {
+          // нажали правой кнопкой на светофор
+          minDist = dister;
+          nomInMap = i;
         }
       }
-      if (nomInMass >= 0) {
-        massfaz[nomInMass].runRec = false;
+      if (nomInMap < 0) {
+        // нажали правой кнопкой в чистое поле
+        for (let i = 0; i < massMem.length; i++) {
+          if (massfaz[i].runRec) {
+            nomInMap = i;
+            break;
+          }
+        }
+      }
+      if (nomInMap >= 0) {
+        massfaz[nomInMap].runRec = false;
         dispatch(massfazCreate(massfaz));
         setChangeFaz(!changeFaz);
         setRisovka(true);
@@ -292,9 +304,8 @@ const MainMapGs = (props: { trigger: boolean; history: any }) => {
       mapp.current = ref;
       mapp.current.events.remove("contextmenu", funcContex);
       funcContex = function (e: any) {
-        if (mapp.current.hint && !datestat.working) {
+        if (mapp.current.hint && !datestat.working)
           FindNearVertex(e.get("coords")); // нажата правая кнопка мыши
-        }
       };
       mapp.current.events.add("contextmenu", funcContex);
       mapp.current.events.remove("boundschange", funcBound);
@@ -303,7 +314,6 @@ const MainMapGs = (props: { trigger: boolean; history: any }) => {
         zoom = mapp.current.getZoom(); // покрутили колёсико мыши
       };
       mapp.current.events.add("boundschange", funcBound);
-
       if (flagCenter) {
         pointCenter = newCenter;
         setFlagCenter(false);
@@ -453,7 +463,7 @@ const MainMapGs = (props: { trigger: boolean; history: any }) => {
                     "templateLayoutFactory",
                   ]}
                   state={mapState}
-                  instanceRef={(ref) => InstanceRefDo(ref)}
+                  instanceRef={(ref) => InstanceRefDo(ref)} // обработка действий с правой кнопкой и колёсиком мыши
                   onLoad={(ref) => {
                     ref && setYmaps(ref);
                   }}

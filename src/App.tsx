@@ -55,6 +55,7 @@ export interface Fazer {
   kolOpen: number;
   runRec: boolean;
   idx: number;
+  coordinates: Array<number>;
   faza: number;
   fazaSist: number;
   fazaSistOld: number;
@@ -70,6 +71,7 @@ let maskFaz: Fazer = {
   kolOpen: 0,
   runRec: false,
   idx: 0,
+  coordinates: [],
   faza: 1,
   fazaSist: -1,
   fazaSistOld: -1,
