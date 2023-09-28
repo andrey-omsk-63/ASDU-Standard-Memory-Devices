@@ -19,7 +19,7 @@ import GsDoPlacemarkDo from "./GsComponents/GsDoPlacemarkDo";
 import { getMultiRouteOptions, StrokaHelp } from "./MapServiceFunctions";
 import { getReferencePoints, CenterCoord } from "./MapServiceFunctions";
 import { ErrorHaveVertex, Distance } from "./MapServiceFunctions";
-import { StrokaMenuGlob } from "./MapServiceFunctions";
+import { StrokaMenuGlob, StrokaHelpPusto } from "./MapServiceFunctions";
 
 import { SendSocketUpdateRoute } from "./MapSocketFunctions";
 
@@ -414,10 +414,12 @@ const MainMapGs = (props: { trigger: boolean; history: any }) => {
 
     return (
       <>
+        {/* <Box sx={{ display: "flex", justifyContent: "space-between" }}> */}
         {modeToDo > 0 && <>{StrokaHelp(soobInfo)}</>}
         {modeToDo === 0 && (
           <>
             {StrokaMenuGlob("Существующие ЗУ", PressButton, 42)}
+
             {massMem.length < 1 && helper && <>{StrokaHelp(soobHelp)}</>}
             {massMem.length === 1 && helper && <>{StrokaHelp(soobHelpFiest)}</>}
             {massMem.length > 1 && (
@@ -436,9 +438,11 @@ const MainMapGs = (props: { trigger: boolean; history: any }) => {
                 )}
               </>
             )}
+            {StrokaHelpPusto()}
           </>
         )}
       </>
+      // </Box>
     );
   };
 

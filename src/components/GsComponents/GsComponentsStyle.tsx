@@ -124,9 +124,9 @@ export const styleSetSelect = {
   //======
   width: 580,
   bgcolor: 'background.paper',
-  border: '3px solid #000',
+  border: '1px solid #000',
   borderColor: 'primary.main',
-  borderRadius: 2,
+  borderRadius: 1,
   boxShadow: 24,
   p: 1.5,
 };

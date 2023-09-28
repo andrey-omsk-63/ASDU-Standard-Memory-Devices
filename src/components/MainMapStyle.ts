@@ -6,7 +6,6 @@ export const searchControl = {
 
 export const styleInfoSoob = {
   fontSize: 14,
-  border: 0,
   marginRight: 0.1,
   width: 530,
   maxHeight: "21px",
@@ -14,6 +13,7 @@ export const styleInfoSoob = {
   backgroundColor: "#E9F5D8",
   color: "#E6761B",
   textTransform: "unset !important",
+  p: 1.5,
 };
 
 export const styleModalEnd = {

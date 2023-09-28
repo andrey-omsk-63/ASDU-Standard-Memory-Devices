@@ -218,14 +218,18 @@ export const StrokaMenuGlob = (soob: string, func: any, mode: number) => {
   let dlSoob = (soob.length + 5) * 8;
   const styleApp01 = {
     fontSize: 14,
-    marginRight: 0.1,
-    maxWidth: dlSoob,
-    minWidth: dlSoob,
+    marginRight: 0.3,
+    marginTop: -0.5,
+    width: dlSoob,
     maxHeight: "21px",
     minHeight: "21px",
-    backgroundColor: "#D7F1C0",
+    bgcolor: "#C4EAA2", // салатовый
+    border: "1px solid #000",
+    borderColor: "#d4d4d4", // серый
+    borderRadius: 1,
     color: "black",
     textTransform: "unset !important",
+    boxShadow: 4,
   };
 
   return (
@@ -241,4 +245,17 @@ export const StrokaHelp = (soobInfo: string) => {
       <em>{soobInfo}</em>
     </Button>
   );
+};
+
+export const StrokaHelpPusto = () => {
+  const styleInfoSoob = {
+    
+    maxWidth: '1px',
+    minWidth: '1px',
+    maxHeight: "21px",
+    minHeight: "21px",
+    backgroundColor: "#E9F5D8",
+    p: 1.5,
+  };
+  return <Button sx={styleInfoSoob}> </Button>;
 };
