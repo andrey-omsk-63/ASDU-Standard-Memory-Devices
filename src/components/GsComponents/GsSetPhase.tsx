@@ -6,7 +6,6 @@ import { statsaveCreate } from "../../redux/actions";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
-//import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import MenuItem from "@mui/material/MenuItem";
@@ -18,19 +17,19 @@ import { SendSocketCreateRoute } from "../MapSocketFunctions";
 import { SendSocketUpdateRoute } from "../MapSocketFunctions";
 
 import { styleModalEnd } from "../MainMapStyle";
+
 import { styleSetInf, styleModalMenu } from "./GsComponentsStyle";
-import { styleBoxFormFaza } from "./GsComponentsStyle";
+import { styleBoxFormFaza, styleSaveRed } from "./GsComponentsStyle";
+import { styleSaveBlack } from "./GsComponentsStyle";
 import { styleSet, styleBoxFormName } from "./GsComponentsStyle";
+import { StyleSetFaza, StyleSetFazaNull } from "./GsComponentsStyle";
 
 let newInput = true;
 let massFaz: any = [];
-let colorRec = "black";
-let knop = "удалить";
 let nameMode = "";
 let soobErr = "";
 let chFaz = 0;
 let xsFaza = 2;
-//let afterDel = false;
 
 const GsSetPhase = (props: {
   setOpen: any;
@@ -64,10 +63,11 @@ const GsSetPhase = (props: {
   const [openSoobErr, setOpenSoobErr] = React.useState(false);
   const [trigger, setTrigger] = React.useState(true);
   const [chDel, setChDel] = React.useState(0);
-  const [valuen, setValuen] = React.useState(nameMode);
+  // const [valuen, setValuen] = React.useState(nameMode);
   let massCoord = props.massCoord;
   //=== инициализация ======================================
   const MakeMaskFaz = (i: number) => {
+    chFaz = 0;
     let im: Array<string | null> = [];
     let maskFaz = {
       idx: 0,
@@ -91,7 +91,6 @@ const GsSetPhase = (props: {
     }
     return maskFaz;
   };
-  //console.log("@@@:", afterDel, newInput, props.newMode);
   if (props.newMode >= 0) {
     if (newInput) {
       massFaz = []; // существующий режим
@@ -110,9 +109,6 @@ const GsSetPhase = (props: {
       newInput = false;
       setChDel(0);
     } else {
-      // if (afterDel) {
-      //   afterDel = false; // новый режим после удаления
-      // } else {
       let massRab: any = [];
       for (let i = 0; i < props.massMem.length; i++) {
         let flagHave = false;
@@ -126,11 +122,8 @@ const GsSetPhase = (props: {
         if (!flagHave) massRab.push(MakeMaskFaz(i));
       }
       massFaz = massRab;
-      // }
     }
   }
-  // datestat.working = true;
-  // dispatch(statsaveCreate(datestat));
   //========================================================
   const handleCloseSetEnd = () => {
     if (chDel) DelRec();
@@ -244,18 +237,9 @@ const GsSetPhase = (props: {
   };
 
   const InputFaza = (mode: number) => {
-    let mesto = "12%";
-    if (props.newMode < 0) mesto = "0%";
-    const styleSetFaza = {
-      position: "relative",
-      left: mesto,
-      width: "12px",
-      maxHeight: "3px",
-      minHeight: "3px",
-      bgcolor: "#FFFBE5",
-      boxShadow: 3,
-      p: 1.5,
-    };
+    let mesto = props.newMode < 0 ? "12%" : "0%";
+    const styleSetFaza = StyleSetFaza(mesto);
+    const styleSetFazaNull = StyleSetFazaNull(mesto);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       chFaz++;
@@ -286,8 +270,10 @@ const GsSetPhase = (props: {
       dat.indexOf(massFaz[mode].faza)
     );
 
+    let styleFaz = massFaz[mode].delRec ? styleSetFazaNull : styleSetFaza;
+
     return (
-      <Box sx={styleSetFaza}>
+      <Box sx={styleFaz}>
         {!massFaz[mode].delRec && (
           <Box component="form" sx={styleBoxFormFaza}>
             <TextField
@@ -318,29 +304,16 @@ const GsSetPhase = (props: {
 
   const StrokaTabl = () => {
     let resStr = [];
-
     for (let i = 0; i < massFaz.length; i++) {
-      knop = "удалить";
+      let knop = "удалить";
       let fSize = 15;
-      colorRec = "black";
+      let colorRec = "black";
       if (massFaz[i].delRec) {
         knop = "восстановить";
         fSize = 12.9;
         colorRec = "red";
       }
-      const styleSave = {
-        fontSize: fSize,
-        marginRight: 0.1,
-        border: "2px solid #000",
-        bgcolor: "#E6F5D6",
-        width: "110px",
-        maxHeight: "20px",
-        minHeight: "20px",
-        borderColor: "#E6F5D6",
-        borderRadius: 2,
-        color: colorRec,
-        textTransform: "unset !important",
-      };
+      let illum = massFaz[i].delRec ? styleSaveRed : styleSaveBlack;
 
       resStr.push(
         <Grid
@@ -368,11 +341,7 @@ const GsSetPhase = (props: {
 
           {props.newMode < 0 && (
             <Grid item xs={2} sx={{ textAlign: "center" }}>
-              <Button
-                variant="contained"
-                sx={styleSave}
-                onClick={() => ClickKnop(i)}
-              >
+              <Button sx={illum} onClick={() => ClickKnop(i)}>
                 {knop}
               </Button>
             </Grid>
@@ -400,9 +369,9 @@ const GsSetPhase = (props: {
 
   xsFaza = 2.7;
   if (props.newMode < 0) xsFaza = 0.7;
+  const [valuen, setValuen] = React.useState(nameMode);
 
   return (
-    // <Modal open={openSetMode} onClose={handleCloseSetEnd} hideBackdrop>
     <Box sx={styleSetInf}>
       <Button sx={styleModalEnd} onClick={handleCloseSetEnd}>
         <b>&#10006;</b>
@@ -441,7 +410,10 @@ const GsSetPhase = (props: {
         </Grid>
       )}
 
-      <Typography variant="h6" sx={{ marginTop: 1, textAlign: "center" }}>
+      <Typography
+        variant="h6"
+        sx={{ color: "#5B1080", marginTop: 1, textAlign: "center" }}
+      >
         Таблица фаз
       </Typography>
       <Box sx={{ marginTop: 0.5 }}>
@@ -471,19 +443,24 @@ const GsSetPhase = (props: {
           </Box>
         )}
 
-        {props.newMode >= 0 && chFaz > 0 && (
-          <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
-            <Button sx={styleModalMenu} onClick={() => SaveFaz()}>
-              Сохранить изменения
-            </Button>
-          </Box>
+        {props.newMode >= 0 && (
+          <>
+            {chFaz > 0 ? (
+              <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
+                <Button sx={styleModalMenu} onClick={() => SaveFaz()}>
+                  Сохранить изменения
+                </Button>
+              </Box>
+            ) : (
+              <Box sx={{ height: "27px" }}> </Box>
+            )}
+          </>
         )}
       </Box>
       {openSoobErr && (
         <GsErrorMessage setOpen={setOpenSoobErr} sErr={soobErr} />
       )}
     </Box>
-    // </Modal>
   );
 };
 

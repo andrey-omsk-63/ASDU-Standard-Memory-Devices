@@ -35,7 +35,7 @@ const GsLookHistory = (props: { setOpen: Function; history: any }) => {
   };
 
   const ClickKnop = (mode: number) => {
-    hist = history[mode]
+    hist = history[mode];
     setLookFaza(true);
   };
 
@@ -51,17 +51,12 @@ const GsLookHistory = (props: { setOpen: Function; history: any }) => {
             Изменён:
           </Grid>
           <Grid item xs={4.5} sx={{ border: 0, textAlign: "center" }}>
-            <Button
-              variant="contained"
-              sx={styleButLook}
-              onClick={() => ClickKnop(i)}
-            >
+            <Button sx={styleButLook} onClick={() => ClickKnop(i)}>
               {stroka}
             </Button>
           </Grid>
           <Grid item xs sx={{ marginTop: 1, fontSize: 14, textAlign: "left" }}>
             Кем: <b>{history[i].login.slice(0, 21)}</b>
-            {/* Кем: <b>012345678901234567890</b> */}
           </Grid>
         </Grid>
       );
@@ -84,13 +79,16 @@ const GsLookHistory = (props: { setOpen: Function; history: any }) => {
 
         {history !== null && (
           <>
-            <Typography variant="h6" sx={{ textAlign: "center" }}>
+            <Typography
+              variant="h6"
+              sx={{ color: "#5B1080", textAlign: "center" }}
+            >
               {history[0].description}
             </Typography>
             <Box sx={{ overflowX: "auto", height: "69vh" }}>{StrokaTabl()}</Box>
           </>
         )}
-        {lookFaza && <GsLookFaza setOpen={setLookFaza} history={hist} />} 
+        {lookFaza && <GsLookFaza setOpen={setLookFaza} history={hist} />}
       </Box>
     </Modal>
   );

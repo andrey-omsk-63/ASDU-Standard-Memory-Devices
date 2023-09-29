@@ -33,7 +33,7 @@ const GsLookFaza = (props: { setOpen: Function; history: any }) => {
     let resStr: any = [];
     for (let i = 0; i < history.state.length; i++) {
       resStr.push(
-        <Grid key={i} container sx={{fontSize: 14.4, marginTop: 1 }}>
+        <Grid key={i} container sx={{ fontSize: 14.4, marginTop: 1 }}>
           <Grid item xs={8.3} sx={{ paddingLeft: 1 }}>
             {history.state[i].description}
           </Grid>
@@ -53,7 +53,11 @@ const GsLookFaza = (props: { setOpen: Function; history: any }) => {
           <b>&#10006;</b>
         </Button>
         <Grid container sx={{ marginTop: 1 }}>
-          <Grid item xs sx={{ fontSize: 18, textAlign: "center" }}>
+          <Grid
+            item
+            xs
+            sx={{ color: "#5B1080", fontSize: 18, textAlign: "center" }}
+          >
             <b>{history.description}</b>
           </Grid>
         </Grid>

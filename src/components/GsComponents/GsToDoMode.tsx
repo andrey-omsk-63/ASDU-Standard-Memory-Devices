@@ -13,14 +13,17 @@ import { OutputFazaImg, OutputVertexImg } from "../MapServiceFunctions";
 import { SendSocketRoute, SendSocketDispatch } from "../MapSocketFunctions";
 
 import { styleModalEnd } from "../MainMapStyle";
-import { styleModalMenu, styleStrokaTablImg } from "./GsComponentsStyle";
-import { styleToDoMode, styleStrokaTabl } from "./GsComponentsStyle";
+import { styleModalMenu, styleStrokaTablImg01 } from "./GsComponentsStyle";
+import { styleToDoMode, styleStrokaTabl01 } from "./GsComponentsStyle";
+import { styleStrokaTabl02, styleStrokaTablImg02 } from "./GsComponentsStyle";
+
 import { styleToDo01, styleToDo02 } from "./GsComponentsStyle";
 
 let toDoMode = false;
 let init = true;
-let timerId: any[] = [];
+let nomIllum = -1;
 
+let timerId: any[] = [];
 let massInt: any[][] = [];
 
 const GsToDoMode = (props: {
@@ -72,6 +75,8 @@ const GsToDoMode = (props: {
       starRec: false,
       img: [],
     };
+
+    nomIllum = -1;
     if (debug) maskFaz.fazaSist = 1;
     maskFaz.idx = props.massMem[i];
     maskFaz.name = massdk[maskFaz.idx].nameCoordinates;
@@ -171,6 +176,7 @@ const GsToDoMode = (props: {
   };
 
   const ClickKnop = (mode: number) => {
+    nomIllum = mode;
     let coor = map.routes[newMode].listTL[mode].point;
     let coord = [coor.Y, coor.X];
     props.funcCenter(coord);
@@ -220,15 +226,15 @@ const GsToDoMode = (props: {
       massfaz[i].img.length > massfaz[i].faza &&
         (fazaImg = massfaz[i].img[massfaz[i].faza - 1]);
       debug && (fazaImg = datestat.phSvg); // для отладки
+      let illum = nomIllum === i ? styleStrokaTabl01 : styleStrokaTabl02;
+      let illumImg = massfaz[i].runRec
+        ? styleStrokaTablImg01
+        : styleStrokaTablImg02;
 
       resStr.push(
         <Grid key={i} container sx={{ marginTop: 1 }}>
           <Grid item xs={1} sx={{ paddingTop: 0.7, textAlign: "center" }}>
-            <Button
-              variant="contained"
-              sx={styleStrokaTabl}
-              onClick={() => ClickKnop(i)}
-            >
+            <Button sx={illum} onClick={() => ClickKnop(i)}>
               {i + 1}
             </Button>
           </Grid>
@@ -239,11 +245,7 @@ const GsToDoMode = (props: {
           <Grid item xs={1.0} sx={{}}>
             {!toDoMode && <>{OutputVertexImg(host)}</>}
             {toDoMode && (
-              <Button
-                variant="contained"
-                sx={styleStrokaTablImg}
-                onClick={() => ClickVertex(i)}
-              >
+              <Button sx={illumImg} onClick={() => ClickVertex(i)}>
                 {OutputVertexImg(host)}
               </Button>
             )}
@@ -293,7 +295,11 @@ const GsToDoMode = (props: {
         )}
 
         <Grid container sx={{ marginTop: 0 }}>
-          <Grid item xs sx={{ fontSize: 18, textAlign: "center" }}>
+          <Grid
+            item
+            xs
+            sx={{ color: "#5B1080", fontSize: 18, textAlign: "center" }}
+          >
             Режим: <b>{map.routes[newMode].description}</b>
           </Grid>
         </Grid>

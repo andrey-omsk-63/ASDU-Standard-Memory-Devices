@@ -63,6 +63,10 @@ const GsSelectMD = (props: {
     setOpenSetMode(false);
   };
 
+  const handleCloseEnd = (event: any, reason: string) => {
+    if (reason === "escapeKeyDown") handleCloseSetEnd();
+  };
+
   const ClickKnop1 = (idx: number) => {
     if (massmode[idx].delRec) {
       soobErr = "Данный режим помечен к удалению";
@@ -160,6 +164,24 @@ const GsSelectMD = (props: {
         textTransform: "unset !important",
         boxShadow: 4,
       };
+
+      const styleBut03 = {
+        fontSize: fSize,
+        marginTop: 1,
+        border: "1px solid #000",
+        bgcolor: "#BAE186", // тёмно-салатовый
+        width: "105px",
+        maxHeight: "20px",
+        minHeight: "20px",
+        borderColor: "#93D145",
+        borderRadius: 1,
+        color: colorRec,
+        textTransform: "unset !important",
+        boxShadow: 8,
+      };
+
+      let illum = massmode[i].delRec ? styleBut03 : styleBut02;
+
       resStr.push(
         <Grid key={i} container>
           <Grid item xs={7.0} sx={{ border: 0, textAlign: "center" }}>
@@ -175,7 +197,7 @@ const GsSelectMD = (props: {
           </Grid>
 
           <Grid item xs sx={{ border: 0, textAlign: "center" }}>
-            <Button sx={styleBut02} onClick={() => ClickKnop3(i)}>
+            <Button sx={illum} onClick={() => ClickKnop3(i)}>
               {knop2}
             </Button>
           </Grid>
@@ -186,7 +208,7 @@ const GsSelectMD = (props: {
   };
 
   return (
-    <Modal open={openSetMode} onClose={handleCloseSetEnd} hideBackdrop={false}>
+    <Modal open={openSetMode} onClose={handleCloseEnd} hideBackdrop={false}>
       <Box sx={styleSetSelect}>
         <Button sx={styleModalEnd} onClick={handleCloseSetEnd}>
           <b>&#10006;</b>
