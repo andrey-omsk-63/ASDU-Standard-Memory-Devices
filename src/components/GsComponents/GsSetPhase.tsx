@@ -438,7 +438,7 @@ const GsSetPhase = (props: {
             )}
 
             <Button sx={styleModalMenu} onClick={() => SaveRec(1)}>
-              Очистить таблицу
+              Отмена режима
             </Button>
           </Box>
         )}

@@ -90,8 +90,9 @@ export const GetPointData = (
 ) => {
   let cont1 = massdk[index].nameCoordinates + "<br/>";
   let cont3 = map.tflight[index].tlsost.description + "<br/>";
-  let cont2 = "[" + massdk[index].region + ", " + massdk[index].area;
-  cont2 += ", " + massdk[index].ID + ", " + map.tflight[index].idevice + "]";
+  // let cont2 = "[" + massdk[index].region + ", " + massdk[index].area;
+  // cont2 += ", " + massdk[index].ID + ", " + map.tflight[index].idevice + "]";
+  let cont2 = "[" + massdk[index].ID + ", " + map.tflight[index].idevice + "]";
   let textBalloon = "";
   let nomInRoute = massMem.indexOf(index);
   if (nomInRoute > 0)
