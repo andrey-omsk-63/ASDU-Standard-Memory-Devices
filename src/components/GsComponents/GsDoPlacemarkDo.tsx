@@ -84,6 +84,8 @@ const GsDoPlacemarkDo = (props: {
   //debug && (fazaImg = datestat.phSvg); // для отладки
 
   const Hoster = React.useCallback(() => {
+    //let begin = id === pA && props.massMem.length === 1 ? true : false;
+    //console.log('@@@:',mappp.tlsost.num)
     let host = "https://localhost:3000/18.svg";
     if (!debug) {
       let mpp = mapp;
