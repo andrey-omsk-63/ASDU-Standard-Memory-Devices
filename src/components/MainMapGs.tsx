@@ -84,6 +84,7 @@ const MainMapGs = (props: { trigger: boolean; history: any }) => {
   const [flagCenter, setFlagCenter] = React.useState(false);
   const [openSoobErr, setOpenSoobErr] = React.useState(false);
   const [risovka, setRisovka] = React.useState(false);
+  const [trigger, setTrigger] = React.useState(false);
   const [changeFaz, setChangeFaz] = React.useState(false);
 
   const [ymaps, setYmaps] = React.useState<YMapsApi | null>(null);
@@ -155,14 +156,22 @@ const MainMapGs = (props: { trigger: boolean; history: any }) => {
     }
   };
 
-  const StatusQuo = () => {
-    massMem = [];
-    massCoord = [];
-    newMode = -1;
-    zoom = zoomStart - 0.01;
-    ymaps && addRoute(ymaps, false); // перерисовка связей
-    NewPointCenter(pointCenterEt);
-  };
+  // const StatusQuo = () => {
+  //   massMem = [];
+  //   massCoord = [];
+  //   newMode = -1;
+  //   //mapState.zoom = zoomStart - 0.01;
+  //   zoom = zoomStart - 0.01;
+  //   datestat.create = true;
+  //   dispatch(statsaveCreate(datestat));
+  //   ymaps && addRoute(ymaps, false); // перерисовка связей
+  //   //NewPointCenter(pointCenterEt);
+  //   //pointCenter = pointCenterEt;
+  //   //mapState.center = pointCenterEt;
+  //   NewPointCenter(pointCenterEt);
+  //   console.log("StatusQuo отработал:", mapState);
+  //   //setTrigger(!trigger);
+  // };
 
   const MakeNewMassMem = (mass: any) => {
     if (mass.length) {
@@ -356,12 +365,15 @@ const MainMapGs = (props: { trigger: boolean; history: any }) => {
         setFlagPusk(!flagPusk);
         break;
       case 42: // выбор режима ЗУ
+        StatusQuo();
         if (massMem.length) {
-          StatusQuo();
+          //StatusQuo();
           ymaps && addRoute(ymaps, false); // перерисовка связей
           setFlagPusk(!flagPusk);
         }
         helper = false;
+        datestat.create = false;
+        dispatch(statsaveCreate(datestat));
         setSelectMD(true);
         break;
       case 43: // переход к созданию нового режима
@@ -400,10 +412,6 @@ const MainMapGs = (props: { trigger: boolean; history: any }) => {
     flagOpen = true;
   }
   //========================================================
-  let mapState: any = {
-    center: pointCenter,
-    zoom,
-  };
 
   const MenuGl = (mod: number) => {
     let soobHelp = "Выберите перекрёстки для создания нового маршрута";
@@ -425,12 +433,15 @@ const MainMapGs = (props: { trigger: boolean; history: any }) => {
             {massMem.length > 1 && (
               <>
                 {newMode < 0 && (
-                  <>{StrokaMenuGlob("Обработка режима", PressButton, 44)}</>
+                  <>
+                    {StrokaMenuGlob("Закрыть режим", PressButton, 43)}
+                    {StrokaMenuGlob("Обработка режима", PressButton, 44)}
+                  </>
                 )}
                 {newMode < 0 && <>{StrokaHelp(soobHelpFiest)}</>}
                 {newMode >= 0 && (
                   <>
-                    {StrokaMenuGlob("Создать режим", PressButton, 43)}
+                    {StrokaMenuGlob("Закрыть режим", PressButton, 43)}
                     {StrokaMenuGlob("Удалить режим", PressButton, 41)}
                     {StrokaMenuGlob("Редактировать фазы", PressButton, 44)}
                     {StrokaMenuGlob("Выполнить режим", PressButton, 45)}
@@ -445,6 +456,26 @@ const MainMapGs = (props: { trigger: boolean; history: any }) => {
       // </Box>
     );
   };
+
+  let mapState: any = {
+    center: pointCenter,
+    zoom: zoom,
+  };
+
+  const StatusQuo = () => {
+    massMem = [];
+    massCoord = [];
+    newMode = -1;
+    zoom = zoom === zoomStart ? zoomStart - 0.01 : zoomStart;
+    datestat.create = true;
+    dispatch(statsaveCreate(datestat));
+    ymaps && addRoute(ymaps, false); // перерисовка связей
+    NewPointCenter(pointCenterEt);
+    //console.log("StatusQuo отработал:", zoom, mapState);
+    setTrigger(!trigger);
+  };
+
+  //console.log("mapState:", zoom, mapState);
 
   return (
     <Grid container sx={{ border: 0, height: "99.9vh" }}>

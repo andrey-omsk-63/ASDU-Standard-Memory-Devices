@@ -84,16 +84,19 @@ const GsDoPlacemarkDo = (props: {
   //debug && (fazaImg = datestat.phSvg); // для отладки
 
   const Hoster = React.useCallback(() => {
-    //let begin = id === pA && props.massMem.length === 1 ? true : false;
-    //console.log('@@@:',mappp.tlsost.num)
-    let host = "https://localhost:3000/18.svg";
+    let nomInRoute = props.massMem.indexOf(id);
+    let illum = datestat.create && nomInRoute >= 0 ? true : false;
+    //console.log("@@@:",nomInRoute,illum, props.massMem.length, datestat.create);
+    let host = !illum
+      ? "https://localhost:3000/18.svg"
+      : "https://localhost:3000/4.svg";
     if (!debug) {
-      let mpp = mapp;
+      let mpp = illum ? 4 : mapp;
       if (nomSvg > 0) mpp = nomSvg.toString();
       host = window.location.origin + "/free/img/trafficLights/" + mpp + ".svg";
     }
     return host;
-  }, [mapp, nomSvg, debug]);
+  }, [mapp, nomSvg, debug, datestat.create, props.massMem, id]);
 
   const createChipsLayout = React.useCallback(
     (calcFunc: Function, currnum: number, rotateDeg?: number) => {

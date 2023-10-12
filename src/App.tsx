@@ -28,6 +28,7 @@ export interface Stater {
   hist: any;
   toDoMode: boolean;
   working: boolean;
+  create: boolean;
 }
 
 export let dateStat: Stater = {
@@ -38,6 +39,7 @@ export let dateStat: Stater = {
   hist: dataHistory, // для отладки
   toDoMode: false,
   working: false,
+  create: true,
 };
 
 export interface Pointer {
