@@ -86,7 +86,7 @@ const GsDoPlacemarkDo = (props: {
   const Hoster = React.useCallback(() => {
     let nomInRoute = props.massMem.indexOf(id);
     let illum = datestat.create && nomInRoute >= 0 ? true : false;
-    //console.log("@@@:",nomInRoute,illum, props.massMem.length, datestat.create);
+    
     let host = !illum
       ? "https://localhost:3000/18.svg"
       : "https://localhost:3000/4.svg";

@@ -21,6 +21,7 @@ let knop2 = "удалить";
 let soobErr = "";
 let oldHistory: any = null;
 let history: any = null;
+let nomPlan = -1;
 
 const GsSelectMD = (props: {
   setOpen: Function;
@@ -78,6 +79,7 @@ const GsSelectMD = (props: {
         soobErr = "Некорректный режим. Количество светофоров = 1";
         setOpenSoobErr(true);
       } else {
+        nomPlan = idx;
         props.receive(idx);
         props.setOpen(false);
         setOpenSetMode(false);
@@ -116,6 +118,7 @@ const GsSelectMD = (props: {
     map.routes = massRoute;
     dispatch(massmodeCreate(massmode));
     dispatch(mapCreate(map));
+    nomPlan = -1;
     setTrigger(!trigger);
   };
 
@@ -152,6 +155,22 @@ const GsSelectMD = (props: {
         textTransform: "unset !important",
         boxShadow: 4,
       };
+
+      const styleBut011 = {
+        fontSize: fSize + 2,
+        marginTop: 1,
+        border: "1px solid #000",
+        bgcolor: "#BAE186", // тёмно-салатовый
+        width: "320px",
+        maxHeight: "20px",
+        minHeight: "20px",
+        borderColor: "#93D145",
+        borderRadius: 1,
+        color: colorRec,
+        textTransform: "unset !important",
+        boxShadow: 4,
+      };
+
       const styleBut02 = {
         fontSize: fSize,
         marginTop: 1,
@@ -183,11 +202,12 @@ const GsSelectMD = (props: {
       };
 
       let illum = massmode[i].delRec ? styleBut03 : styleBut02;
+      let ILLUM = nomPlan === i ? styleBut011 : styleBut01;
 
       resStr.push(
         <Grid key={i} container>
           <Grid item xs={7.0} sx={{ border: 0, textAlign: "center" }}>
-            <Button sx={styleBut01} onClick={() => ClickKnop1(i)}>
+            <Button sx={ILLUM} onClick={() => ClickKnop1(i)}>
               {massmode[i].name}
             </Button>
           </Grid>
