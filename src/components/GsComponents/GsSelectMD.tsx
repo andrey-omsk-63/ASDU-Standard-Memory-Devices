@@ -16,6 +16,7 @@ import { SendSocketRouteHistory } from "../MapSocketFunctions";
 
 import { styleModalEnd } from "../MainMapStyle";
 import { styleSetSelect, styleModalMenuSelect } from "./GsComponentsStyle";
+import { styletSelectTitle } from "./GsComponentsStyle";
 
 let knop2 = "удалить";
 let soobErr = "";
@@ -153,11 +154,11 @@ const GsSelectMD = (props: {
         borderRadius: 1,
         color: colorRec,
         textTransform: "unset !important",
-        boxShadow: 4,
+        boxShadow: 3,
       };
 
       const styleBut011 = {
-        fontSize: fSize + 2,
+        fontSize: fSize + 3,
         marginTop: 1,
         border: "1px solid #000",
         bgcolor: "#BAE186", // тёмно-салатовый
@@ -168,7 +169,7 @@ const GsSelectMD = (props: {
         borderRadius: 1,
         color: colorRec,
         textTransform: "unset !important",
-        boxShadow: 4,
+        boxShadow: 9,
       };
 
       const styleBut02 = {
@@ -183,7 +184,7 @@ const GsSelectMD = (props: {
         borderRadius: 1,
         color: colorRec,
         textTransform: "unset !important",
-        boxShadow: 4,
+        boxShadow: 3,
       };
 
       const styleBut03 = {
@@ -198,7 +199,7 @@ const GsSelectMD = (props: {
         borderRadius: 1,
         color: colorRec,
         textTransform: "unset !important",
-        boxShadow: 8,
+        boxShadow: 9,
       };
 
       let illum = massmode[i].delRec ? styleBut03 : styleBut02;
@@ -208,7 +209,7 @@ const GsSelectMD = (props: {
         <Grid key={i} container>
           <Grid item xs={7.0} sx={{ border: 0, textAlign: "center" }}>
             <Button sx={ILLUM} onClick={() => ClickKnop1(i)}>
-              {massmode[i].name}
+              {massmode[i].name.slice(0, 36)}
             </Button>
           </Grid>
 
@@ -235,8 +236,7 @@ const GsSelectMD = (props: {
         <Button sx={styleModalEnd} onClick={handleCloseSetEnd}>
           <b>&#10006;</b>
         </Button>
-
-        <Typography variant="h6" sx={{ color: "#5B1080", textAlign: "center" }}>
+        <Typography variant="h6" sx={styletSelectTitle}>
           Выбор режима ЗУ
         </Typography>
         <Box sx={{ overflowX: "auto", height: "69vh" }}>{StrokaTabl()}</Box>

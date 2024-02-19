@@ -7,13 +7,13 @@ export const styleSetInf = {
   //======
   position: "absolute",
   left: "421px",
-  top: "355px",
+  top: "358px",
   transform: "translate(-50%, -50%)",
   //======
   width: 730,
   bgcolor: "background.paper",
-  border: "1px solid #000",
-  borderColor: "primary.main",
+  border: "1px solid #FFF",
+  //borderColor: "primary.main",
   borderRadius: 1,
   boxShadow: 24,
   p: 1,
@@ -90,6 +90,21 @@ export const styleSaveRed = {
   color: "red",
   textTransform: "unset !important",
   boxShadow: 12,
+};
+
+export const styletFazaTitle = {
+  color: "#5B1080",
+  marginTop: -0.5,
+  textAlign: "center",
+  textShadow: "2px 2px 3px rgba(0,0,0,0.3)",
+};
+
+export const styletFaza01 = {
+  marginTop: 0.5,
+  bgcolor: "#F1F5FB", // светло серый
+  border: "1px solid #d4d4d4",
+  boxShadow: 6,
+  borderRadius: 1,
 };
 //=== GsToDoMode =========================================
 export const styleToDoMode = {
@@ -222,8 +237,7 @@ export const styleSetSelect = {
   //======
   width: 580,
   bgcolor: "background.paper",
-  border: "1px solid #000",
-  borderColor: "primary.main",
+  border: "1px solid #FFF",
   borderRadius: 1,
   boxShadow: 24,
   p: 1.5,
@@ -240,6 +254,12 @@ export const styleModalMenuSelect = {
   textTransform: "unset !important",
   color: "black",
   boxShadow: 4,
+};
+
+export const styletSelectTitle = {
+  textShadow: "2px 2px 3px rgba(0,0,0,0.3)",
+  color: "#5B1080",
+  textAlign: "center",
 };
 //=== GsLookHistory ======================================
 export const styleSetHist = {

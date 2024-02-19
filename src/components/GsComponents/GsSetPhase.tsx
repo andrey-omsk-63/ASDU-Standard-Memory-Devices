@@ -20,9 +20,10 @@ import { styleModalEnd } from "../MainMapStyle";
 
 import { styleSetInf, styleModalMenu } from "./GsComponentsStyle";
 import { styleBoxFormFaza, styleSaveRed } from "./GsComponentsStyle";
-import { styleSaveBlack } from "./GsComponentsStyle";
-import { styleSet, styleBoxFormName } from "./GsComponentsStyle";
+import { styleSaveBlack, styletFazaTitle } from "./GsComponentsStyle";
+import { styleSet, styleBoxFormName, styletFaza01 } from "./GsComponentsStyle";
 import { StyleSetFaza, StyleSetFazaNull } from "./GsComponentsStyle";
+//import { styletSelectTitle } from "./GsComponentsStyle";
 
 let newInput = true;
 let massFaz: any = [];
@@ -360,6 +361,33 @@ const GsSetPhase = (props: {
     );
   };
 
+  const InputName = () => {
+    return (
+      <Grid container sx={{ marginTop: 1 }}>
+        <Grid item xs={3.5} sx={{ fontSize: 14, textAlign: "center" }}>
+          <b>Введите название нового ЗУ:</b>
+        </Grid>
+        <Grid item xs sx={{ border: 0, textAlign: "center" }}>
+          <Box sx={styleSet}>
+            <Box component="form" sx={styleBoxFormName}>
+              <TextField
+                size="small"
+                onKeyPress={handleKey} //отключение Enter
+                InputProps={{
+                  disableUnderline: true,
+                  style: { fontSize: 12.9 },
+                }}
+                value={valuen}
+                onChange={handleChange}
+                variant="standard"
+              />
+            </Box>
+          </Box>
+        </Grid>
+      </Grid>
+    );
+  };
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.value) {
       setValuen(event.target.value.trimStart()); // удаление пробелов в начале строки
@@ -377,86 +405,57 @@ const GsSetPhase = (props: {
         <b>&#10006;</b>
       </Button>
 
-      {props.newMode < 0 && (
-        <Grid container sx={{ marginTop: 1 }}>
-          <Grid item xs={3.5} sx={{ fontSize: 14, textAlign: "center" }}>
-            <b>Введите название нового ЗУ:</b>
-          </Grid>
-          <Grid item xs sx={{ border: 0, textAlign: "center" }}>
-            <Box sx={styleSet}>
-              <Box component="form" sx={styleBoxFormName}>
-                <TextField
-                  size="small"
-                  onKeyPress={handleKey} //отключение Enter
-                  InputProps={{
-                    disableUnderline: true,
-                    style: { fontSize: 12.9 },
-                  }}
-                  value={valuen}
-                  onChange={handleChange}
-                  variant="standard"
-                />
-              </Box>
-            </Box>
+      {props.newMode < 0 ? (
+        <>{InputName()}</>
+      ) : (
+        <Grid container sx={{}}>
+          <Grid item xs sx={{ fontSize: 14, textAlign: "left" }}>
+            Режим: <b>{map.routes[props.newMode].description.slice(0, 90)}</b>
           </Grid>
         </Grid>
       )}
 
-      {props.newMode >= 0 && (
-        <Grid container sx={{ marginTop: 0 }}>
-          <Grid item xs sx={{ fontSize: 14, textAlign: "center" }}>
-            Режим: <b>{map.routes[props.newMode].description}</b>
-          </Grid>
-        </Grid>
-      )}
-
-      <Typography
-        variant="h6"
-        sx={{ color: "#5B1080", marginTop: 1, textAlign: "center" }}
-      >
+      <Typography variant="h6" sx={styletFazaTitle}>
         Таблица фаз
       </Typography>
-      <Box sx={{ marginTop: 0.5 }}>
+      <Box sx={styletFaza01}>
         <Grid container sx={{ bgcolor: "#C0E2C3" }}>
           {StrokaHeader(8.3, "Описание")}
           {StrokaHeader(xsFaza + 1, "Фаза")}
           {props.newMode < 0 && <>{StrokaHeader(2, "Действие")}</>}
         </Grid>
-
         <Box sx={{ overflowX: "auto", height: "540px" }}>{StrokaTabl()}</Box>
-
-        {props.newMode < 0 && (
-          <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
-            <Button sx={styleModalMenu} onClick={() => SaveRec(0)}>
-              Сохранить режим
-            </Button>
-
-            {chDel > 0 && (
-              <Button sx={styleModalMenu} onClick={() => SaveRec(2)}>
-                Удалить помеченные
-              </Button>
-            )}
-
-            <Button sx={styleModalMenu} onClick={() => SaveRec(1)}>
-              Отмена режима
-            </Button>
-          </Box>
-        )}
-
-        {props.newMode >= 0 && (
-          <>
-            {chFaz > 0 ? (
-              <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
-                <Button sx={styleModalMenu} onClick={() => SaveFaz()}>
-                  Сохранить изменения
-                </Button>
-              </Box>
-            ) : (
-              <Box sx={{ height: "27px" }}> </Box>
-            )}
-          </>
-        )}
       </Box>
+      {props.newMode < 0 && (
+        <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
+          <Button sx={styleModalMenu} onClick={() => SaveRec(0)}>
+            Сохранить режим
+          </Button>
+
+          {chDel > 0 && (
+            <Button sx={styleModalMenu} onClick={() => SaveRec(2)}>
+              Удалить помеченные
+            </Button>
+          )}
+
+          <Button sx={styleModalMenu} onClick={() => SaveRec(1)}>
+            Отмена режима
+          </Button>
+        </Box>
+      )}
+      {props.newMode >= 0 && (
+        <>
+          {chFaz > 0 ? (
+            <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
+              <Button sx={styleModalMenu} onClick={() => SaveFaz()}>
+                Сохранить изменения
+              </Button>
+            </Box>
+          ) : (
+            <Box sx={{ height: "27px" }}> </Box>
+          )}
+        </>
+      )}
       {openSoobErr && (
         <GsErrorMessage setOpen={setOpenSoobErr} sErr={soobErr} />
       )}
