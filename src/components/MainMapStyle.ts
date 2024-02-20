@@ -37,5 +37,5 @@ export const styleSetInf = {
   borderColor: "primary.main",
   borderRadius: 1,
   boxShadow: 24,
-  p: 1.5,
+  p: 1.5, //
 };
