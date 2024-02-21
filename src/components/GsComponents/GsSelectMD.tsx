@@ -16,7 +16,7 @@ import { SendSocketRouteHistory } from "../MapSocketFunctions";
 
 import { styleModalEnd } from "../MainMapStyle";
 import { styleSetSelect, styleModalMenuSelect } from "./GsComponentsStyle";
-import { styletSelectTitle } from "./GsComponentsStyle";
+import { styletSelectTitle, styletSelect01 } from "./GsComponentsStyle";
 
 let knop2 = "удалить";
 let soobErr = "";
@@ -239,7 +239,7 @@ const GsSelectMD = (props: {
         <Typography variant="h6" sx={styletSelectTitle}>
           Выбор режима ЗУ
         </Typography>
-        <Box sx={{ overflowX: "auto", height: "69vh" }}>{StrokaTabl()}</Box>
+        <Box sx={styletSelect01}>{StrokaTabl()}</Box>
         {LookDel() > 0 && (
           <Box sx={{ marginTop: 1, textAlign: "center" }}>
             <Button sx={styleModalMenuSelect} onClick={() => DeleteRec()}>

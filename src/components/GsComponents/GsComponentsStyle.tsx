@@ -261,6 +261,15 @@ export const styletSelectTitle = {
   color: "#5B1080",
   textAlign: "center",
 };
+
+export const styletSelect01 = {
+  overflowX: "auto",
+  height: "69vh",
+  bgcolor: "#F1F5FB",
+  border: "1px solid #d4d4d4",
+  borderRadius: 1,
+  boxShadow: 6,
+};
 //=== GsLookHistory ======================================
 export const styleSetHist = {
   outline: "none",
@@ -270,8 +279,8 @@ export const styleSetHist = {
   marginRight: "auto",
   width: 430,
   bgcolor: "background.paper",
-  border: "1px solid #000",
-  borderColor: "primary.main",
+  border: "1px solid #d4d4d4",
+  //borderColor: "primary.main",
   borderRadius: 1,
   boxShadow: 24,
   p: 1.5,
