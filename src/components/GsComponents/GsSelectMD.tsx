@@ -191,7 +191,7 @@ const GsSelectMD = (props: {
         fontSize: fSize,
         marginTop: 1,
         border: "1px solid #000",
-        bgcolor: "#BAE186", // тёмно-салатовый
+        bgcolor: "#BAE186", // тёмно-салатовый/
         width: "105px",
         maxHeight: "20px",
         minHeight: "20px",
