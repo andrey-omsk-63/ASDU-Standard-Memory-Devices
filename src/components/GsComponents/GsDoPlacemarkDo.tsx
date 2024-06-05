@@ -1,11 +1,12 @@
 import * as React from "react";
 import { useSelector, useDispatch } from "react-redux";
+//import { Bs1Square, Bs2Square } from "react-icons/bs";
 
 import { massfazCreate } from "../../redux/actions";
 
 import { Placemark, YMapsApi } from "react-yandex-maps";
 
-import { GetPointData } from "../MapServiceFunctions";
+//import { GetPointData } from "../MapServiceFunctions";
 
 let FAZASIST = -1;
 let nomInMassfaz = -1;
@@ -86,7 +87,7 @@ const GsDoPlacemarkDo = (props: {
   const Hoster = React.useCallback(() => {
     let nomInRoute = props.massMem.indexOf(id);
     let illum = datestat.create && nomInRoute >= 0 ? true : false;
-    
+
     let host = !illum
       ? "https://localhost:3000/18.svg"
       : "https://localhost:3000/4.svg";
@@ -184,7 +185,7 @@ const GsDoPlacemarkDo = (props: {
       // if (!Hoster)
       //   console.log("Картинка фазы:", Hoster, nomInMassfaz, FAZASIST, massfaz);
       //let imger = window.location.origin + "/free/img/notImage.png";
-      let imger = "";
+      let imger: any = "";
       let FZSIST = FAZASIST;
       if (FAZASIST === 9 || !FAZASIST) {
         FZSIST = massfaz[nomInMassfaz].fazaSistOld;
@@ -208,6 +209,7 @@ const GsDoPlacemarkDo = (props: {
         iconLayout: "default#image",
         // изображение иконки метки
         iconImageHref: imger,
+        //iconImageHref: FZSIST === 1 ? <Bs1Square /> : <Bs2Square />,
         // размеры метки
         iconImageSize: [iconSize, iconSize],
         // её "ножки" (точки привязки)
@@ -216,6 +218,32 @@ const GsDoPlacemarkDo = (props: {
     },
     [debug, massfaz]
   );
+
+  const GetPointData = (
+    index: number,
+    pointAaIndex: number,
+    pointBbIndex: number,
+    massdk: any,
+    map: any,
+    massMem: any
+  ) => {
+    let cont1 = massdk[index].nameCoordinates + "<br/>";
+    let cont3 = map.tflight[index].tlsost.description + "<br/>";
+    // let cont2 = "[" + massdk[index].region + ", " + massdk[index].area;
+    // cont2 += ", " + massdk[index].ID + ", " + map.tflight[index].idevice + "]";
+    let cont2 =
+      "[" + massdk[index].ID + ", " + map.tflight[index].idevice + "]";
+    let textBalloon = "";
+    let nomInRoute = massMem.indexOf(index);
+    if (nomInRoute > 0)
+      textBalloon = "Промежуточная точка маршрута №" + (nomInRoute + 1);
+    if (index === pointBbIndex) textBalloon = "Конец маршрута";
+    if (index === pointAaIndex) textBalloon = "Начало маршрута";
+
+    return {
+      hintContent: cont1 + cont3 + cont2 + "<br/>" + textBalloon,
+    };
+  };
 
   const MemoPlacemarkDo = React.useMemo(
     () => (
@@ -229,6 +257,7 @@ const GsDoPlacemarkDo = (props: {
           (FAZASIST === 9 && massfaz[nomInMassfaz].fazaSistOld < 0)
             ? {
                 iconLayout: createChipsLayout(calculate, mappp.tlsost.num),
+                //iconLayout: <div>111</div>,
               }
             : GetPointOptions1(fazaImg)
         }

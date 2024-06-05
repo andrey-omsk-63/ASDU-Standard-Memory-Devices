@@ -101,7 +101,9 @@ export const GetPointData = (
   if (index === pointAaIndex) textBalloon = "Начало маршрута";
 
   return {
+    //iconContent: <div>1111</div>,
     hintContent: cont1 + cont3 + cont2 + "<br/>" + textBalloon,
+
   };
 };
 
