@@ -103,7 +103,6 @@ export const GetPointData = (
   return {
     //iconContent: <div>1111</div>,
     hintContent: cont1 + cont3 + cont2 + "<br/>" + textBalloon,
-
   };
 };
 
@@ -201,7 +200,16 @@ export const OutputFazaImg = (img: any, i: number) => {
         </svg>
       )}
       {!img && (
-        <Box sx={{ fontSize: 27, marginTop: -0.5, marginLeft: 1 }}>{i}</Box>
+        <Box
+          sx={{
+            fontSize: 27,
+            marginTop: -0.5,
+            marginLeft: 1,
+            textShadow: "2px 2px 3px rgba(0,0,0,0.3)",
+          }}
+        >
+          {i}
+        </Box>
       )}
     </>
   );
@@ -252,9 +260,8 @@ export const StrokaHelp = (soobInfo: string) => {
 
 export const StrokaHelpPusto = () => {
   const styleInfoSoob = {
-    
-    maxWidth: '1px',
-    minWidth: '1px',
+    maxWidth: "1px",
+    minWidth: "1px",
     maxHeight: "21px",
     minHeight: "21px",
     backgroundColor: "#E9F5D8",

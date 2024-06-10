@@ -16,7 +16,7 @@ import { styleModalEnd } from "../MainMapStyle";
 import { styleModalMenu, styleStrokaTablImg01 } from "./GsComponentsStyle";
 import { styleToDoMode, styleStrokaTabl01 } from "./GsComponentsStyle";
 import { styleStrokaTabl02, styleStrokaTablImg02 } from "./GsComponentsStyle";
-
+import { styleStrokaTabl00 } from "./GsComponentsStyle";
 import { styleToDo01, styleToDo02 } from "./GsComponentsStyle";
 
 let toDoMode = false;
@@ -212,7 +212,11 @@ const GsToDoMode = (props: {
     for (let i = 0; i < massfaz.length; i++) {
       let bull = " ";
       if (massfaz[i].runRec) bull = " •";
-      let host = "https://localhost:3000/18.svg";
+      let hostt =
+        window.location.origin.slice(0, 22) === "https://localhost:3000"
+          ? "https://localhost:3000/"
+          : "./";
+      let host = hostt + "18.svg";
       if (!debug) {
         let num = map.tflight[massfaz[i].idx].tlsost.num.toString();
         host =
@@ -295,11 +299,7 @@ const GsToDoMode = (props: {
         )}
 
         <Grid container sx={{ marginTop: 0 }}>
-          <Grid
-            item
-            xs
-            sx={{ color: "#5B1080", fontSize: 18, textAlign: "center" }}
-          >
+          <Grid item xs sx={styleStrokaTabl00}>
             Режим: <b>{map.routes[newMode].description}</b>
           </Grid>
         </Grid>

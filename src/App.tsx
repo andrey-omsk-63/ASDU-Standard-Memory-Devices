@@ -167,7 +167,11 @@ const App = () => {
   if (flagOpenWS) {
     WS = new WebSocket(host);
     dateStat.ws = WS;
-    if (WS.url === "wss://localhost:3000/W") dateStat.debug = true;
+    if (
+      WS.url.slice(0, 20) === "wss://localhost:3000" ||
+      WS.url.slice(0, 27) === "wss://andrey-omsk-63.github"
+    )
+      dateStat.debug = true;
     dispatch(statsaveCreate(dateStat));
     flagOpenWS = false;
   }
@@ -263,7 +267,7 @@ const App = () => {
     };
   }, [dispatch, massdk, massfaz, trigger]);
 
-  if (WS.url === "wss://localhost:3000/W" && flagOpen) {
+  if (dateStat.debug && flagOpen) {
     console.log("РЕЖИМ ОТЛАДКИ!!!");
     dateMapGl = JSON.parse(JSON.stringify(dataMap));
     dispatch(mapCreate(dateMapGl));

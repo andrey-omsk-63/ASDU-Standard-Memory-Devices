@@ -114,11 +114,17 @@ export const styleToDoMode = {
   marginRight: 1,
   width: "96%",
   bgcolor: "background.paper",
-  border: "1px solid #000",
-  borderColor: "primary.main",
+  border: "1px solid #FFF",
   borderRadius: 1,
   boxShadow: 24,
   p: 1.0,
+};
+
+export const styleStrokaTabl00 = {
+  color: "#5B1080",
+  fontSize: 18,
+  textAlign: "center",
+  textShadow: "2px 2px 3px rgba(0,0,0,0.3)",
 };
 
 export const styleStrokaTabl01 = {

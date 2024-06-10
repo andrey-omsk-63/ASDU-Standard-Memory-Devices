@@ -335,7 +335,7 @@ const GsSetPhase = (props: {
                 {OutputFazaImg(
                   massFaz[i].img[massFaz[i].faza - 1],
                   massFaz[i].faza
-                )}{" "}
+                )}
               </>
             )}
           </Grid>

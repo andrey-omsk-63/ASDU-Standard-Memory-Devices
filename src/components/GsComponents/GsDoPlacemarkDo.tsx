@@ -88,9 +88,11 @@ const GsDoPlacemarkDo = (props: {
     let nomInRoute = props.massMem.indexOf(id);
     let illum = datestat.create && nomInRoute >= 0 ? true : false;
 
-    let host = !illum
-      ? "https://localhost:3000/18.svg"
-      : "https://localhost:3000/4.svg";
+    let hostt =
+      window.location.origin.slice(0, 22) === "https://localhost:3000"
+        ? "https://localhost:3000/"
+        : "./";
+    let host = !illum ? hostt + "18.svg" : hostt + "4.svg";
     if (!debug) {
       let mpp = illum ? 4 : mapp;
       if (nomSvg > 0) mpp = nomSvg.toString();
@@ -196,9 +198,13 @@ const GsDoPlacemarkDo = (props: {
       let iconOffset = Hoster ? -25 : -12.5;
       if (Hoster) imger = "data:image/png;base64," + Hoster;
       if (!Hoster) {
+        let hostt =
+          window.location.origin.slice(0, 22) === "https://localhost:3000"
+            ? "https://localhost:3000/"
+            : "./";
         if (FZSIST > 0) {
           imger = debug
-            ? "https://localhost:3000/" + FZSIST + ".jpg"
+            ? hostt + FZSIST + ".jpg"
             : window.location.origin + "/free/img/" + FZSIST + ".jpg";
         }
         //console.log("Fазы:", imger);
