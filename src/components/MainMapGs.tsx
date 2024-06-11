@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { mapCreate, massmodeCreate } from "../redux/actions";
 import { massfazCreate, statsaveCreate } from "../redux/actions";
 
+import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 
 import { YMaps, Map, FullscreenControl } from "react-yandex-maps";
@@ -19,7 +20,7 @@ import GsDoPlacemarkDo from "./GsComponents/GsDoPlacemarkDo";
 import { getMultiRouteOptions, StrokaHelp } from "./MapServiceFunctions";
 import { getReferencePoints, CenterCoord } from "./MapServiceFunctions";
 import { ErrorHaveVertex, Distance } from "./MapServiceFunctions";
-import { StrokaMenuGlob, StrokaHelpPusto } from "./MapServiceFunctions";
+import { StrokaMenuGlob } from "./MapServiceFunctions";
 
 import { SendSocketUpdateRoute } from "./MapSocketFunctions";
 
@@ -421,8 +422,7 @@ const MainMapGs = (props: { trigger: boolean; history: any }) => {
     modeToDo === 2 && (soobInfo = "Происходит выполнение режима");
 
     return (
-      <>
-        {/* <Box sx={{ display: "flex", justifyContent: "space-between" }}> */}
+      <Box sx={{ display: "flex" }}>
         {modeToDo > 0 && <>{StrokaHelp(soobInfo)}</>}
         {modeToDo === 0 && (
           <>
@@ -449,11 +449,10 @@ const MainMapGs = (props: { trigger: boolean; history: any }) => {
                 )}
               </>
             )}
-            {StrokaHelpPusto()}
+            {/* {StrokaHelpPusto()} */}
           </>
         )}
-      </>
-      // </Box>
+      </Box>
     );
   };
 

@@ -7,7 +7,7 @@ import CardMedia from "@mui/material/CardMedia";
 import { Pointer } from "./../App";
 //import { DateMAP } from "./../interfaceMAP.d";
 
-import { styleInfoSoob } from "./MainMapStyle";
+//import { styleInfoSoob } from "./MainMapStyle";
 
 export const MasskPoint = (debug: boolean, rec: any, imgFaza: string) => {
   let masskPoint: Pointer = {
@@ -230,7 +230,7 @@ export const StrokaMenuGlob = (soob: string, func: any, mode: number) => {
   const styleApp01 = {
     fontSize: 14,
     marginRight: 0.3,
-    marginTop: -0.5,
+    marginTop: -0.2,
     width: dlSoob,
     maxHeight: "21px",
     minHeight: "21px",
@@ -251,10 +251,19 @@ export const StrokaMenuGlob = (soob: string, func: any, mode: number) => {
 };
 
 export const StrokaHelp = (soobInfo: string) => {
+  const styleInfoSoob = {
+    marginTop: "-3px",
+    width: 530,
+    color: "#E6761B", // оранж
+    textAlign: "center",
+    textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
+    fontWeight: 500,
+  };
+
   return (
-    <Button sx={styleInfoSoob}>
+    <Box sx={styleInfoSoob}>
       <em>{soobInfo}</em>
-    </Button>
+    </Box>
   );
 };
 
