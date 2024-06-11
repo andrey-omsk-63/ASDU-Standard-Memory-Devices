@@ -93,7 +93,7 @@ export const styleSaveRed = {
 };
 
 export const styletFazaTitle = {
-  color: "#5B1080",
+  color: "#5B1080", // сиреневый
   marginTop: -0.5,
   textAlign: "center",
   textShadow: "2px 2px 3px rgba(0,0,0,0.3)",
@@ -125,6 +125,16 @@ export const styleStrokaTabl00 = {
   fontSize: 18,
   textAlign: "center",
   textShadow: "2px 2px 3px rgba(0,0,0,0.3)",
+};
+
+export const styleStrokaTabl10 = {
+  bgcolor: "#F1F5FB",
+  border: "1px solid #d4d4d4",
+  borderRadius: 1,
+  marginTop: 1,
+  boxShadow: 6,
+  padding: "5px",
+  textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
 };
 
 export const styleStrokaTabl01 = {
@@ -189,9 +199,12 @@ export const styleStrokaTakt = {
 };
 
 export const styleToDo01 = {
-  fontSize: 12,
+  fontSize: 14.0,
   paddingTop: 1.7,
   textAlign: "right",
+  color: "#5B1080", // сиреневый
+  textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
+  fontWeight: 500,
 };
 
 export const styleToDo02 = {

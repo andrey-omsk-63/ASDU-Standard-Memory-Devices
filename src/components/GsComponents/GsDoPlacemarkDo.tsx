@@ -92,6 +92,7 @@ const GsDoPlacemarkDo = (props: {
       window.location.origin.slice(0, 22) === "https://localhost:3000"
         ? "https://localhost:3000/"
         : "./";
+
     let host = !illum ? hostt + "18.svg" : hostt + "4.svg";
     if (!debug) {
       let mpp = illum ? 4 : mapp;

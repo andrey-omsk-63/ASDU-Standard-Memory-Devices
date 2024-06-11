@@ -205,6 +205,7 @@ export const OutputFazaImg = (img: any, i: number) => {
             fontSize: 27,
             marginTop: -0.5,
             marginLeft: 1,
+            color: "#5B1080", // сиреневый
             textShadow: "2px 2px 3px rgba(0,0,0,0.3)",
           }}
         >

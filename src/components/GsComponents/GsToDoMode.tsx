@@ -16,7 +16,7 @@ import { styleModalEnd } from "../MainMapStyle";
 import { styleModalMenu, styleStrokaTablImg01 } from "./GsComponentsStyle";
 import { styleToDoMode, styleStrokaTabl01 } from "./GsComponentsStyle";
 import { styleStrokaTabl02, styleStrokaTablImg02 } from "./GsComponentsStyle";
-import { styleStrokaTabl00 } from "./GsComponentsStyle";
+import { styleStrokaTabl00, styleStrokaTabl10 } from "./GsComponentsStyle";
 import { styleToDo01, styleToDo02 } from "./GsComponentsStyle";
 
 let toDoMode = false;
@@ -217,6 +217,7 @@ const GsToDoMode = (props: {
           ? "https://localhost:3000/"
           : "./";
       let host = hostt + "18.svg";
+
       if (!debug) {
         let num = map.tflight[massfaz[i].idx].tlsost.num.toString();
         host =
@@ -304,32 +305,31 @@ const GsToDoMode = (props: {
           </Grid>
         </Grid>
 
-        <Box sx={{ marginTop: 1 }}>
+        <Box sx={styleStrokaTabl10}>
           <Grid container sx={{ bgcolor: "#C0E2C3" }}>
             {StrokaHeader(1, "Номер")}
             {StrokaHeader(3.6, "Состояние")}
             {StrokaHeader(1.9, "Фаза")}
             {StrokaHeader(5.5, "ДК")}
           </Grid>
-
-          <Box sx={{ overflowX: "auto", height: "79vh" }}>{StrokaTabl()}</Box>
-
-          {!toDoMode && (
-            <Box sx={{ marginTop: 1.5, textAlign: "center" }}>
-              <Button sx={styleModalMenu} onClick={() => ToDoMode(2)}>
-                Начать исполнение
-              </Button>
-            </Box>
-          )}
-
-          {toDoMode && (
-            <Box sx={{ marginTop: 1.5, textAlign: "center" }}>
-              <Button sx={styleModalMenu} onClick={() => ToDoMode(0)}>
-                Закончить исполнение
-              </Button>
-            </Box>
-          )}
+          <Box sx={{ overflowX: "auto", height: "81vh" }}>{StrokaTabl()}</Box>
         </Box>
+        {!toDoMode && (
+          <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
+            <Button sx={styleModalMenu} onClick={() => ToDoMode(2)}>
+              Начать исполнение
+            </Button>
+          </Box>
+        )}
+
+        {toDoMode && (
+          <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
+            <Button sx={styleModalMenu} onClick={() => ToDoMode(0)}>
+              Закончить исполнение
+            </Button>
+          </Box>
+        )}
+        {/* </Box> */}
       </Box>
     </>
   );
