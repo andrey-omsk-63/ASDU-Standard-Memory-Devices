@@ -133,8 +133,8 @@ export const styleStrokaTabl10 = {
   borderRadius: 1,
   marginTop: 1,
   boxShadow: 6,
-  padding: "5px",
-  textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
+  //padding: "5px",
+  //textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
 };
 
 export const styleStrokaTabl01 = {
@@ -299,7 +299,6 @@ export const styleSetHist = {
   width: 430,
   bgcolor: "background.paper",
   border: "1px solid #d4d4d4",
-  //borderColor: "primary.main",
   borderRadius: 1,
   boxShadow: 24,
   p: 1.5,
@@ -323,11 +322,12 @@ export const styleButLook = {
 export const styleGridLook = {
   border: 0,
   marginTop: 1,
+  marginLeft: 0.5,
   fontSize: 14,
   textAlign: "left",
 };
 //=== GsLookFaza =========================================
-export const styleSetFaza = {
+export const styleSetFazaLook = {
   outline: "none",
   position: "relative",
   marginTop: 8,
@@ -335,10 +335,25 @@ export const styleSetFaza = {
   marginRight: "auto",
   width: 430,
   bgcolor: "background.paper",
-  border: "1px solid #000",
-  borderColor: "primary.main",
+  border: "1px solid #fff",
   borderRadius: 1,
   boxShadow: 24,
   p: 1.5,
+};
+
+export const styleFazaLook01 = {
+  color: "#5B1080",
+  fontSize: 18,
+  textAlign: "center",
+  textShadow: "2px 2px 3px rgba(0,0,0,0.3)",
+};
+
+export const styleFazaLook02 = {
+  marginTop: 1,
+  overflowX: "auto",
+  bgcolor: "#F1F5FB",
+  border: "1px solid #d4d4d4",
+  borderRadius: 1,
+  boxShadow: 6,
 };
 //========================================================

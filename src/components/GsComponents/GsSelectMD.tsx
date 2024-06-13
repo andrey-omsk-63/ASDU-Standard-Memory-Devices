@@ -236,10 +236,13 @@ const GsSelectMD = (props: {
         <Button sx={styleModalEnd} onClick={handleCloseSetEnd}>
           <b>&#10006;</b>
         </Button>
+
         <Typography variant="h6" sx={styletSelectTitle}>
           Выбор режима ЗУ
         </Typography>
+
         <Box sx={styletSelect01}>{StrokaTabl()}</Box>
+
         {LookDel() > 0 && (
           <Box sx={{ marginTop: 1, textAlign: "center" }}>
             <Button sx={styleModalMenuSelect} onClick={() => DeleteRec()}>
@@ -247,6 +250,7 @@ const GsSelectMD = (props: {
             </Button>
           </Box>
         )}
+
         {lookHistory && (
           <GsLookHistory setOpen={setLookHistory} history={history} />
         )}

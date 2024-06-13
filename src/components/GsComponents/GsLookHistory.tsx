@@ -12,6 +12,7 @@ import GsLookFaza from "./GsLookFaza";
 import { styleModalEnd } from "../MainMapStyle";
 import { styleSetHist, styleButLook } from "./GsComponentsStyle";
 import { styleGridLook, styletSelectTitle } from "./GsComponentsStyle";
+import { styletSelect01 } from "./GsComponentsStyle";
 
 let history: any = null;
 let hist: any = null;
@@ -46,7 +47,11 @@ const GsLookHistory = (props: { setOpen: Function; history: any }) => {
       stroka += new Date(history[i].tm).toLocaleTimeString().slice(0, 5) + " ";
 
       resStr.push(
-        <Grid key={i} container>
+        <Grid
+          key={i}
+          container
+          sx={{ textShadow: "1px 1px 2px rgba(0,0,0,0.3)" }}
+        >
           <Grid item xs={1.8} sx={styleGridLook}>
             Изменён:
           </Grid>
@@ -82,7 +87,8 @@ const GsLookHistory = (props: { setOpen: Function; history: any }) => {
             <Typography variant="h6" sx={styletSelectTitle}>
               {history[0].description}
             </Typography>
-            <Box sx={{ overflowX: "auto", height: "69vh" }}>{StrokaTabl()}</Box>
+            {/* <Box sx={{ overflowX: "auto", height: "69vh" }}>{StrokaTabl()}</Box> */}
+            <Box sx={styletSelect01}>{StrokaTabl()}</Box>
           </>
         )}
         {lookFaza && <GsLookFaza setOpen={setLookFaza} history={hist} />}

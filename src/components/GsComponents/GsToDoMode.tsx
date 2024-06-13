@@ -237,7 +237,11 @@ const GsToDoMode = (props: {
         : styleStrokaTablImg02;
 
       resStr.push(
-        <Grid key={i} container sx={{ marginTop: 1 }}>
+        <Grid
+          key={i}
+          container
+          sx={{ marginTop: 1, textShadow: "1px 1px 2px rgba(0,0,0,0.3)" }}
+        >
           <Grid item xs={1} sx={{ paddingTop: 0.7, textAlign: "center" }}>
             <Button sx={illum} onClick={() => ClickKnop(i)}>
               {i + 1}
@@ -314,22 +318,19 @@ const GsToDoMode = (props: {
           </Grid>
           <Box sx={{ overflowX: "auto", height: "81vh" }}>{StrokaTabl()}</Box>
         </Box>
-        {!toDoMode && (
-          <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
+
+        <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
+          {!toDoMode && (
             <Button sx={styleModalMenu} onClick={() => ToDoMode(2)}>
               Начать исполнение
             </Button>
-          </Box>
-        )}
-
-        {toDoMode && (
-          <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
+          )}
+          {toDoMode && (
             <Button sx={styleModalMenu} onClick={() => ToDoMode(0)}>
               Закончить исполнение
             </Button>
-          </Box>
-        )}
-        {/* </Box> */}
+          )}
+        </Box>
       </Box>
     </>
   );
