@@ -4,10 +4,11 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
+import Typography from "@mui/material/Typography";
 
 import { styleModalEnd } from "../MainMapStyle";
-import { styleSetFazaLook, styleFazaLook01 } from "./GsComponentsStyle";
-import { styleFazaLook02 } from "./GsComponentsStyle";
+import { styleSetFazaLook } from "./GsComponentsStyle";
+import { styleFazaLook02, styletSelectTitle } from "./GsComponentsStyle";
 
 let history: any = null;
 
@@ -61,11 +62,9 @@ const GsLookFaza = (props: { setOpen: Function; history: any }) => {
           <b>&#10006;</b>
         </Button>
 
-        <Grid container sx={{ marginTop: 1 }}>
-          <Grid item xs sx={styleFazaLook01}>
-            <b>{history.description}</b>
-          </Grid>
-        </Grid>
+        <Typography variant="h6" sx={styletSelectTitle}>
+          {history.description}
+        </Typography>
 
         <Box sx={styleFazaLook02}>
           <Grid container sx={{ bgcolor: "#C0E2C3" }}>

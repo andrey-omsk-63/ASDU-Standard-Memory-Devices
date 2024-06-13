@@ -121,7 +121,7 @@ export const styleToDoMode = {
 };
 
 export const styleStrokaTabl00 = {
-  color: "#5B1080",
+  color: "#5B1080", // сиреневый
   fontSize: 18,
   textAlign: "center",
   textShadow: "2px 2px 3px rgba(0,0,0,0.3)",
@@ -131,7 +131,7 @@ export const styleStrokaTabl10 = {
   bgcolor: "#F1F5FB",
   border: "1px solid #d4d4d4",
   borderRadius: 1,
-  marginTop: 1,
+  //marginTop: 1,
   boxShadow: 6,
   //padding: "5px",
   //textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
@@ -277,7 +277,7 @@ export const styleModalMenuSelect = {
 
 export const styletSelectTitle = {
   textShadow: "2px 2px 3px rgba(0,0,0,0.3)",
-  color: "#5B1080",
+  color: "#5B1080", // сиреневый
   textAlign: "center",
 };
 
@@ -349,7 +349,7 @@ export const styleFazaLook01 = {
 };
 
 export const styleFazaLook02 = {
-  marginTop: 1,
+  //marginTop: 1,
   overflowX: "auto",
   bgcolor: "#F1F5FB",
   border: "1px solid #d4d4d4",

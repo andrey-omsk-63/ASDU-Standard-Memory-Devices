@@ -87,7 +87,6 @@ const GsLookHistory = (props: { setOpen: Function; history: any }) => {
             <Typography variant="h6" sx={styletSelectTitle}>
               {history[0].description}
             </Typography>
-            {/* <Box sx={{ overflowX: "auto", height: "69vh" }}>{StrokaTabl()}</Box> */}
             <Box sx={styletSelect01}>{StrokaTabl()}</Box>
           </>
         )}

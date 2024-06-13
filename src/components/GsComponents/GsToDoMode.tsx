@@ -1,11 +1,11 @@
 import * as React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { massfazCreate, statsaveCreate } from "../../redux/actions";
-//import { massmodeCreate } from '../../redux/actions';
 
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 
 import { Fazer } from "./../../App";
 
@@ -16,7 +16,7 @@ import { styleModalEnd } from "../MainMapStyle";
 import { styleModalMenu, styleStrokaTablImg01 } from "./GsComponentsStyle";
 import { styleToDoMode, styleStrokaTabl01 } from "./GsComponentsStyle";
 import { styleStrokaTabl02, styleStrokaTablImg02 } from "./GsComponentsStyle";
-import { styleStrokaTabl00, styleStrokaTabl10 } from "./GsComponentsStyle";
+import { styletSelectTitle, styleStrokaTabl10 } from "./GsComponentsStyle";
 import { styleToDo01, styleToDo02 } from "./GsComponentsStyle";
 
 let toDoMode = false;
@@ -303,11 +303,9 @@ const GsToDoMode = (props: {
           </Button>
         )}
 
-        <Grid container sx={{ marginTop: 0 }}>
-          <Grid item xs sx={styleStrokaTabl00}>
-            Режим: <b>{map.routes[newMode].description}</b>
-          </Grid>
-        </Grid>
+        <Typography variant="h6" sx={styletSelectTitle}>
+          Режим: <b>{map.routes[newMode].description}</b>
+        </Typography>
 
         <Box sx={styleStrokaTabl10}>
           <Grid container sx={{ bgcolor: "#C0E2C3" }}>
