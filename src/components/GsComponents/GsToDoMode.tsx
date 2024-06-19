@@ -308,7 +308,7 @@ const GsToDoMode = (props: {
         </Typography>
 
         <Box sx={styleStrokaTabl10}>
-          <Grid container sx={{ bgcolor: "#C0E2C3" }}>
+          <Grid container sx={{ bgcolor: "#B8CBB9" }}>
             {StrokaHeader(1, "Номер")}
             {StrokaHeader(3.6, "Состояние")}
             {StrokaHeader(1.9, "Фаза")}

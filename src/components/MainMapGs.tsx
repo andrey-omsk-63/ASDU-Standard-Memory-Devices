@@ -48,7 +48,12 @@ let newCenter: any = [];
 let funcContex: any = null;
 let funcBound: any = null;
 
-const MainMapGs = (props: { trigger: boolean; history: any }) => {
+const MainMapGs = (props: {
+  trigger: boolean;
+  history: any;
+  trHist: boolean;
+}) => {
+  //console.log("PROPS:", props);
   //== Piece of Redux =======================================
   const map = useSelector((state: any) => {
     const { mapReducer } = state;
@@ -449,7 +454,6 @@ const MainMapGs = (props: { trigger: boolean; history: any }) => {
                 )}
               </>
             )}
-            {/* {StrokaHelpPusto()} */}
           </>
         )}
       </Box>
@@ -520,6 +524,7 @@ const MainMapGs = (props: { trigger: boolean; history: any }) => {
                       setOpen={setSelectMD}
                       receive={ReceiveIdxGs}
                       history={props.history}
+                      trHist={props.trHist}
                       funcHelper={SetHelper}
                     />
                   )}

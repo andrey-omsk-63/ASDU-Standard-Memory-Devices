@@ -419,7 +419,7 @@ const GsSetPhase = (props: {
         Таблица фаз
       </Typography>
       <Box sx={styletFaza01}>
-        <Grid container sx={{ bgcolor: "#C0E2C3" }}>
+        <Grid container sx={{ bgcolor: "#B8CBB9" }}>
           {StrokaHeader(8.3, "Описание")}
           {StrokaHeader(xsFaza + 1, "Фаза")}
           {props.newMode < 0 && <>{StrokaHeader(2, "Действие")}</>}

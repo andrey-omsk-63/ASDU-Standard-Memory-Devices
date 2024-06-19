@@ -163,6 +163,7 @@ const App = () => {
   const [openMapInfo, setOpenMapInfo] = React.useState(false);
   const [history, setHistory] = React.useState(null);
   const [trigger, setTrigger] = React.useState(false);
+  const [trHist, setTrHist] = React.useState(false);
   //=== инициализация ======================================
   if (flagOpenWS) {
     WS = new WebSocket(host);
@@ -259,13 +260,14 @@ const App = () => {
           break;
         case "getRouteHistory":
           console.log("getRouteHistory:", data, data.history);
+          setTrHist(!trHist);
           setHistory(data.history);
           break;
         default:
           console.log("data_default:", allData.type, data);
       }
     };
-  }, [dispatch, massdk, massfaz, trigger]);
+  }, [dispatch, massdk, massfaz, trigger, trHist]);
 
   if (dateStat.debug && flagOpen) {
     console.log("РЕЖИМ ОТЛАДКИ!!!");
@@ -293,7 +295,9 @@ const App = () => {
     <Grid container sx={{ height: "100vh", width: "100%", bgcolor: "#E9F5D8" }}>
       <Grid item xs>
         {openSetErr && <AppSocketError sErr={soob} setOpen={setOpenSetErr} />}
-        {openMapInfo && <MainMapGS trigger={trigger} history={history} />}
+        {openMapInfo && (
+          <MainMapGS trigger={trigger} history={history} trHist={trHist} />
+        )}
       </Grid>
     </Grid>
   );

@@ -17,7 +17,12 @@ import { styletSelect01 } from "./GsComponentsStyle";
 let history: any = null;
 let hist: any = null;
 
-const GsLookHistory = (props: { setOpen: Function; history: any }) => {
+const GsLookHistory = (props: {
+  setOpen: Function;
+  history: any;
+  trHist: boolean;
+}) => {
+  //console.log("GsLookHistory:", props.trHist);
   //== Piece of Redux =======================================
   let datestat = useSelector((state: any) => {
     const { statsaveReducer } = state;
@@ -77,7 +82,14 @@ const GsLookHistory = (props: { setOpen: Function; history: any }) => {
         </Button>
 
         {history === null && (
-          <Typography variant="h6" sx={{ textAlign: "center" }}>
+          <Typography
+            variant="h6"
+            sx={{
+              color: "#5B1080",
+              textAlign: "center",
+              textShadow: "2px 2px 3px rgba(0,0,0,0.3)",
+            }}
+          >
             Нет данных по этому режиму
           </Typography>
         )}

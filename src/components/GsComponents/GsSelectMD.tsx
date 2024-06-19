@@ -21,15 +21,19 @@ import { styletSelectTitle, styletSelect01 } from "./GsComponentsStyle";
 let knop2 = "удалить";
 let soobErr = "";
 let oldHistory: any = null;
+let oldTrHist: any = null;
 let history: any = null;
 let nomPlan = -1;
+let startSeance = true;
 
 const GsSelectMD = (props: {
   setOpen: Function;
   receive: any;
   history: any;
+  trHist: boolean;
   funcHelper: Function;
 }) => {
+  //console.log("GsSelectMD:", props.trHist, props.history);
   //== Piece of Redux =======================================
   const map = useSelector((state: any) => {
     const { mapReducer } = state;
@@ -54,9 +58,12 @@ const GsSelectMD = (props: {
   const [openSetMode, setOpenSetMode] = React.useState(true);
   if (!debug) history = props.history;
 
-  if (oldHistory !== props.history) {
-    setLookHistory(true);
+  if (oldHistory !== props.history || oldTrHist !== props.trHist) {
+    if (startSeance) {
+      startSeance = false;
+    } else setLookHistory(true);
     oldHistory = props.history;
+    oldTrHist = props.trHist;
   }
 
   const handleCloseSetEnd = () => {
@@ -252,7 +259,11 @@ const GsSelectMD = (props: {
         )}
 
         {lookHistory && (
-          <GsLookHistory setOpen={setLookHistory} history={history} />
+          <GsLookHistory
+            setOpen={setLookHistory}
+            history={history}
+            trHist={props.trHist}
+          />
         )}
         {openSoobErr && (
           <GsErrorMessage setOpen={setOpenSoobErr} sErr={soobErr} />
