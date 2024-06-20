@@ -13,7 +13,6 @@ export const styleSetInf = {
   width: 730,
   bgcolor: "background.paper",
   border: "1px solid #FFF",
-  //borderColor: "primary.main",
   borderRadius: 1,
   boxShadow: 24,
   p: 1,
@@ -25,8 +24,7 @@ export const styleModalMenu = {
   maxHeight: "21px",
   minHeight: "21px",
   bgcolor: "#E6F5D6", // светло-салатовый
-  border: "1px solid #000",
-  borderColor: "#d4d4d4", // серый
+  border: "1px solid #d4d4d4", // серый
   borderRadius: 1,
   textTransform: "unset !important",
   color: "black",
@@ -46,8 +44,7 @@ export const styleSet = {
   maxHeight: "4px",
   minHeight: "4px",
   bgcolor: "#FFFBE5",
-  border: "1px solid #000",
-  borderColor: "#d4d4d4", // серый
+  border: "1px solid #d4d4d4", // серый
   borderRadius: 1,
   boxShadow: 4,
   textAlign: "center",
@@ -65,12 +62,11 @@ export const styleBoxFormName = {
 export const styleSaveBlack = {
   fontSize: 15,
   marginRight: 0.1,
-  border: "1px solid #000",
   bgcolor: "#E6F5D6",
   width: "110px",
   maxHeight: "20px",
   minHeight: "20px",
-  borderColor: "#d4d4d4", // серый
+  border: "1px solid #d4d4d4", // серый
   borderRadius: 1,
   color: "black",
   textTransform: "unset !important",
@@ -80,12 +76,11 @@ export const styleSaveBlack = {
 export const styleSaveRed = {
   fontSize: 12.9,
   marginRight: 0.1,
-  border: "1px solid #000",
   bgcolor: "#BAE186", // тёмно-салатовый
   width: "110px",
   maxHeight: "20px",
   minHeight: "20px",
-  borderColor: "#93D145",
+  border: "1px solid #93D145", // тёмно-салатовый
   borderRadius: 1,
   color: "red",
   textTransform: "unset !important",
@@ -131,10 +126,7 @@ export const styleStrokaTabl10 = {
   bgcolor: "#F1F5FB",
   border: "1px solid #d4d4d4",
   borderRadius: 1,
-  //marginTop: 1,
   boxShadow: 6,
-  //padding: "5px",
-  //textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
 };
 
 export const styleStrokaTabl01 = {
@@ -142,9 +134,8 @@ export const styleStrokaTabl01 = {
   minWidth: "33px",
   maxHeight: "21px",
   minHeight: "21px",
-  bgcolor: "#BAE186", // тёмно-салатовый
-  border: "1px solid #000",
-  borderColor: "#93D145",
+  bgcolor: "#BAE186", // салатовый
+  border: "1px solid #93D145", // тёмно-салатовый
   borderRadius: 1,
   color: "black",
   textTransform: "unset !important",
@@ -157,8 +148,7 @@ export const styleStrokaTabl02 = {
   maxHeight: "21px",
   minHeight: "21px",
   bgcolor: "#E6F5D6", // светло-салатовый
-  border: "1px solid #000",
-  borderColor: "#d4d4d4", // серый
+  border: "1px solid #d4d4d4", // серый
   borderRadius: 1,
   color: "black",
   textTransform: "unset !important",
@@ -170,9 +160,8 @@ export const styleStrokaTablImg01 = {
   minWidth: "33px",
   maxHeight: "45px",
   minHeight: "45px",
-  bgcolor: "#BAE186", // тёмно-салатовый
-  border: "1px solid #000",
-  borderColor: "#93D145",
+  bgcolor: "#BAE186", // салатовый
+  border: "1px solid #93D145", // тёмно-салатовый
   borderRadius: 1,
   color: "black",
   textTransform: "unset !important",
@@ -221,8 +210,7 @@ export const StyleSetFaza = (mesto: string) => {
     maxHeight: "3px",
     minHeight: "3px",
     bgcolor: "#FFFBE5", // молочный
-    border: "1px solid #000",
-    borderColor: "#d4d4d4", // серый
+    border: "1px solid #d4d4d4", // серый
     borderRadius: 1,
     boxShadow: 4,
     p: 1.5,
@@ -267,8 +255,7 @@ export const styleModalMenuSelect = {
   maxHeight: "21px",
   minHeight: "21px",
   bgcolor: "#E6F5D6", // светло-салатовый
-  border: "1px solid #000",
-  borderColor: "#d4d4d4", // серый
+  border: "1px solid #d4d4d4", // серый
   borderRadius: 1,
   textTransform: "unset !important",
   color: "black",
@@ -311,8 +298,7 @@ export const styleButLook = {
   width: "150px",
   maxHeight: "20px",
   minHeight: "20px",
-  border: "1px solid #000",
-  borderColor: "#d4d4d4", // серый
+  border: "1px solid #d4d4d4", // серый
   borderRadius: 1,
   color: "black",
   textTransform: "unset !important",

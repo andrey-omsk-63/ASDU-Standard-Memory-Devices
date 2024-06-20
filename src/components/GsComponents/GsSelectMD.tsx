@@ -162,6 +162,7 @@ const GsSelectMD = (props: {
         color: colorRec,
         textTransform: "unset !important",
         boxShadow: 3,
+        justifyContent: "flex-start",
       };
 
       const styleBut011 = {
@@ -177,6 +178,7 @@ const GsSelectMD = (props: {
         color: colorRec,
         textTransform: "unset !important",
         boxShadow: 9,
+        justifyContent: "flex-start",
       };
 
       const styleBut02 = {
@@ -216,7 +218,7 @@ const GsSelectMD = (props: {
         <Grid key={i} container>
           <Grid item xs={7.0} sx={{ border: 0, textAlign: "center" }}>
             <Button sx={ILLUM} onClick={() => ClickKnop1(i)}>
-              {massmode[i].name.slice(0, 36)}
+              {massmode[i].name.slice(0, 39)}
             </Button>
           </Grid>
 
