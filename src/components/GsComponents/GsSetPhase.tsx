@@ -373,9 +373,13 @@ const GsSetPhase = (props: {
               <TextField
                 size="small"
                 onKeyPress={handleKey} //отключение Enter
-                InputProps={{
-                  disableUnderline: true,
-                  style: { fontSize: 12.9 },
+                InputProps={{ disableUnderline: true }}
+                inputProps={{
+                  style: {
+                    cursor: "pointer",
+                    paddingLeft: "3px",
+                    fontSize: 12.9,
+                  },
                 }}
                 value={valuen}
                 onChange={handleChange}
