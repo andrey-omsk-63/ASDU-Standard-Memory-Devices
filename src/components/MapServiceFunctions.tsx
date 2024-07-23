@@ -3,6 +3,7 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import CardMedia from "@mui/material/CardMedia";
+import { MdOpenWith } from "react-icons/md";
 
 import { Pointer } from "./../App";
 //import { DateMAP } from "./../interfaceMAP.d";
@@ -79,6 +80,16 @@ export const Distance = (coord1: Array<number>, coord2: Array<number>) => {
   }
 };
 
+export const Сrossroad = () => {
+  return (
+    <>
+      <Box sx={{ fontSize: 15 }}>
+        {/* <BiExpand /> */}
+        <MdOpenWith />
+      </Box>
+    </>
+  );
+};
 //=== Placemark =====================================
 export const GetPointData = (
   index: number,
@@ -236,8 +247,7 @@ export const StrokaMenuGlob = (soob: string, func: any, mode: number) => {
     maxHeight: "21px",
     minHeight: "21px",
     bgcolor: "#C4EAA2", // салатовый
-    border: "1px solid #000",
-    borderColor: "#d4d4d4", // серый
+    border: "1px solid #d4d4d4", // серый
     borderRadius: 1,
     color: "black",
     textTransform: "unset !important",
@@ -251,12 +261,14 @@ export const StrokaMenuGlob = (soob: string, func: any, mode: number) => {
   );
 };
 
-export const StrokaHelp = (soobInfo: string) => {
+export const StrokaHelp = (soobInfo: string, mode: number) => {
+  let moder = mode ? "left" : "right";
+
   const styleInfoSoob = {
     marginTop: "-3px",
     width: 530,
     color: "#E6761B", // оранж
-    textAlign: "center",
+    textAlign: moder,
     textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
     fontWeight: 500,
   };

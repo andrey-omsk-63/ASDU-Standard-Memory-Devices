@@ -20,7 +20,7 @@ import GsDoPlacemarkDo from "./GsComponents/GsDoPlacemarkDo";
 import { getMultiRouteOptions, StrokaHelp } from "./MapServiceFunctions";
 import { getReferencePoints, CenterCoord } from "./MapServiceFunctions";
 import { ErrorHaveVertex, Distance } from "./MapServiceFunctions";
-import { StrokaMenuGlob } from "./MapServiceFunctions";
+import { StrokaMenuGlob, Сrossroad } from "./MapServiceFunctions";
 
 import { SendSocketUpdateRoute } from "./MapSocketFunctions";
 
@@ -422,19 +422,25 @@ const MainMapGs = (props: {
   const MenuGl = (mod: number) => {
     let soobHelp = "Выберите перекрёстки для создания нового маршрута";
     let soobHelpFiest = "Добавьте/удалите перекрёстки для создания маршрута [";
-    soobHelpFiest += massMem.length + "🔆]";
+    soobHelpFiest += massMem.length;
+    // + "🔆]";
     let soobInfo = "Подготовка к выпонению режима";
     modeToDo === 2 && (soobInfo = "Происходит выполнение режима");
 
     return (
       <Box sx={{ display: "flex" }}>
-        {modeToDo > 0 && <>{StrokaHelp(soobInfo)}</>}
+        {modeToDo > 0 && <>{StrokaHelp(soobInfo, 0)}</>}
         {modeToDo === 0 && (
           <>
             {StrokaMenuGlob("Существующие ЗУ", PressButton, 42)}
-
-            {massMem.length < 1 && helper && <>{StrokaHelp(soobHelp)}</>}
-            {massMem.length === 1 && helper && <>{StrokaHelp(soobHelpFiest)}</>}
+            {massMem.length < 1 && helper && <>{StrokaHelp(soobHelp, 0)}</>}
+            {massMem.length === 1 && helper && (
+              <>
+                {StrokaHelp(soobHelpFiest, 0)}
+                {Сrossroad()}
+                {StrokaHelp("]", 1)}
+              </>
+            )}
             {massMem.length > 1 && (
               <>
                 {newMode < 0 && (
@@ -443,7 +449,13 @@ const MainMapGs = (props: {
                     {StrokaMenuGlob("Обработка режима", PressButton, 44)}
                   </>
                 )}
-                {newMode < 0 && <>{StrokaHelp(soobHelpFiest)}</>}
+                {newMode < 0 && (
+                  <>
+                    {StrokaHelp(soobHelpFiest, 0)}
+                    {Сrossroad()}
+                    {StrokaHelp("]", 1)}
+                  </>
+                )}
                 {newMode >= 0 && (
                   <>
                     {StrokaMenuGlob("Закрыть режим", PressButton, 43)}
@@ -484,7 +496,7 @@ const MainMapGs = (props: {
     <Grid container sx={{ border: 0, height: "99.9vh" }}>
       <Grid item xs sx={{ border: 0 }}>
         {!datestat.working && <>{MenuGl(modeToDo)}</>}
-        {datestat.working && <>{StrokaHelp(" ")}</>}
+        {datestat.working && <>{StrokaHelp(" ", 0)}</>}
         <Grid container sx={{ border: 0, height: "96.9vh" }}>
           <Grid item xs={xsMap} sx={{ border: 0 }}>
             {Object.keys(map.tflight).length && (
