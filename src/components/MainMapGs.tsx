@@ -20,7 +20,7 @@ import GsDoPlacemarkDo from "./GsComponents/GsDoPlacemarkDo";
 import { getMultiRouteOptions, StrokaHelp } from "./MapServiceFunctions";
 import { getReferencePoints, CenterCoord } from "./MapServiceFunctions";
 import { ErrorHaveVertex, Distance } from "./MapServiceFunctions";
-import { StrokaMenuGlob, Сrossroad } from "./MapServiceFunctions";
+import { StrokaMenuGlob, HelpAdd } from "./MapServiceFunctions";
 
 import { SendSocketUpdateRoute } from "./MapSocketFunctions";
 
@@ -279,7 +279,6 @@ const MainMapGs = (props: {
         }
       }
     } else {
-      //let nomInMass = -1;
       for (let i = 0; i < massMem.length; i++) {
         let corFromMap = [massfaz[i].coordinates[0], massfaz[i].coordinates[1]];
         let dister = Distance(coord, corFromMap);
@@ -418,12 +417,10 @@ const MainMapGs = (props: {
     flagOpen = true;
   }
   //========================================================
-
   const MenuGl = (mod: number) => {
     let soobHelp = "Выберите перекрёстки для создания нового маршрута";
     let soobHelpFiest = "Добавьте/удалите перекрёстки для создания маршрута [";
     soobHelpFiest += massMem.length;
-    // + "🔆]";
     let soobInfo = "Подготовка к выпонению режима";
     modeToDo === 2 && (soobInfo = "Происходит выполнение режима");
 
@@ -434,13 +431,7 @@ const MainMapGs = (props: {
           <>
             {StrokaMenuGlob("Существующие ЗУ", PressButton, 42)}
             {massMem.length < 1 && helper && <>{StrokaHelp(soobHelp, 0)}</>}
-            {massMem.length === 1 && helper && (
-              <>
-                {StrokaHelp(soobHelpFiest, 0)}
-                {Сrossroad()}
-                {StrokaHelp("]", 1)}
-              </>
-            )}
+            {massMem.length === 1 && helper && <>{HelpAdd(soobHelpFiest)}</>}
             {massMem.length > 1 && (
               <>
                 {newMode < 0 && (
@@ -449,13 +440,7 @@ const MainMapGs = (props: {
                     {StrokaMenuGlob("Обработка режима", PressButton, 44)}
                   </>
                 )}
-                {newMode < 0 && (
-                  <>
-                    {StrokaHelp(soobHelpFiest, 0)}
-                    {Сrossroad()}
-                    {StrokaHelp("]", 1)}
-                  </>
-                )}
+                {newMode < 0 && <>{HelpAdd(soobHelpFiest)}</>}
                 {newMode >= 0 && (
                   <>
                     {StrokaMenuGlob("Закрыть режим", PressButton, 43)}
@@ -486,11 +471,8 @@ const MainMapGs = (props: {
     dispatch(statsaveCreate(datestat));
     ymaps && addRoute(ymaps, false); // перерисовка связей
     NewPointCenter(pointCenterEt);
-    //console.log("StatusQuo отработал:", zoom, mapState);
     setTrigger(!trigger);
   };
-
-  //console.log("mapState:", zoom, mapState);
 
   return (
     <Grid container sx={{ border: 0, height: "99.9vh" }}>

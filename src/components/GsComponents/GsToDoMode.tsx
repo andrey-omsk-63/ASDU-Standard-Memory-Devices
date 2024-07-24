@@ -314,7 +314,7 @@ const GsToDoMode = (props: {
             {StrokaHeader(1.9, "Фаза")}
             {StrokaHeader(5.5, "ДК")}
           </Grid>
-          <Box sx={{ overflowX: "auto", height: "81vh" }}>{StrokaTabl()}</Box>
+          <Box sx={{ overflowX: "auto", height: "84.5vh" }}>{StrokaTabl()}</Box>
         </Box>
 
         <Box sx={{ marginTop: 0.5, textAlign: "center" }}>

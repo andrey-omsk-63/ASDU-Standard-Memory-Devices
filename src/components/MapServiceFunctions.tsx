@@ -87,6 +87,16 @@ export const Сrossroad = () => {
         {/* <BiExpand /> */}
         <MdOpenWith />
       </Box>
+      {StrokaHelp("]", 1)}
+    </>
+  );
+};
+
+export const HelpAdd = (soobHelpFiest: string) => {
+  return (
+    <>
+      {StrokaHelp(soobHelpFiest, 0)}
+      {Сrossroad()}
     </>
   );
 };
@@ -263,10 +273,11 @@ export const StrokaMenuGlob = (soob: string, func: any, mode: number) => {
 
 export const StrokaHelp = (soobInfo: string, mode: number) => {
   let moder = mode ? "left" : "right";
+  let dl = mode ? 20 : 490
 
   const styleInfoSoob = {
     marginTop: "-3px",
-    width: 530,
+    width: dl, // 530
     color: "#E6761B", // оранж
     textAlign: moder,
     textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
