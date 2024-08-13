@@ -23,7 +23,6 @@ import { styleBoxFormFaza, styleSaveRed } from "./GsComponentsStyle";
 import { styleSaveBlack, styletFazaTitle } from "./GsComponentsStyle";
 import { styleSet, styleBoxFormName, styletFaza01 } from "./GsComponentsStyle";
 import { StyleSetFaza, StyleSetFazaNull } from "./GsComponentsStyle";
-//import { styletSelectTitle } from "./GsComponentsStyle";
 
 let newInput = true;
 let massFaz: any = [];
@@ -60,11 +59,9 @@ const GsSetPhase = (props: {
   const ws = datestat.ws;
   const dispatch = useDispatch();
   //========================================================
-  //const [openSetMode, setOpenSetMode] = React.useState(true);
   const [openSoobErr, setOpenSoobErr] = React.useState(false);
   const [trigger, setTrigger] = React.useState(true);
   const [chDel, setChDel] = React.useState(0);
-  // const [valuen, setValuen] = React.useState(nameMode);
   let massCoord = props.massCoord;
   //=== инициализация ======================================
   const MakeMaskFaz = (i: number) => {
@@ -130,7 +127,6 @@ const GsSetPhase = (props: {
     if (chDel) DelRec();
     props.func(massFaz);
     props.setOpen(false);
-    //setOpenSetMode(false);
     newInput = true;
     datestat.working = false;
     dispatch(statsaveCreate(datestat));
@@ -361,6 +357,40 @@ const GsSetPhase = (props: {
     );
   };
 
+  const StrokaFooter = (mode: number, soob: string) => {
+    return (
+      <Button sx={styleModalMenu} onClick={() => SaveRec(mode)}>
+        {soob}
+      </Button>
+    );
+  };
+
+  const FooterMenu = () => {
+    return (
+      <>
+        {props.newMode < 0 ? (
+          <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
+            {StrokaFooter(0, "Сохранить режим")}
+            {chDel > 0 && <>{StrokaFooter(2, "Удалить помеченные")}</>}
+            {StrokaFooter(1, "Отмена режима")}
+          </Box>
+        ) : (
+          <>
+            {chFaz > 0 ? (
+              <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
+                <Button sx={styleModalMenu} onClick={() => SaveFaz()}>
+                  Сохранить изменения
+                </Button>
+              </Box>
+            ) : (
+              <Box sx={{ height: "29px" }}> </Box>
+            )}
+          </>
+        )}
+      </>
+    );
+  };
+
   const InputName = () => {
     return (
       <Grid container sx={{ marginTop: 1 }}>
@@ -430,24 +460,14 @@ const GsSetPhase = (props: {
         </Grid>
         <Box sx={{ overflowX: "auto", height: "540px" }}>{StrokaTabl()}</Box>
       </Box>
-      {props.newMode < 0 && (
+      {FooterMenu()}
+      {/* {props.newMode < 0 ? (
         <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
-          <Button sx={styleModalMenu} onClick={() => SaveRec(0)}>
-            Сохранить режим
-          </Button>
-
-          {chDel > 0 && (
-            <Button sx={styleModalMenu} onClick={() => SaveRec(2)}>
-              Удалить помеченные
-            </Button>
-          )}
-
-          <Button sx={styleModalMenu} onClick={() => SaveRec(1)}>
-            Отмена режима
-          </Button>
+          {StrokaFooter(0, "Сохранить режим")}
+          {chDel > 0 && <>{StrokaFooter(2, "Удалить помеченные")}</>}
+          {StrokaFooter(1, "Отмена режима")}
         </Box>
-      )}
-      {props.newMode >= 0 && (
+      ) : (
         <>
           {chFaz > 0 ? (
             <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
@@ -459,7 +479,7 @@ const GsSetPhase = (props: {
             <Box sx={{ height: "27px" }}> </Box>
           )}
         </>
-      )}
+      )} */}
       {openSoobErr && (
         <GsErrorMessage setOpen={setOpenSoobErr} sErr={soobErr} />
       )}

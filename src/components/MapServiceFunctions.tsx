@@ -8,7 +8,25 @@ import { MdOpenWith } from "react-icons/md";
 import { Pointer } from "./../App";
 //import { DateMAP } from "./../interfaceMAP.d";
 
-//import { styleInfoSoob } from "./MainMapStyle";
+import { FullscreenControl, GeolocationControl } from "react-yandex-maps";
+import { RulerControl, SearchControl } from "react-yandex-maps";
+import { TrafficControl, TypeSelector, ZoomControl } from "react-yandex-maps";
+
+import { searchControl } from "./MainMapStyle";
+
+export const YandexServices = () => {
+  return (
+    <>
+      <FullscreenControl />
+      <GeolocationControl options={{ float: "left" }} />
+      <RulerControl options={{ float: "right" }} />
+      <SearchControl options={searchControl} />
+      <TrafficControl options={{ float: "right" }} />
+      <TypeSelector options={{ float: "right" }} />
+      <ZoomControl options={{ float: "right" }} />
+    </>
+  );
+};
 
 export const MasskPoint = (debug: boolean, rec: any, imgFaza: string) => {
   let masskPoint: Pointer = {

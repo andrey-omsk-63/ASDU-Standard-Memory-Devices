@@ -6,10 +6,7 @@ import { massfazCreate, statsaveCreate } from "../redux/actions";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 
-import { YMaps, Map, FullscreenControl } from "react-yandex-maps";
-import { GeolocationControl, YMapsApi } from "react-yandex-maps";
-import { RulerControl, SearchControl } from "react-yandex-maps";
-import { TrafficControl, TypeSelector, ZoomControl } from "react-yandex-maps";
+import { YMaps, Map, YMapsApi } from "react-yandex-maps";
 
 import GsSelectMD from "./GsComponents/GsSelectMD";
 import GsSetPhase from "./GsComponents/GsSetPhase";
@@ -20,14 +17,13 @@ import GsDoPlacemarkDo from "./GsComponents/GsDoPlacemarkDo";
 import { getMultiRouteOptions, StrokaHelp } from "./MapServiceFunctions";
 import { getReferencePoints, CenterCoord } from "./MapServiceFunctions";
 import { ErrorHaveVertex, Distance } from "./MapServiceFunctions";
-import { StrokaMenuGlob, HelpAdd } from "./MapServiceFunctions";
+import { StrokaMenuGlob, HelpAdd, YandexServices } from "./MapServiceFunctions";
 
 import { SendSocketUpdateRoute } from "./MapSocketFunctions";
 
-import { searchControl } from "./MainMapStyle";
+import { YMapsModul, MyYandexKey } from "./MapConst";
 
 let flagOpen = false;
-
 const zoomStart = 10;
 let zoom = zoomStart;
 let pointCenter: any = 0;
@@ -53,7 +49,6 @@ const MainMapGs = (props: {
   history: any;
   trHist: boolean;
 }) => {
-  //console.log("PROPS:", props);
   //== Piece of Redux =======================================
   const map = useSelector((state: any) => {
     const { mapReducer } = state;
@@ -92,7 +87,6 @@ const MainMapGs = (props: {
   const [risovka, setRisovka] = React.useState(false);
   const [trigger, setTrigger] = React.useState(false);
   const [changeFaz, setChangeFaz] = React.useState(false);
-
   const [ymaps, setYmaps] = React.useState<YMapsApi | null>(null);
   const mapp = React.useRef<any>(null);
 
@@ -161,23 +155,6 @@ const MainMapGs = (props: {
       mapp.current.geoObjects.add(multiRoute);
     }
   };
-
-  // const StatusQuo = () => {
-  //   massMem = [];
-  //   massCoord = [];
-  //   newMode = -1;
-  //   //mapState.zoom = zoomStart - 0.01;
-  //   zoom = zoomStart - 0.01;
-  //   datestat.create = true;
-  //   dispatch(statsaveCreate(datestat));
-  //   ymaps && addRoute(ymaps, false); // перерисовка связей
-  //   //NewPointCenter(pointCenterEt);
-  //   //pointCenter = pointCenterEt;
-  //   //mapState.center = pointCenterEt;
-  //   NewPointCenter(pointCenterEt);
-  //   console.log("StatusQuo отработал:", mapState);
-  //   //setTrigger(!trigger);
-  // };
 
   const MakeNewMassMem = (mass: any) => {
     if (mass.length) {
@@ -283,8 +260,7 @@ const MainMapGs = (props: {
         let corFromMap = [massfaz[i].coordinates[0], massfaz[i].coordinates[1]];
         let dister = Distance(coord, corFromMap);
         if (dister < 200 && minDist > dister) {
-          // нажали правой кнопкой на светофор
-          minDist = dister;
+          minDist = dister; // нажали правой кнопкой на светофор
           nomInMap = i;
         }
       }
@@ -372,7 +348,6 @@ const MainMapGs = (props: {
       case 42: // выбор режима ЗУ
         StatusQuo();
         if (massMem.length) {
-          //StatusQuo();
           ymaps && addRoute(ymaps, false); // перерисовка связей
           setFlagPusk(!flagPusk);
         }
@@ -475,25 +450,16 @@ const MainMapGs = (props: {
   };
 
   return (
-    <Grid container sx={{ border: 0, height: "99.9vh" }}>
-      <Grid item xs sx={{ border: 0 }}>
+    <Grid container sx={{ height: "99.9vh" }}>
+      <Grid item xs>
         {!datestat.working && <>{MenuGl(modeToDo)}</>}
         {datestat.working && <>{StrokaHelp(" ", 0)}</>}
         <Grid container sx={{ border: 0, height: "96.9vh" }}>
           <Grid item xs={xsMap} sx={{ border: 0 }}>
             {Object.keys(map.tflight).length && (
-              <YMaps
-                query={{
-                  apikey: "65162f5f-2d15-41d1-a881-6c1acf34cfa1",
-                  lang: "ru_RU",
-                }}
-              >
+              <YMaps query={{ apikey: MyYandexKey, lang: "ru_RU" }}>
                 <Map
-                  modules={[
-                    "multiRouter.MultiRoute",
-                    "Polyline",
-                    "templateLayoutFactory",
-                  ]}
+                  modules={YMapsModul}
                   state={mapState}
                   instanceRef={(ref) => InstanceRefDo(ref)} // обработка действий с правой кнопкой и колёсиком мыши
                   onLoad={(ref) => {
@@ -502,15 +468,7 @@ const MainMapGs = (props: {
                   width={widthMap}
                   height={"99.6%"}
                 >
-                  {/* сервисы Яндекса */}
-                  <FullscreenControl />
-                  <GeolocationControl options={{ float: "left" }} />
-                  <RulerControl options={{ float: "right" }} />
-                  <SearchControl options={searchControl} />
-                  <TrafficControl options={{ float: "right" }} />
-                  <TypeSelector options={{ float: "right" }} />
-                  <ZoomControl options={{ float: "right" }} />
-                  {/* служебные компоненты */}
+                  {YandexServices()}
                   {Pererisovka()}
                   <PlacemarkDo />
                   {selectMD && (
