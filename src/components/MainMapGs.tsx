@@ -451,7 +451,9 @@ const MainMapGs = (props: {
     <Grid container sx={{ height: "99.9vh" }}>
       <Grid item xs>
         {!datestat.working && <>{MenuGl(modeToDo)}</>}
-        {datestat.working && <>{StrokaHelp(" ", 0)}</>}
+        {datestat.working && (
+          <>{StrokaHelp("Происходит обработка режима", 0)}</>
+        )}
         <Grid container sx={{ border: 0, height: "96.9vh" }}>
           <Grid item xs={xsMap} sx={{ border: 0 }}>
             {Object.keys(map.tflight).length && (
