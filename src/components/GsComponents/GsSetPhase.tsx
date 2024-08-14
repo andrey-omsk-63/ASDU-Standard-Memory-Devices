@@ -461,25 +461,6 @@ const GsSetPhase = (props: {
         <Box sx={{ overflowX: "auto", height: "540px" }}>{StrokaTabl()}</Box>
       </Box>
       {FooterMenu()}
-      {/* {props.newMode < 0 ? (
-        <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
-          {StrokaFooter(0, "Сохранить режим")}
-          {chDel > 0 && <>{StrokaFooter(2, "Удалить помеченные")}</>}
-          {StrokaFooter(1, "Отмена режима")}
-        </Box>
-      ) : (
-        <>
-          {chFaz > 0 ? (
-            <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
-              <Button sx={styleModalMenu} onClick={() => SaveFaz()}>
-                Сохранить изменения
-              </Button>
-            </Box>
-          ) : (
-            <Box sx={{ height: "27px" }}> </Box>
-          )}
-        </>
-      )} */}
       {openSoobErr && (
         <GsErrorMessage setOpen={setOpenSoobErr} sErr={soobErr} />
       )}
