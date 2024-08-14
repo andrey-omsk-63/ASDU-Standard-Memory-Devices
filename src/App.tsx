@@ -101,7 +101,7 @@ let soob = "";
 let flagInit = false;
 
 const App = () => {
-  // //== Piece of Redux ======================================
+  //== Piece of Redux ======================================
   let massdk = useSelector((state: any) => {
     const { massdkReducer } = state;
     return massdkReducer.massdk;
@@ -199,9 +199,8 @@ const App = () => {
           console.log("Tflight:", data, data.tflight);
           for (let j = 0; j < data.tflight.length; j++) {
             for (let i = 0; i < dateMapGl.tflight.length; i++) {
-              if (data.tflight[j].idevice === dateMapGl.tflight[i].idevice) {
+              if (data.tflight[j].idevice === dateMapGl.tflight[i].idevice)
                 dateMapGl.tflight[i].tlsost = data.tflight[j].tlsost;
-              }
             }
           }
           dispatch(mapCreate(dateMapGl));
@@ -274,9 +273,8 @@ const App = () => {
     dateMapGl = JSON.parse(JSON.stringify(dataMap));
     dispatch(mapCreate(dateMapGl));
     let massRegion = [];
-    for (let key in dateMapGl.regionInfo) {
+    for (let key in dateMapGl.regionInfo)
       if (!isNaN(Number(key))) massRegion.push(Number(key));
-    }
     homeRegion = massRegion[0].toString();
     dateStat.region = homeRegion;
     dateStat.phSvg = imgFaza;

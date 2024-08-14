@@ -82,7 +82,6 @@ const GsDoPlacemarkDo = (props: {
       }
     }
   }
-  //debug && (fazaImg = datestat.phSvg); // для отладки
 
   const Hoster = React.useCallback(() => {
     let nomInRoute = props.massMem.indexOf(id);
@@ -186,9 +185,6 @@ const GsDoPlacemarkDo = (props: {
   const GetPointOptions1 = React.useCallback(
     (hoster: any) => {
       let Hoster = hoster;
-      // if (!Hoster)
-      //   console.log("Картинка фазы:", Hoster, nomInMassfaz, FAZASIST, massfaz);
-      //let imger = window.location.origin + "/free/img/notImage.png";
       let imger: any = "";
       let FZSIST = FAZASIST;
       if (FAZASIST === 9 || !FAZASIST) {
@@ -209,7 +205,6 @@ const GsDoPlacemarkDo = (props: {
             ? hostt + FZSIST + ".jpg"
             : window.location.origin + "/free/img/" + FZSIST + ".jpg";
         }
-        //console.log("Fазы:", imger);
       }
 
       return {
@@ -217,7 +212,6 @@ const GsDoPlacemarkDo = (props: {
         iconLayout: "default#image",
         // изображение иконки метки
         iconImageHref: imger,
-        //iconImageHref: FZSIST === 1 ? <Bs1Square /> : <Bs2Square />,
         // размеры метки
         iconImageSize: [iconSize, iconSize],
         // её "ножки" (точки привязки)
@@ -237,8 +231,6 @@ const GsDoPlacemarkDo = (props: {
   ) => {
     let cont1 = massdk[index].nameCoordinates + "<br/>";
     let cont3 = map.tflight[index].tlsost.description + "<br/>";
-    // let cont2 = "[" + massdk[index].region + ", " + massdk[index].area;
-    // cont2 += ", " + massdk[index].ID + ", " + map.tflight[index].idevice + "]";
     let cont2 =
       "[" + massdk[index].ID + ", " + map.tflight[index].idevice + "]";
     let textBalloon = "";
@@ -265,7 +257,6 @@ const GsDoPlacemarkDo = (props: {
           (FAZASIST === 9 && massfaz[nomInMassfaz].fazaSistOld < 0)
             ? {
                 iconLayout: createChipsLayout(calculate, mappp.tlsost.num),
-                //iconLayout: <div>111</div>,
               }
             : GetPointOptions1(fazaImg)
         }

@@ -24,7 +24,6 @@ export const styleModalEnd = {
   height: "21px",
   maxWidth: "2%",
   minWidth: "2%",
-  //color: "black",
   color: "#5B1080", // сиреневый
   textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
 };
@@ -35,9 +34,8 @@ export const styleSetInf = {
   marginLeft: "24vh",
   width: 380,
   bgcolor: "background.paper",
-  border: "1px solid #000",
-  borderColor: "primary.main",
+  border: "1px solid #fff",
   borderRadius: 1,
   boxShadow: 24,
-  p: 1.5, //
+  p: 1.5, 
 };

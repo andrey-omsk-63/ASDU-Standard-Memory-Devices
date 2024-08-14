@@ -6,7 +6,6 @@ import CardMedia from "@mui/material/CardMedia";
 import { MdOpenWith } from "react-icons/md";
 
 import { Pointer } from "./../App";
-//import { DateMAP } from "./../interfaceMAP.d";
 
 import { FullscreenControl, GeolocationControl } from "react-yandex-maps";
 import { RulerControl, SearchControl } from "react-yandex-maps";
@@ -102,7 +101,6 @@ export const Сrossroad = () => {
   return (
     <>
       <Box sx={{ fontSize: 15 }}>
-        {/* <BiExpand /> */}
         <MdOpenWith />
       </Box>
       {StrokaHelp("]", 1)}
@@ -129,8 +127,6 @@ export const GetPointData = (
 ) => {
   let cont1 = massdk[index].nameCoordinates + "<br/>";
   let cont3 = map.tflight[index].tlsost.description + "<br/>";
-  // let cont2 = "[" + massdk[index].region + ", " + massdk[index].area;
-  // cont2 += ", " + massdk[index].ID + ", " + map.tflight[index].idevice + "]";
   let cont2 = "[" + massdk[index].ID + ", " + map.tflight[index].idevice + "]";
   let textBalloon = "";
   let nomInRoute = massMem.indexOf(index);
@@ -140,7 +136,6 @@ export const GetPointData = (
   if (index === pointAaIndex) textBalloon = "Начало маршрута";
 
   return {
-    //iconContent: <div>1111</div>,
     hintContent: cont1 + cont3 + cont2 + "<br/>" + textBalloon,
   };
 };
@@ -223,9 +218,18 @@ export const NameMode = () => {
 export const OutputFazaImg = (img: any, i: number) => {
   let widthHeight = 60;
   if (!img) widthHeight = 30;
+
+  const styleFazaImg = {
+    fontSize: 27,
+    marginTop: -0.5,
+    marginLeft: 1,
+    color: "#5B1080", // сиреневый
+    textShadow: "2px 2px 3px rgba(0,0,0,0.3)",
+  };
+
   return (
     <>
-      {img && (
+      {img ? (
         <svg
           xmlns="http://www.w3.org/2000/svg"
           xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -237,19 +241,8 @@ export const OutputFazaImg = (img: any, i: number) => {
             xlinkHref={"data:image/png;base64," + img}
           />
         </svg>
-      )}
-      {!img && (
-        <Box
-          sx={{
-            fontSize: 27,
-            marginTop: -0.5,
-            marginLeft: 1,
-            color: "#5B1080", // сиреневый
-            textShadow: "2px 2px 3px rgba(0,0,0,0.3)",
-          }}
-        >
-          {i}
-        </Box>
+      ) : (
+        <Box sx={styleFazaImg}>{i}</Box>
       )}
     </>
   );
@@ -291,7 +284,7 @@ export const StrokaMenuGlob = (soob: string, func: any, mode: number) => {
 
 export const StrokaHelp = (soobInfo: string, mode: number) => {
   let moder = mode ? "left" : "right";
-  let dl = mode ? 20 : 490
+  let dl = mode ? 20 : 490;
 
   const styleInfoSoob = {
     marginTop: "-3px",

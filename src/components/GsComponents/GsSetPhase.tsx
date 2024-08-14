@@ -80,9 +80,7 @@ const GsSetPhase = (props: {
     maskFaz.phases = massdk[maskFaz.idx].phases;
     if (!maskFaz.phases.length) {
       maskFaz.img = [null, null, null];
-    } else {
-      maskFaz.img = massdk[maskFaz.idx].phSvg;
-    }
+    } else maskFaz.img = massdk[maskFaz.idx].phSvg;
     if (props.newMode >= 0) {
       maskFaz.faza = map.routes[props.newMode].listTL[i].phase;
       if (!maskFaz.faza) maskFaz.faza = 1;
@@ -92,18 +90,16 @@ const GsSetPhase = (props: {
   if (props.newMode >= 0) {
     if (newInput) {
       massFaz = []; // существующий режим
-      for (let i = 0; i < props.massMem.length; i++) {
+      for (let i = 0; i < props.massMem.length; i++)
         massFaz.push(MakeMaskFaz(i));
-      }
       newInput = false;
     }
   } else {
     if (newInput) {
       massFaz = []; // новый режим
       nameMode = "Режим ЗУ" + NameMode();
-      for (let i = 0; i < props.massMem.length; i++) {
+      for (let i = 0; i < props.massMem.length; i++)
         massFaz.push(MakeMaskFaz(i));
-      }
       newInput = false;
       setChDel(0);
     } else {
@@ -204,9 +200,7 @@ const GsSetPhase = (props: {
           };
           if (i) {
             maskRoutes.listTL.push(maskListTL);
-          } else {
-            maskRoutes.listTL[0] = maskListTL;
-          }
+          } else maskRoutes.listTL[0] = maskListTL;
         }
         map.routes.push(maskRoutes);
         dispatch(mapCreate(map));
@@ -222,9 +216,7 @@ const GsSetPhase = (props: {
         handleCloseSetEnd();
       }
     } else {
-      if (mode === 1) {
-        massFaz = []; // очистить таблицу
-      }
+      if (mode === 1) massFaz = []; // очистить таблицу
       handleCloseSetEnd();
     }
   };

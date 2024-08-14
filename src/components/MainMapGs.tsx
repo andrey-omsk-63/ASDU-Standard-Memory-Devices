@@ -168,9 +168,7 @@ const MainMapGs = (props: {
       massCoord = masRab;
       ymaps && addRoute(ymaps, false); // перерисовка связей
       setFlagPusk(!flagPusk);
-    } else {
-      StatusQuo();
-    }
+    } else StatusQuo();
   };
 
   const OnPlacemarkClickPoint = (index: number) => {

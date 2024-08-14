@@ -15,6 +15,7 @@ import { SendSocketRoute, SendSocketDispatch } from "../MapSocketFunctions";
 import { styleModalEnd } from "../MainMapStyle";
 import { styleModalMenu, styleStrokaTablImg01 } from "./GsComponentsStyle";
 import { styleToDoMode, styleStrokaTabl01 } from "./GsComponentsStyle";
+import { styleStrokaTabl03 } from "./GsComponentsStyle";
 import { styleStrokaTabl02, styleStrokaTablImg02 } from "./GsComponentsStyle";
 import { styletSelectTitle, styleStrokaTabl10 } from "./GsComponentsStyle";
 import { styleToDo01, styleToDo02 } from "./GsComponentsStyle";
@@ -237,23 +238,19 @@ const GsToDoMode = (props: {
         : styleStrokaTablImg02;
 
       resStr.push(
-        <Grid
-          key={i}
-          container
-          sx={{ marginTop: 1, textShadow: "1px 1px 2px rgba(0,0,0,0.3)" }}
-        >
+        <Grid key={i} container sx={styleStrokaTabl03}>
           <Grid item xs={1} sx={{ paddingTop: 0.7, textAlign: "center" }}>
             <Button sx={illum} onClick={() => ClickKnop(i)}>
               {i + 1}
             </Button>
           </Grid>
-
           <Grid item xs={1.2} sx={{ fontSize: 27, textAlign: "right" }}>
             {star}
           </Grid>
           <Grid item xs={1.0} sx={{}}>
-            {!toDoMode && <>{OutputVertexImg(host)}</>}
-            {toDoMode && (
+            {!toDoMode ? (
+              <>{OutputVertexImg(host)}</>
+            ) : (
               <Button sx={illumImg} onClick={() => ClickVertex(i)}>
                 {OutputVertexImg(host)}
               </Button>
@@ -262,14 +259,12 @@ const GsToDoMode = (props: {
           <Grid item xs={0.4} sx={styleToDo02}>
             {bull}
           </Grid>
-
           <Grid item xs={1.1} sx={styleToDo01}>
             {takt}
           </Grid>
           <Grid item xs={2} sx={{ paddingTop: pad, textAlign: "center" }}>
             {OutputFazaImg(fazaImg, massfaz[i].faza)}
           </Grid>
-
           <Grid item xs sx={{ fontSize: 14 }}>
             {massfaz[i].name}
           </Grid>
@@ -318,12 +313,11 @@ const GsToDoMode = (props: {
         </Box>
 
         <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
-          {!toDoMode && (
+          {!toDoMode ? (
             <Button sx={styleModalMenu} onClick={() => ToDoMode(2)}>
               Начать исполнение
             </Button>
-          )}
-          {toDoMode && (
+          ) : (
             <Button sx={styleModalMenu} onClick={() => ToDoMode(0)}>
               Закончить исполнение
             </Button>
