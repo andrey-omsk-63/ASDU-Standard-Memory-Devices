@@ -62,30 +62,26 @@ const GsToDoMode = (props: {
   let newMode = props.newMode;
   //=== инициализация ======================================
   const MakeMaskFaz = (i: number) => {
+    let iDx = props.massMem[i]
     let maskFaz: Fazer = {
       kolOpen: 0,
       runRec: false,
-      idx: 0,
+      idx: iDx,
       coordinates: [],
-      faza: 1,
+      faza: map.routes[newMode].listTL[i].phase,
       fazaSist: -1,
       fazaSistOld: -1,
-      phases: [],
-      idevice: 0,
-      name: "",
+      phases: massdk[iDx].phases,
+      idevice: map.tflight[iDx].idevice,
+      name: massdk[iDx].nameCoordinates,
       starRec: false,
       img: [],
     };
 
     nomIllum = -1;
     if (debug) maskFaz.fazaSist = 1;
-    maskFaz.idx = props.massMem[i];
-    maskFaz.name = massdk[maskFaz.idx].nameCoordinates;
-    maskFaz.phases = massdk[maskFaz.idx].phases;
-    maskFaz.idevice = map.tflight[maskFaz.idx].idevice;
-    maskFaz.faza = map.routes[newMode].listTL[i].phase;
-    maskFaz.coordinates[0] = map.tflight[maskFaz.idx].points.Y;
-    maskFaz.coordinates[1] = map.tflight[maskFaz.idx].points.X;
+    maskFaz.coordinates[0] = map.tflight[iDx].points.Y;
+    maskFaz.coordinates[1] = map.tflight[iDx].points.X;
     if (
       map.tflight[maskFaz.idx].points.X !==
         map.routes[newMode].listTL[i].point.X ||
@@ -95,9 +91,7 @@ const GsToDoMode = (props: {
       maskFaz.starRec = true; // было изменение координат
     if (!maskFaz.phases.length) {
       maskFaz.img = [null, null, null];
-    } else {
-      maskFaz.img = massdk[maskFaz.idx].phSvg;
-    }
+    } else maskFaz.img = massdk[maskFaz.idx].phSvg;
     return maskFaz;
   };
 
@@ -108,9 +102,8 @@ const GsToDoMode = (props: {
       massfaz.push(MakeMaskFaz(i));
       timerId.push(null);
     }
-    for (let i = 0; i < props.massMem.length; i++) {
+    for (let i = 0; i < props.massMem.length; i++)
       massInt.push(JSON.parse(JSON.stringify(timerId)));
-    }
     init = false;
     dispatch(massfazCreate(massfaz));
   }

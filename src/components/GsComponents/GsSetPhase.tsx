@@ -67,26 +67,25 @@ const GsSetPhase = (props: {
   const MakeMaskFaz = (i: number) => {
     chFaz = 0;
     let im: Array<string | null> = [];
+    let iDx = props.massMem[i];
     let maskFaz = {
-      idx: 0,
+      idx: iDx,
       faza: 1,
-      phases: [],
-      name: "",
+      phases: massdk[iDx].phases,
+      name: massdk[iDx].nameCoordinates,
       delRec: false,
       img: im,
     };
-    maskFaz.idx = props.massMem[i];
-    maskFaz.name = massdk[maskFaz.idx].nameCoordinates;
-    maskFaz.phases = massdk[maskFaz.idx].phases;
     if (!maskFaz.phases.length) {
       maskFaz.img = [null, null, null];
-    } else maskFaz.img = massdk[maskFaz.idx].phSvg;
+    } else maskFaz.img = massdk[iDx].phSvg;
     if (props.newMode >= 0) {
       maskFaz.faza = map.routes[props.newMode].listTL[i].phase;
       if (!maskFaz.faza) maskFaz.faza = 1;
     }
     return maskFaz;
   };
+
   if (props.newMode >= 0) {
     if (newInput) {
       massFaz = []; // существующий режим
@@ -168,9 +167,7 @@ const GsSetPhase = (props: {
         setOpenSoobErr(true);
       } else {
         for (let i = 0; i < map.routes.length; i++) {
-          if (nameMode === map.routes[i].description) {
-            nameMode += NameMode();
-          }
+          if (nameMode === map.routes[i].description) nameMode += NameMode();
         }
         let maskRoutes = {
           region: datestat.region,
@@ -205,12 +202,11 @@ const GsSetPhase = (props: {
         map.routes.push(maskRoutes);
         dispatch(mapCreate(map));
         SendSocketCreateRoute(debug, ws, maskRoutes);
-        let maskName = {
+        massmode.push({
           name: nameMode,
           delRec: false,
           kolOpen: 0,
-        };
-        massmode.push(maskName);
+        });
         dispatch(massmodeCreate(massmode));
         massFaz = [];
         handleCloseSetEnd();
@@ -245,15 +241,8 @@ const GsSetPhase = (props: {
       massKey.push(key);
       massDat.push(dat[key]);
     }
-    for (let i = 0; i < massKey.length; i++) {
-      let maskCurrencies = {
-        value: "",
-        label: "",
-      };
-      maskCurrencies.value = massKey[i];
-      maskCurrencies.label = massDat[i];
-      currencies.push(maskCurrencies);
-    }
+    for (let i = 0; i < massKey.length; i++)
+      currencies.push({ value: massKey[i], label: massDat[i] });
 
     const [currency, setCurrency] = React.useState(
       dat.indexOf(massFaz[mode].faza)
@@ -303,13 +292,14 @@ const GsSetPhase = (props: {
         colorRec = "red";
       }
       let illum = massFaz[i].delRec ? styleSaveRed : styleSaveBlack;
+      const styleTabl01 = {
+        marginTop: 1,
+        color: colorRec,
+        fontSize: fSize,
+      };
 
       resStr.push(
-        <Grid
-          key={i}
-          container
-          sx={{ marginTop: 1, color: colorRec, fontSize: fSize }}
-        >
+        <Grid key={i} container sx={styleTabl01}>
           <Grid item xs={8.3} sx={{ paddingLeft: 1 }}>
             {massFaz[i].name}
           </Grid>

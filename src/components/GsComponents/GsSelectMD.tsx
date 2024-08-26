@@ -118,9 +118,7 @@ const GsSelectMD = (props: {
       if (!massmode[i].delRec) {
         massRab.push(massmode[i]);
         massRoute.push(map.routes[i]);
-      } else {
-        SendSocketDeleteRoute(debug, ws, map.routes[i]);
-      }
+      } else SendSocketDeleteRoute(debug, ws, map.routes[i]);
     }
     massmode = massRab;
     map.routes = massRoute;
@@ -152,12 +150,11 @@ const GsSelectMD = (props: {
       const styleBut01 = {
         fontSize: fSize + 2,
         marginTop: 1,
-        border: "1px solid #000",
         bgcolor: "#E6F5D6",
         width: "320px",
         maxHeight: "20px",
         minHeight: "20px",
-        borderColor: "#d4d4d4", // серый
+        border: "1px solid #d4d4d4", // серый
         borderRadius: 1,
         color: colorRec,
         textTransform: "unset !important",
@@ -184,12 +181,11 @@ const GsSelectMD = (props: {
       const styleBut02 = {
         fontSize: fSize,
         marginTop: 1,
-        border: "1px solid #000",
-        bgcolor: "#E6F5D6",
+        bgcolor: "#E6F5D6", // светло-салатовый
         width: "105px",
         maxHeight: "20px",
         minHeight: "20px",
-        borderColor: "#d4d4d4", // серый
+        border: "1px solid #d4d4d4", // серый
         borderRadius: 1,
         color: colorRec,
         textTransform: "unset !important",
@@ -199,12 +195,11 @@ const GsSelectMD = (props: {
       const styleBut03 = {
         fontSize: fSize,
         marginTop: 1,
-        border: "1px solid #000",
-        bgcolor: "#BAE186", // тёмно-салатовый/
+        bgcolor: "#BAE186", // салатовый
         width: "105px",
         maxHeight: "20px",
         minHeight: "20px",
-        borderColor: "#93D145",
+        border: "1px solid #93D145", // тёмно-салатовый
         borderRadius: 1,
         color: colorRec,
         textTransform: "unset !important",

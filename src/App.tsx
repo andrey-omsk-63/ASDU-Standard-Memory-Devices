@@ -132,12 +132,11 @@ const App = () => {
     for (let i = 0; i < dateMapGl.routes.length; i++) {
       let nameZU = dateMapGl.routes[i].description;
       if (!nameZU) nameZU = "без имени(" + ch++ + ")";
-      let maskName = {
+      massmode.push({
         name: nameZU,
         delRec: false,
         kolOpen: 0,
-      };
-      massmode.push(maskName);
+      });
     }
     massfaz.push(maskFaz);
     dispatch(massdkCreate(massdk));
@@ -198,10 +197,9 @@ const App = () => {
         case "tflight":
           console.log("Tflight:", data, data.tflight);
           for (let j = 0; j < data.tflight.length; j++) {
-            for (let i = 0; i < dateMapGl.tflight.length; i++) {
+            for (let i = 0; i < dateMapGl.tflight.length; i++)
               if (data.tflight[j].idevice === dateMapGl.tflight[i].idevice)
                 dateMapGl.tflight[i].tlsost = data.tflight[j].tlsost;
-            }
           }
           dispatch(mapCreate(dateMapGl));
           setTrigger(!trigger);

@@ -8,7 +8,6 @@ import reportWebVitals from "./reportWebVitals";
 
 import { rootReducer } from "./redux/rootReducer";
 import { Provider } from "react-redux";
-//import { store } from "./store";
 
 import "./index.css";
 import App from "./App";

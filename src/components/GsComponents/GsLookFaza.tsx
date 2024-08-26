@@ -11,6 +11,7 @@ import { styleSetFazaLook } from "./GsComponentsStyle";
 import { styleFazaLook02, styletSelectTitle } from "./GsComponentsStyle";
 
 let history: any = null;
+let tSh = "1px 1px 2px rgba(0,0,0,0.3)";
 
 const GsLookFaza = (props: { setOpen: Function; history: any }) => {
   const [openSetMode, setOpenSetMode] = React.useState(true);
@@ -31,28 +32,40 @@ const GsLookFaza = (props: { setOpen: Function; history: any }) => {
   };
 
   const StrokaTabl = () => {
-    let resStr: any = [];
-    for (let i = 0; i < history.state.length; i++) {
-      resStr.push(
+    // let resStr: any = [];
+    // for (let i = 0; i < history.state.length; i++) {
+    //   resStr.push(
+    //     <Grid
+    //       key={i}
+    //       container
+    //       sx={{ fontSize: 14.4, marginTop: 1, textShadow: tSh }}
+    //     >
+    //       <Grid item xs={8.3} sx={{ paddingLeft: 1 }}>
+    //         {history.state[i].description}
+    //       </Grid>
+    //       <Grid item xs sx={{ textAlign: "center" }}>
+    //         {history.state[i].phase}
+    //       </Grid>
+    //     </Grid>
+    //   );
+    // }
+    // return resStr;
+    return history.state.map((historyState: any, idx: number) => {
+      return (
         <Grid
-          key={i}
+          key={idx}
           container
-          sx={{
-            fontSize: 14.4,
-            marginTop: 1,
-            textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
-          }}
+          sx={{ fontSize: 14.4, marginTop: 1, textShadow: tSh }}
         >
           <Grid item xs={8.3} sx={{ paddingLeft: 1 }}>
-            {history.state[i].description}
+            {historyState.description}
           </Grid>
           <Grid item xs sx={{ textAlign: "center" }}>
-            {history.state[i].phase}
+            {historyState.phase}
           </Grid>
         </Grid>
       );
-    }
-    return resStr;
+    });
   };
 
   return (
@@ -67,7 +80,7 @@ const GsLookFaza = (props: { setOpen: Function; history: any }) => {
         </Typography>
 
         <Box sx={styleFazaLook02}>
-          <Grid container sx={{ bgcolor: "#C0E2C3" }}>
+          <Grid container sx={{ bgcolor: "#B8CBB9" }}>
             {StrokaHeader(8.3, "Описание")}
             {StrokaHeader(3.7, "Фаза")}
           </Grid>

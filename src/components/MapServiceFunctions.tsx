@@ -31,23 +31,17 @@ export const MasskPoint = (debug: boolean, rec: any, imgFaza: string) => {
   let masskPoint: Pointer = {
     ID: -1,
     coordinates: [],
-    nameCoordinates: "",
-    region: 0,
-    area: 0,
-    phases: [],
+    nameCoordinates: rec.description,
+    region: Number(rec.region.num),
+    area: Number(rec.area.num),
+    phases: rec.phases,
     phSvg: [],
   };
   let img = null;
   masskPoint.ID = rec.ID;
   masskPoint.coordinates[0] = rec.points.Y;
   masskPoint.coordinates[1] = rec.points.X;
-  masskPoint.nameCoordinates = rec.description;
-  masskPoint.region = Number(rec.region.num);
-  masskPoint.area = Number(rec.area.num);
-  masskPoint.phases = rec.phases;
-  for (let i = 0; i < rec.phases.length; i++) {
-    masskPoint.phSvg.push(img);
-  }
+  for (let i = 0; i < rec.phases.length; i++) masskPoint.phSvg.push(img);
   return masskPoint;
 };
 
@@ -63,10 +57,9 @@ export const DoublRoute = (massroute: any, pointA: any, pointB: any) => {
   let flDubl = false;
   let pointAcod = CodingCoord(pointA);
   let pointBcod = CodingCoord(pointB);
-  for (let i = 0; i < massroute.length; i++) {
+  for (let i = 0; i < massroute.length; i++)
     if (massroute[i].starts === pointAcod && massroute[i].stops === pointBcod)
       flDubl = true;
-  }
   return flDubl;
 };
 

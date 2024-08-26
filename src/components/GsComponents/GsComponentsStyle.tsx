@@ -97,7 +97,6 @@ export const styletFazaTitle = {
 
 export const styletFaza01 = {
   marginTop: 0.5,
-  //bgcolor: "#F1F5FB", // светло серый
   background: "linear-gradient(180deg, #F1F5FB 59%, #DEE8F5 )",
   border: "1px solid #d4d4d4",
   boxShadow: 6,
@@ -125,7 +124,6 @@ export const styleStrokaTabl00 = {
 };
 
 export const styleStrokaTabl10 = {
-  //bgcolor: "#F1F5FB",
   background: "linear-gradient(180deg, #F1F5FB 59%, #DEE8F5 )",
   border: "1px solid #d4d4d4",
   borderRadius: 1,
@@ -282,7 +280,6 @@ export const styletSelectTitle = {
 export const styletSelect01 = {
   overflowX: "auto",
   height: "69vh",
-  //bgcolor: "#F1F5FB",
   background: "linear-gradient(180deg, #F1F5FB 59%, #DEE8F5 )",
   border: "1px solid #d4d4d4",
   borderRadius: 1,
@@ -347,9 +344,7 @@ export const styleFazaLook01 = {
 };
 
 export const styleFazaLook02 = {
-  //marginTop: 1,
   overflowX: "auto",
-  //bgcolor: "#F1F5FB",
   background: "linear-gradient(180deg, #F1F5FB 59%, #DEE8F5 )",
   border: "1px solid #d4d4d4",
   borderRadius: 1,

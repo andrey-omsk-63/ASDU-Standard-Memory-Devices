@@ -16,6 +16,8 @@ import { styletSelect01 } from "./GsComponentsStyle";
 
 let history: any = null;
 let hist: any = null;
+let tSh1 = "1px 1px 2px rgba(0,0,0,0.3)";
+let tSh2 = "2px 2px 3px rgba(0,0,0,0.3)";
 
 const GsLookHistory = (props: {
   setOpen: Function;
@@ -46,32 +48,47 @@ const GsLookHistory = (props: {
   };
 
   const StrokaTabl = () => {
-    let resStr = [];
-    for (let i = 0; i < history.length; i++) {
-      let stroka = new Date(history[i].tm).toLocaleDateString() + " ";
-      stroka += new Date(history[i].tm).toLocaleTimeString().slice(0, 5) + " ";
+    // let resStr = [];
+    // for (let i = 0; i < history.length; i++) {
+    //   let stroka = new Date(history[i].tm).toLocaleDateString() + " ";
+    //   stroka += new Date(history[i].tm).toLocaleTimeString().slice(0, 5) + " ";
 
-      resStr.push(
-        <Grid
-          key={i}
-          container
-          sx={{ textShadow: "1px 1px 2px rgba(0,0,0,0.3)" }}
-        >
+    //   resStr.push(
+    //     <Grid key={i} container sx={{ textShadow: tSh1 }}>
+    //       <Grid item xs={1.8} sx={styleGridLook}>
+    //         Изменён:
+    //       </Grid>
+    //       <Grid item xs={4.5} sx={{ border: 0, textAlign: "center" }}>
+    //         <Button sx={styleButLook} onClick={() => ClickKnop(i)}>
+    //           {stroka}
+    //         </Button>
+    //       </Grid>
+    //       <Grid item xs sx={{ marginTop: 1, fontSize: 14, textAlign: "left" }}>
+    //         Кем: <b>{history[i].login.slice(0, 21)}</b>
+    //       </Grid>
+    //     </Grid>
+    //   );
+    // }
+    // return resStr;
+    return history.map((hist: any, idx: number) => {
+      let stroka = new Date(hist.tm).toLocaleDateString() + " ";
+      stroka += new Date(hist.tm).toLocaleTimeString().slice(0, 5) + " ";
+      return (
+        <Grid key={idx} container sx={{ textShadow: tSh1 }}>
           <Grid item xs={1.8} sx={styleGridLook}>
             Изменён:
           </Grid>
           <Grid item xs={4.5} sx={{ border: 0, textAlign: "center" }}>
-            <Button sx={styleButLook} onClick={() => ClickKnop(i)}>
+            <Button sx={styleButLook} onClick={() => ClickKnop(idx)}>
               {stroka}
             </Button>
           </Grid>
           <Grid item xs sx={{ marginTop: 1, fontSize: 14, textAlign: "left" }}>
-            Кем: <b>{history[i].login.slice(0, 21)}</b>
+            Кем: <b>{hist.login.slice(0, 21)}</b>
           </Grid>
         </Grid>
       );
-    }
-    return resStr;
+    });
   };
 
   return (
@@ -84,11 +101,7 @@ const GsLookHistory = (props: {
         {history === null && (
           <Typography
             variant="h6"
-            sx={{
-              color: "#5B1080",
-              textAlign: "center",
-              textShadow: "2px 2px 3px rgba(0,0,0,0.3)",
-            }}
+            sx={{ color: "#5B1080", textAlign: "center", textShadow: tSh2 }}
           >
             Нет данных по этому режиму
           </Typography>
