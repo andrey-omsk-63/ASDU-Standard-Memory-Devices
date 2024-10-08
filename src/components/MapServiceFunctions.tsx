@@ -133,44 +133,6 @@ export const GetPointData = (
   };
 };
 
-// export const GetPointOptions1 = (Hoster: any) => {
-//   let imger = window.location.origin + '/free/img/notImage.png';
-//   if (Hoster) imger = 'data:image/png;base64,' + Hoster;
-//   //console.log("###", imger,Hoster );
-
-//   return {
-//     // данный тип макета
-//     iconLayout: 'default#image',
-//     // изображение иконки метки
-//     //iconImageHref: '/faza.png',
-//     // iconImageHref: 'data:image/png;base64,' + Hoster,
-//     iconImageHref: imger,
-//     // размеры метки
-//     iconImageSize: [50, 50],
-//     // её "ножки" (точки привязки)
-//     iconImageOffset: [-25, -25],
-//   };
-// };
-
-// export const GetPointOptions2 = (index: number, massMem: Array<number>) => {
-//   let colorBalloon = "islands#violetCircleDotIcon";
-//   let aaa = massMem.indexOf(index);
-
-//   if (aaa >= 0) {
-//     colorBalloon = "islands#redCircleDotIcon";
-//     if (massMem.length === aaa + 1 && massMem.length) {
-//       colorBalloon = "islands#darkBlueStretchyIcon";
-//     }
-//     if (!aaa && massMem.length) {
-//       colorBalloon = "islands#redStretchyIcon";
-//     }
-//   }
-
-//   return {
-//     preset: colorBalloon,
-//   };
-// };
-
 export const ErrorHaveVertex = (rec: any) => {
   alert(
     "Не существует светофор: Район " +

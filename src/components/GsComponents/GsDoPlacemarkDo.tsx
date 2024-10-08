@@ -106,7 +106,6 @@ const GsDoPlacemarkDo = (props: {
       const Chips = props.ymaps?.templateLayoutFactory.createClass(
         '<div class="placemark"  ' +
           `style="background-image:url(${Hoster()}); ` +
-          //`style="<div>123</div>>; ` +
           `background-size: 100%; transform: rotate(${
             rotateDeg ?? 0
           }deg);\n"></div>`,

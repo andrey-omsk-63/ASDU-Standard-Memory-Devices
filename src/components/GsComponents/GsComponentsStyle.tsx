@@ -163,7 +163,7 @@ export const styleStrokaTabl03 = {
   textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
 };
 
-export const styleStrokaTablImg01 = {
+export const styleStrTablImg01 = {
   maxWidth: "33px",
   minWidth: "33px",
   maxHeight: "45px",
@@ -176,7 +176,7 @@ export const styleStrokaTablImg01 = {
   boxShadow: 12,
 };
 
-export const styleStrokaTablImg02 = {
+export const styleStrTablImg02 = {
   maxWidth: "33px",
   minWidth: "33px",
   maxHeight: "45px",

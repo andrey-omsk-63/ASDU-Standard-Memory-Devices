@@ -119,10 +119,9 @@ const MainMapGs = (props: {
     }
     if (massErrRec.length) {
       let massRabMap = []; // редактируем у себя map
-      for (let i = 0; i < map.routes[mode].listTL.length; i++) {
+      for (let i = 0; i < map.routes[mode].listTL.length; i++)
         if (!massErrRec.includes(i))
           massRabMap.push(map.routes[mode].listTL[i]);
-      }
       map.routes[mode].listTL = massRabMap;
       SendSocketUpdateRoute(debug, ws, map.routes[mode]);
       dispatch(mapCreate(map));

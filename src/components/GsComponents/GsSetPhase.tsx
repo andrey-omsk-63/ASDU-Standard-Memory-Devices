@@ -149,9 +149,8 @@ const GsSetPhase = (props: {
   };
 
   const SaveFaz = () => {
-    for (let i = 0; i < massFaz.length; i++) {
+    for (let i = 0; i < massFaz.length; i++)
       map.routes[props.newMode].listTL[i].phase = massFaz[i].faza;
-    }
     dispatch(mapCreate(map));
     SendSocketUpdateRoute(debug, ws, map.routes[props.newMode]);
     chFaz = 0;

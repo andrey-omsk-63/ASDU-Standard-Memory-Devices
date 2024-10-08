@@ -32,24 +32,6 @@ const GsLookFaza = (props: { setOpen: Function; history: any }) => {
   };
 
   const StrokaTabl = () => {
-    // let resStr: any = [];
-    // for (let i = 0; i < history.state.length; i++) {
-    //   resStr.push(
-    //     <Grid
-    //       key={i}
-    //       container
-    //       sx={{ fontSize: 14.4, marginTop: 1, textShadow: tSh }}
-    //     >
-    //       <Grid item xs={8.3} sx={{ paddingLeft: 1 }}>
-    //         {history.state[i].description}
-    //       </Grid>
-    //       <Grid item xs sx={{ textAlign: "center" }}>
-    //         {history.state[i].phase}
-    //       </Grid>
-    //     </Grid>
-    //   );
-    // }
-    // return resStr;
     return history.state.map((historyState: any, idx: number) => {
       return (
         <Grid

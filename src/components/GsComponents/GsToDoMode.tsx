@@ -13,10 +13,10 @@ import { OutputFazaImg, OutputVertexImg } from "../MapServiceFunctions";
 import { SendSocketRoute, SendSocketDispatch } from "../MapSocketFunctions";
 
 import { styleModalEnd } from "../MainMapStyle";
-import { styleModalMenu, styleStrokaTablImg01 } from "./GsComponentsStyle";
+import { styleModalMenu, styleStrTablImg01 } from "./GsComponentsStyle";
 import { styleToDoMode, styleStrokaTabl01 } from "./GsComponentsStyle";
 import { styleStrokaTabl03 } from "./GsComponentsStyle";
-import { styleStrokaTabl02, styleStrokaTablImg02 } from "./GsComponentsStyle";
+import { styleStrokaTabl02, styleStrTablImg02 } from "./GsComponentsStyle";
 import { styletSelectTitle, styleStrokaTabl10 } from "./GsComponentsStyle";
 import { styleToDo01, styleToDo02 } from "./GsComponentsStyle";
 
@@ -60,9 +60,13 @@ const GsToDoMode = (props: {
   //========================================================
   const [trigger, setTrigger] = React.useState(true);
   let newMode = props.newMode;
+  let hostt =
+    window.location.origin.slice(0, 22) === "https://localhost:3000"
+      ? "https://localhost:3000/"
+      : "./";
   //=== инициализация ======================================
   const MakeMaskFaz = (i: number) => {
-    let iDx = props.massMem[i]
+    let iDx = props.massMem[i];
     let maskFaz: Fazer = {
       kolOpen: 0,
       runRec: false,
@@ -206,10 +210,6 @@ const GsToDoMode = (props: {
     for (let i = 0; i < massfaz.length; i++) {
       let bull = " ";
       if (massfaz[i].runRec) bull = " •";
-      let hostt =
-        window.location.origin.slice(0, 22) === "https://localhost:3000"
-          ? "https://localhost:3000/"
-          : "./";
       let host = hostt + "18.svg";
 
       if (!debug) {
@@ -225,10 +225,9 @@ const GsToDoMode = (props: {
       massfaz[i].img.length > massfaz[i].faza &&
         (fazaImg = massfaz[i].img[massfaz[i].faza - 1]);
       debug && (fazaImg = datestat.phSvg); // для отладки
+      
       let illum = nomIllum === i ? styleStrokaTabl01 : styleStrokaTabl02;
-      let illumImg = massfaz[i].runRec
-        ? styleStrokaTablImg01
-        : styleStrokaTablImg02;
+      let illumImg = massfaz[i].runRec ? styleStrTablImg01 : styleStrTablImg02;
 
       resStr.push(
         <Grid key={i} container sx={styleStrokaTabl03}>

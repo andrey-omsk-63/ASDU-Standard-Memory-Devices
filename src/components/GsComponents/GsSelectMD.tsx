@@ -33,7 +33,6 @@ const GsSelectMD = (props: {
   trHist: boolean;
   funcHelper: Function;
 }) => {
-  //console.log("GsSelectMD:", props.trHist, props.history);
   //== Piece of Redux =======================================
   const map = useSelector((state: any) => {
     const { mapReducer } = state;
@@ -47,7 +46,6 @@ const GsSelectMD = (props: {
     const { statsaveReducer } = state;
     return statsaveReducer.datestat;
   });
-  //console.log('datestat:',datestat)
   const debug = datestat.debug;
   const ws = datestat.ws;
   const dispatch = useDispatch();
@@ -130,9 +128,8 @@ const GsSelectMD = (props: {
 
   const LookDel = () => {
     let chDel = 0;
-    for (let i = 0; i < massmode.length; i++) {
+    for (let i = 0; i < massmode.length; i++) 
       if (massmode[i].delRec) chDel++;
-    }
     return chDel;
   };
 

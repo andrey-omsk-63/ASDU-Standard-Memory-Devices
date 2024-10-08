@@ -131,7 +131,7 @@ const App = () => {
     let ch = 1;
     for (let i = 0; i < dateMapGl.routes.length; i++) {
       let nameZU = dateMapGl.routes[i].description;
-      if (!nameZU) nameZU = "без имени(" + ch++ + ")";
+      if (!nameZU) nameZU = "без имени(" + ch++ + ")"; // защита от дурака
       massmode.push({
         name: nameZU,
         delRec: false,
@@ -225,9 +225,8 @@ const App = () => {
           dateMapGl = JSON.parse(JSON.stringify(data));
           dispatch(mapCreate(dateMapGl));
           let massRegion = [];
-          for (let key in dateMapGl.regionInfo) {
+          for (let key in dateMapGl.regionInfo) 
             if (!isNaN(Number(key))) massRegion.push(Number(key));
-          }
           homeRegion = massRegion[0].toString();
           dateStat.region = homeRegion;
           dispatch(statsaveCreate(dateStat));
@@ -272,7 +271,7 @@ const App = () => {
     dispatch(mapCreate(dateMapGl));
     let massRegion = [];
     for (let key in dateMapGl.regionInfo)
-      if (!isNaN(Number(key))) massRegion.push(Number(key));
+      if (!isNaN(Number(key))) massRegion.push(Number(key))
     homeRegion = massRegion[0].toString();
     dateStat.region = homeRegion;
     dateStat.phSvg = imgFaza;

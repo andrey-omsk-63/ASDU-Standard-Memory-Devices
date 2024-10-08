@@ -24,7 +24,6 @@ const GsLookHistory = (props: {
   history: any;
   trHist: boolean;
 }) => {
-  //console.log("GsLookHistory:", props.trHist);
   //== Piece of Redux =======================================
   let datestat = useSelector((state: any) => {
     const { statsaveReducer } = state;
@@ -48,28 +47,6 @@ const GsLookHistory = (props: {
   };
 
   const StrokaTabl = () => {
-    // let resStr = [];
-    // for (let i = 0; i < history.length; i++) {
-    //   let stroka = new Date(history[i].tm).toLocaleDateString() + " ";
-    //   stroka += new Date(history[i].tm).toLocaleTimeString().slice(0, 5) + " ";
-
-    //   resStr.push(
-    //     <Grid key={i} container sx={{ textShadow: tSh1 }}>
-    //       <Grid item xs={1.8} sx={styleGridLook}>
-    //         Изменён:
-    //       </Grid>
-    //       <Grid item xs={4.5} sx={{ border: 0, textAlign: "center" }}>
-    //         <Button sx={styleButLook} onClick={() => ClickKnop(i)}>
-    //           {stroka}
-    //         </Button>
-    //       </Grid>
-    //       <Grid item xs sx={{ marginTop: 1, fontSize: 14, textAlign: "left" }}>
-    //         Кем: <b>{history[i].login.slice(0, 21)}</b>
-    //       </Grid>
-    //     </Grid>
-    //   );
-    // }
-    // return resStr;
     return history.map((hist: any, idx: number) => {
       let stroka = new Date(hist.tm).toLocaleDateString() + " ";
       stroka += new Date(hist.tm).toLocaleTimeString().slice(0, 5) + " ";
