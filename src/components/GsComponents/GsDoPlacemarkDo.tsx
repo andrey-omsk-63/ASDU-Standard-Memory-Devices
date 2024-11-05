@@ -205,6 +205,7 @@ const GsDoPlacemarkDo = (props: {
             : window.location.origin + "/free/img/" + FZSIST + ".jpg";
         }
       }
+      //console.log('###:')
 
       return {
         // данный тип макета
