@@ -73,7 +73,7 @@ export const SendSocketRoute = (
   devicesProps: Array<number>,
   turnOnProps: boolean,
 ) => {
-  console.log('Route:', turnOnProps, devicesProps);
+  console.log('Route:', devicesProps, turnOnProps);
   const handleSendOpen = () => {
     if (!debug) {
       if (ws.readyState === WebSocket.OPEN) {

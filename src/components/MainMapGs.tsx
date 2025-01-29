@@ -15,19 +15,18 @@ import GsErrorMessage from "./GsComponents/GsErrorMessage";
 import GsDoPlacemarkDo from "./GsComponents/GsDoPlacemarkDo";
 
 import { getMultiRouteOptions, StrokaHelp } from "./MapServiceFunctions";
-import { getReferencePoints, CenterCoord } from "./MapServiceFunctions";
-import { ErrorHaveVertex, Distance } from "./MapServiceFunctions";
+import { getReferencePoints, CenterCoordBegin } from "./MapServiceFunctions";
+import { ErrorHaveVertex, Distance, SaveZoom } from "./MapServiceFunctions";
 import { StrokaMenuGlob, HelpAdd, YandexServices } from "./MapServiceFunctions";
 
 import { SendSocketUpdateRoute } from "./MapSocketFunctions";
 
-import { YMapsModul, MyYandexKey } from "./MapConst";
+import { YMapsModul, MyYandexKey, zoomStart } from "./MapConst";
 
 let flagOpen = false;
-const zoomStart = 10;
 let zoom = zoomStart;
 let pointCenter: any = 0;
-let pointCenterEt: any = 0;
+//let pointCenterEt: any = 0;
 
 let massMem: Array<number> = [];
 let massCoord: any = [];
@@ -299,10 +298,12 @@ const MainMapGs = (props: {
       funcBound = function () {
         pointCenter = mapp.current.getCenter();
         zoom = mapp.current.getZoom(); // покрутили колёсико мыши
+        SaveZoom(zoom, pointCenter);
       };
       mapp.current.events.add("boundschange", funcBound);
       if (flagCenter) {
         pointCenter = newCenter;
+        SaveZoom(zoom, pointCenter);
         setFlagCenter(false);
       }
     }
@@ -379,13 +380,13 @@ const MainMapGs = (props: {
 
   //=== инициализация ======================================
   if (!flagOpen && Object.keys(map.tflight).length) {
-    pointCenter = CenterCoord(
-      map.boxPoint.point0.Y,
-      map.boxPoint.point0.X,
-      map.boxPoint.point1.Y,
-      map.boxPoint.point1.X
-    );
-    pointCenterEt = pointCenter;
+    let point0 = window.localStorage.PointCenterGS0;
+    let point1 = window.localStorage.PointCenterGS1;
+    if (!Number(point0) || !Number(point1)) {
+      pointCenter = CenterCoordBegin(map); // начальные координаты центра отоброжаемой карты
+    } else pointCenter = [Number(point0), Number(point1)];
+    zoom = Number(window.localStorage.ZoomGS); // начальный zoom Yandex-карты ДУ
+    //pointCenterEt = pointCenter;
     flagOpen = true;
   }
   //========================================================
@@ -438,11 +439,11 @@ const MainMapGs = (props: {
     massMem = [];
     massCoord = [];
     newMode = -1;
-    zoom = zoom === zoomStart ? zoomStart - 0.01 : zoomStart;
+    //zoom = zoom === zoomStart ? zoomStart - 0.01 : zoomStart;
     datestat.create = true;
     dispatch(statsaveCreate(datestat));
     ymaps && addRoute(ymaps, false); // перерисовка связей
-    NewPointCenter(pointCenterEt);
+    //NewPointCenter(pointCenterEt);
     setTrigger(!trigger);
   };
 

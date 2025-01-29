@@ -17,6 +17,8 @@ import { dataMap } from "./otladkaMaps";
 import { imgFaza } from "./otladkaRoutes";
 import { dataHistory } from "./otladkaHistory"; // для отладки
 
+import { zoomStart } from "./components/MapConst";
+
 export let dateMapGl: any;
 export let dateRouteGl: any;
 export let dateRouteProGl: any;
@@ -150,6 +152,18 @@ const App = () => {
       SendSocketGetPhases(dateStat.debug, WS, reg, area, massdk[i].ID);
     }
   };
+
+  // достать начальный zoom Yandex-карты из LocalStorage
+  if (window.localStorage.ZoomGS === undefined)
+    window.localStorage.ZoomGS = zoomStart;
+
+  // достать центр координат [0] Yandex-карты из LocalStorage
+  if (window.localStorage.PointCenterGS0 === undefined)
+    window.localStorage.PointCenterGS0 = 0;
+
+  // достать центр координат [1] Yandex-карты из LocalStorage
+  if (window.localStorage.PointCenterGS1 === undefined)
+    window.localStorage.PointCenterGS1 = 0;
 
   const host =
     "wss://" +
