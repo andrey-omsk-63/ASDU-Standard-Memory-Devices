@@ -14,9 +14,11 @@ const GsErrorMessage = (props: { sErr: string; setOpen: any }) => {
     marginTop: "15vh",
     marginLeft: "24vh",
     width: 380,
-    bgcolor: "background.paper",
-    border: "1px solid #fff",
+    //bgcolor: 'background.paper', // белый
+    bgcolor: "#FFDB4D", // жёлтый
+    border: "1px solid #FFEDA6", // блендно-жёлтый
     borderRadius: 1,
+    color: "black",
     boxShadow: 24,
     textShadow: "2px 2px 3px rgba(0,0,0,0.3)",
     p: 1.5,
@@ -30,7 +32,7 @@ const GsErrorMessage = (props: { sErr: string; setOpen: any }) => {
     height: "21px",
     maxWidth: "2%",
     minWidth: "2%",
-    color: "red",
+    color: "black",
   };
 
   const handleClose = () => {
@@ -44,7 +46,7 @@ const GsErrorMessage = (props: { sErr: string; setOpen: any }) => {
         <Button sx={styleModalEnd} onClick={handleClose}>
           <b>&#10006;</b>
         </Button>
-        <Typography variant="h6" sx={{ textAlign: "center", color: "red" }}>
+        <Typography variant="h6" sx={{ textAlign: "center" }}>
           {props.sErr}
         </Typography>
       </Box>

@@ -59,22 +59,18 @@ const GsDoPlacemarkDo = (props: {
       if (idv === massfaz[i].idevice) {
         FAZASIST = massfaz[i].fazaSist;
         nomInMassfaz = i;
-        if (massfaz[i].fazaSist === 11 || massfaz[i].fazaSist === 15) {
+        if (FAZASIST === 11 || FAZASIST === 15) {
           nomSvg = 12; // ОС
           pC = -1;
         } else {
-          if (massfaz[i].fazaSist === 10 || massfaz[i].fazaSist === 14) {
+          if (FAZASIST === 10 || FAZASIST === 14) {
             nomSvg = 7; // ЖМ
             pC = -1;
           } else {
-            if (
-              massfaz[i].fazaSist > 0 &&
-              massfaz[i].fazaSist < 9 &&
-              massfaz[i].img
-            ) {
-              if (massfaz[i].fazaSist <= massfaz[i].img.length)
-                fazaImg = massfaz[i].img[massfaz[i].fazaSist - 1];
-              massfaz[i].fazaSistOld = massfaz[i].fazaSist;
+            if (FAZASIST > 0 && FAZASIST < 9 && massfaz[i].img) {
+              if (FAZASIST <= massfaz[i].img.length)
+                fazaImg = massfaz[i].img[FAZASIST - 1];
+              massfaz[i].fazaSistOld = FAZASIST;
               dispatch(massfazCreate(massfaz));
             }
           }
