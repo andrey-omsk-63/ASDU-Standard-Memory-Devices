@@ -36,7 +36,6 @@ let helper = true;
 let xsMap = 11.99;
 let xsTab = 0.01;
 let widthMap = "99.9%";
-
 let modeToDo = 0;
 let newCenter: any = [];
 let funcContex: any = null;
