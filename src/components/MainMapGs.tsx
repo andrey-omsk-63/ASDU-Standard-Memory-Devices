@@ -21,12 +21,11 @@ import { StrokaMenuGlob, HelpAdd, YandexServices } from "./MapServiceFunctions";
 
 import { SendSocketUpdateRoute } from "./MapSocketFunctions";
 
-import { YMapsModul, MyYandexKey, zoomStart } from "./MapConst";
+import { YMapsModul, MyYandexKey } from "./MapConst";
 
 let flagOpen = false;
-let zoom = zoomStart;
+let zoom = 0;
 let pointCenter: any = 0;
-//let pointCenterEt: any = 0;
 
 let massMem: Array<number> = [];
 let massCoord: any = [];
@@ -386,7 +385,6 @@ const MainMapGs = (props: {
       pointCenter = CenterCoordBegin(map); // начальные координаты центра отоброжаемой карты
     } else pointCenter = [Number(point0), Number(point1)];
     zoom = Number(window.localStorage.ZoomGS); // начальный zoom Yandex-карты ДУ
-    //pointCenterEt = pointCenter;
     flagOpen = true;
   }
   //========================================================
@@ -439,11 +437,9 @@ const MainMapGs = (props: {
     massMem = [];
     massCoord = [];
     newMode = -1;
-    //zoom = zoom === zoomStart ? zoomStart - 0.01 : zoomStart;
     datestat.create = true;
     dispatch(statsaveCreate(datestat));
     ymaps && addRoute(ymaps, false); // перерисовка связей
-    //NewPointCenter(pointCenterEt);
     setTrigger(!trigger);
   };
 

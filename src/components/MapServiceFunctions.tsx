@@ -104,10 +104,9 @@ export const CenterCoordBegin = (map: any) => {
 };
 
 export const SaveZoom = (zoom: number, pointCenter: Array<number>) => {
-  window.localStorage.ZoomGS = zoom;
+  window.localStorage.ZoomGS = zoom.toString();
   window.localStorage.PointCenterGS0 = pointCenter[0];
   window.localStorage.PointCenterGS1 = pointCenter[1];
-  //console.log('SaveZoom:',window.localStorage.ZoomGs)
 };
 
 export const Distance = (coord1: Array<number>, coord2: Array<number>) => {
