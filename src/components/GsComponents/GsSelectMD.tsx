@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
-import Typography from "@mui/material/Typography";
+//import Typography from "@mui/material/Typography";
 
 import GsErrorMessage from "./GsErrorMessage";
 import GsLookHistory from "./GsLookHistory";
@@ -128,8 +128,7 @@ const GsSelectMD = (props: {
 
   const LookDel = () => {
     let chDel = 0;
-    for (let i = 0; i < massmode.length; i++) 
-      if (massmode[i].delRec) chDel++;
+    for (let i = 0; i < massmode.length; i++) if (massmode[i].delRec) chDel++;
     return chDel;
   };
 
@@ -147,10 +146,9 @@ const GsSelectMD = (props: {
       const styleBut01 = {
         fontSize: fSize + 2,
         marginTop: 1,
-        bgcolor: "#E6F5D6",
+        bgcolor: "#E6F5D6", // светло-салатовый
         width: "320px",
-        maxHeight: "20px",
-        minHeight: "20px",
+        height: "22px",
         border: "1px solid #d4d4d4", // серый
         borderRadius: 1,
         color: colorRec,
@@ -162,12 +160,10 @@ const GsSelectMD = (props: {
       const styleBut011 = {
         fontSize: fSize + 3,
         marginTop: 1,
-        border: "1px solid #000",
-        bgcolor: "#BAE186", // тёмно-салатовый
+        bgcolor: "#82E94A", // ярко-салатовый
         width: "320px",
-        maxHeight: "20px",
-        minHeight: "20px",
-        borderColor: "#93D145",
+        height: "22px",
+        border: "1px solid #d4d4d4", // серый
         borderRadius: 1,
         color: colorRec,
         textTransform: "unset !important",
@@ -180,8 +176,7 @@ const GsSelectMD = (props: {
         marginTop: 1,
         bgcolor: "#E6F5D6", // светло-салатовый
         width: "105px",
-        maxHeight: "20px",
-        minHeight: "20px",
+        height: "22px",
         border: "1px solid #d4d4d4", // серый
         borderRadius: 1,
         color: colorRec,
@@ -192,11 +187,10 @@ const GsSelectMD = (props: {
       const styleBut03 = {
         fontSize: fSize,
         marginTop: 1,
-        bgcolor: "#BAE186", // салатовый
+        bgcolor: "#82E94A", // ярко-салатовый
         width: "105px",
-        maxHeight: "20px",
-        minHeight: "20px",
-        border: "1px solid #93D145", // тёмно-салатовый
+        height: "22px",
+        border: "1px solid #d4d4d4", // серый
         borderRadius: 1,
         color: colorRec,
         textTransform: "unset !important",
@@ -238,9 +232,7 @@ const GsSelectMD = (props: {
           <b>&#10006;</b>
         </Button>
 
-        <Typography variant="h6" sx={styletSelectTitle}>
-          Выбор режима ЗУ
-        </Typography>
+        <Box sx={styletSelectTitle}><b>Выбор режима ЗУ</b></Box>
 
         <Box sx={styletSelect01}>{StrokaTabl()}</Box>
 

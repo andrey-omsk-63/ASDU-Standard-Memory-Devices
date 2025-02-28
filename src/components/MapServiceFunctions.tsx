@@ -3,6 +3,8 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import CardMedia from "@mui/material/CardMedia";
+import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
 import { MdOpenWith } from "react-icons/md";
 
 import { Pointer } from "./../App";
@@ -12,6 +14,10 @@ import { RulerControl, SearchControl } from "react-yandex-maps";
 import { TrafficControl, TypeSelector, ZoomControl } from "react-yandex-maps";
 
 import { searchControl } from "./MainMapStyle";
+
+const handleKey = (event: any) => {
+  if (event.key === "Enter") event.preventDefault();
+};
 
 export const YandexServices = () => {
   return (
@@ -250,13 +256,13 @@ export const OutputVertexImg = (host: string) => {
     />
   );
 };
-//=== Разное =======================================
-export const StrokaMenuGlob = (soob: string, func: any, mode: number) => {
+//=== MainMapGs ====================================
+export const StrokaMenuDop = (soob: string, func: any, mode: number) => {
   let dlSoob = (soob.length + 5) * 8;
   const styleApp01 = {
     fontSize: 14,
     marginRight: 0.3,
-    marginTop: -0.2,
+    //marginTop: -0.2,
     width: dlSoob,
     maxHeight: "21px",
     minHeight: "21px",
@@ -265,7 +271,9 @@ export const StrokaMenuGlob = (soob: string, func: any, mode: number) => {
     borderRadius: 1,
     color: "black",
     textTransform: "unset !important",
-    boxShadow: 4,
+    paddingTop: 1.5,
+    paddingBottom: 1.2,
+    boxShadow: 6,
   };
 
   return (
@@ -275,13 +283,146 @@ export const StrokaMenuGlob = (soob: string, func: any, mode: number) => {
   );
 };
 
+export const InputDirect = (props: { func: any }) => {
+  const styleSetNapr = {
+    width: "185px",
+    maxHeight: "1px",
+    minHeight: "1px",
+    bgcolor: "#BAE186", // салатовый,
+    border: "1px solid #d4d4d4", // серый
+    borderRadius: 1,
+    paddingTop: 1.4,
+    paddingBottom: 1.2,
+    textAlign: "center",
+    boxShadow: 6,
+  };
+
+  const styleBoxFormNapr = {
+    "& > :not(style)": {
+      marginTop: "-12px",
+      width: "185px",
+    },
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    //let curr = currency
+    setCurrency(Number(event.target.value));
+    switch (Number(event.target.value)) {
+      case 0: // // заголовок
+        props.func(43);
+        setCurrency(1);
+        break;
+      case 1: // созданию нового режима
+        props.func(43);
+        break;
+      case 2: // выбор режима ЗУ
+        props.func(42);
+        break;
+      case 3: // Настройки
+        props.func(46);
+        //setCurrency(1);
+        break;
+      case 4: // режим Demo
+        props.func(47);
+        break;
+      case 5: // Фрагменты
+        props.func(48);
+        //setCurrency(1);
+    }
+  };
+
+  let dat = [
+    "Режимы работы:",
+    "● Создание новой ЗУ",
+    "● Существующие ЗУ",
+    "● Настройки",
+    "● Режим Демо",
+    "● Фрагменты",
+  ];
+  let massKey = [];
+  let massDat: any[] = [];
+  const currencies: any = [];
+  for (let key in dat) {
+    massKey.push(key);
+    massDat.push(dat[key]);
+  }
+  for (let i = 0; i < massKey.length; i++)
+    currencies.push({ value: massKey[i], label: massDat[i] });
+
+  const [currency, setCurrency] = React.useState(1);
+
+  return (
+    <Box sx={styleSetNapr}>
+      <Box component="form" sx={styleBoxFormNapr}>
+        <TextField
+          select
+          size="small"
+          onKeyPress={handleKey} //отключение Enter
+          value={currency}
+          onChange={handleChange}
+          InputProps={{
+            disableUnderline: true,
+            style: {
+              fontSize: 15,
+              fontWeight: 500,
+              color: currency === 4 ? "red" : currency === 0 ? "blue" : "black",
+            },
+          }}
+          variant="standard"
+          color="secondary"
+        >
+          {currencies.map((option: any) => (
+            <MenuItem
+              key={option.value}
+              value={option.value}
+              sx={{
+                fontSize: 15,
+                color:
+                  option.label === "● Режим Демо"
+                    ? "red"
+                    : option.label === "Режимы работы:"
+                    ? "blue"
+                    : "black",
+                cursor: option.label === "Режимы работы:" ? "none" : "pointer",
+                fontWeight: option.label === "Режимы работы:" ? 800 : 300,
+              }}
+            >
+              {option.label}
+            </MenuItem>
+          ))}
+        </TextField>
+      </Box>
+    </Box>
+  );
+};
+
+export const StrokaMenuGlob = (soob: string, func: any, mode: number) => {
+  const styleApp01 = {
+    fontSize: 14,
+    marginRight: 0.5,
+    //marginLeft: 0.1,
+    width: 185,
+    maxHeight: "26px",
+    minHeight: "26px",
+    //border: 1,
+  };
+
+  return (
+    <Box sx={styleApp01}>
+      <InputDirect func={func} />
+    </Box>
+  );
+};
+
 export const StrokaHelp = (soobInfo: string, mode: number) => {
   let moder = mode ? "left" : "right";
   let dl = mode ? 20 : 490;
 
   const styleInfoSoob = {
-    marginTop: "-3px",
+    //marginTop: "-3px",
     width: dl, // 530
+    maxHeight: "26px",
+    minHeight: "26px",
     color: "#E6761B", // оранж
     textAlign: moder,
     textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
@@ -299,10 +440,10 @@ export const StrokaHelpPusto = () => {
   const styleInfoSoob = {
     maxWidth: "1px",
     minWidth: "1px",
-    maxHeight: "21px",
-    minHeight: "21px",
+    maxHeight: "26px",
+    minHeight: "26px",
     backgroundColor: "#E9F5D8",
-    p: 1.5,
+    //p: 1.5,
   };
   return <Button sx={styleInfoSoob}> </Button>;
 };

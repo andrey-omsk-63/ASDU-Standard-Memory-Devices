@@ -18,6 +18,7 @@ import { getMultiRouteOptions, StrokaHelp } from "./MapServiceFunctions";
 import { getReferencePoints, CenterCoordBegin } from "./MapServiceFunctions";
 import { ErrorHaveVertex, Distance, SaveZoom } from "./MapServiceFunctions";
 import { StrokaMenuGlob, HelpAdd, YandexServices } from "./MapServiceFunctions";
+import { StrokaMenuDop } from "./MapServiceFunctions";
 
 import { SendSocketUpdateRoute } from "./MapSocketFunctions";
 
@@ -333,6 +334,7 @@ const MainMapGs = (props: {
   };
 
   const PressButton = (mode: number) => {
+    console.log("Mode:", mode);
     switch (mode) {
       case 41: // удалить режим
         massmode[newMode].delRec = true;
@@ -373,6 +375,18 @@ const MainMapGs = (props: {
           setToDoMode(true);
           setFlagPusk(!flagPusk);
         }
+        break;
+      case 46: // Настройки
+        soobErr = "Данный режим пока не реализован";
+        setOpenSoobErr(true);
+        break;
+      case 47: // режим Demo
+        soobErr = "Данный режим пока не реализован";
+        setOpenSoobErr(true);
+        break;
+      case 48: // Фрагменты
+        soobErr = "Данный режим пока не реализован";
+        setOpenSoobErr(true);
     }
   };
 
@@ -406,17 +420,17 @@ const MainMapGs = (props: {
               <>
                 {newMode < 0 && (
                   <>
-                    {StrokaMenuGlob("Закрыть режим", PressButton, 43)}
-                    {StrokaMenuGlob("Обработка режима", PressButton, 44)}
+                    {StrokaMenuDop("Закрыть режим", PressButton, 43)}
+                    {StrokaMenuDop("Обработка режима", PressButton, 44)}
                   </>
                 )}
                 {newMode < 0 && <>{HelpAdd(soobHelpFiest)}</>}
                 {newMode >= 0 && (
                   <>
-                    {StrokaMenuGlob("Закрыть режим", PressButton, 43)}
-                    {StrokaMenuGlob("Удалить режим", PressButton, 41)}
-                    {StrokaMenuGlob("Редактировать фазы", PressButton, 44)}
-                    {StrokaMenuGlob("Выполнить режим", PressButton, 45)}
+                    {StrokaMenuDop("Закрыть режим", PressButton, 43)}
+                    {StrokaMenuDop("Удалить режим", PressButton, 41)}
+                    {StrokaMenuDop("Редактировать фазы", PressButton, 44)}
+                    {StrokaMenuDop("Выполнить режим", PressButton, 45)}
                   </>
                 )}
               </>
@@ -461,7 +475,7 @@ const MainMapGs = (props: {
                     ref && setYmaps(ref);
                   }}
                   width={widthMap}
-                  height={"99.6%"}
+                  height={"99.9%"}
                 >
                   {YandexServices()}
                   {Pererisovka()}

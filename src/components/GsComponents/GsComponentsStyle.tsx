@@ -251,6 +251,7 @@ export const styleSetSelect = {
   // transform: 'translate(-50%, -50%)',
   //======
   width: 580,
+  height: "421px",
   bgcolor: "background.paper",
   border: "1px solid #FFF",
   borderRadius: 1,
@@ -260,8 +261,7 @@ export const styleSetSelect = {
 
 export const styleModalMenuSelect = {
   marginRight: 1,
-  maxHeight: "21px",
-  minHeight: "21px",
+  height: "24px",
   bgcolor: "#E6F5D6", // светло-салатовый
   border: "1px solid #d4d4d4", // серый
   borderRadius: 1,
@@ -272,6 +272,7 @@ export const styleModalMenuSelect = {
 };
 
 export const styletSelectTitle = {
+  fontSize: 17,
   textShadow: "2px 2px 3px rgba(0,0,0,0.3)",
   color: "#5B1080", // сиреневый
   textAlign: "center",
@@ -279,7 +280,9 @@ export const styletSelectTitle = {
 
 export const styletSelect01 = {
   overflowX: "auto",
-  height: "69vh",
+  marginTop: 1,
+  height: "358px",
+  //top: "358px",
   background: "linear-gradient(180deg, #F1F5FB 59%, #DEE8F5 )",
   border: "1px solid #d4d4d4",
   borderRadius: 1,
