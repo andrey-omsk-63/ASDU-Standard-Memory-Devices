@@ -104,16 +104,22 @@ export const styletFaza01 = {
 };
 //=== GsToDoMode =========================================
 export const styleToDoMode = {
-  position: "relative",
-  marginTop: 0.1,
-  marginLeft: "auto",
-  marginRight: 1,
-  width: "96%",
+  // position: "relative",
+  // marginTop: 0.1,
+  // marginLeft: "auto",
+  // marginRight: 1,
+  // width: "96%",
+  // bgcolor: "background.paper",
+  // border: "1px solid #FFF",
+  // borderRadius: 1,
+  // boxShadow: 24,
+  // p: 1.0,
+
   bgcolor: "background.paper",
-  border: "1px solid #FFF",
+  border: "1px solid #fff",
   borderRadius: 1,
   boxShadow: 24,
-  p: 1.0,
+  padding: "2px 9px 10px 10px",
 };
 
 export const styleStrokaTabl00 = {
@@ -251,7 +257,8 @@ export const styleSetSelect = {
   // transform: 'translate(-50%, -50%)',
   //======
   width: 580,
-  height: "421px",
+  //height: "421px",
+  height: "601px",
   bgcolor: "background.paper",
   border: "1px solid #FFF",
   borderRadius: 1,
@@ -272,16 +279,18 @@ export const styleModalMenuSelect = {
 };
 
 export const styletSelectTitle = {
-  fontSize: 17,
-  textShadow: "2px 2px 3px rgba(0,0,0,0.3)",
-  color: "#5B1080", // сиреневый
+  fontSize: 16,
   textAlign: "center",
+  color: "#7620a2", // сиреневый
+  textShadow: "2px 2px 3px rgba(0,0,0,0.3)",
+  //display: "inline-block",
 };
 
 export const styletSelect01 = {
   overflowX: "auto",
   marginTop: 1,
-  height: "358px",
+  //height: "358px",
+  height: "540px",
   //top: "358px",
   background: "linear-gradient(180deg, #F1F5FB 59%, #DEE8F5 )",
   border: "1px solid #d4d4d4",

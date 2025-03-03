@@ -1,10 +1,13 @@
 import * as React from "react";
 
+import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Modal from "@mui/material/Modal";
 import CardMedia from "@mui/material/CardMedia";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
+import Typography from "@mui/material/Typography";
 import { MdOpenWith } from "react-icons/md";
 
 import { Pointer } from "./../App";
@@ -13,7 +16,11 @@ import { FullscreenControl, GeolocationControl } from "react-yandex-maps";
 import { RulerControl, SearchControl } from "react-yandex-maps";
 import { TrafficControl, TypeSelector, ZoomControl } from "react-yandex-maps";
 
+import { 
+  //styleAppSt02, styleAppSt03, 
+  styleModalEnd } from "./MainMapStyle";
 import { searchControl } from "./MainMapStyle";
+import { styleSetPK04 } from "./MainMapStyle";
 
 const handleKey = (event: any) => {
   if (event.key === "Enter") event.preventDefault();
@@ -30,6 +37,44 @@ export const YandexServices = () => {
       <TypeSelector options={{ float: "right" }} />
       <ZoomControl options={{ float: "right" }} />
     </>
+  );
+};
+
+export const ExitCross = (func: any) => {
+  return (
+    <Button sx={styleModalEnd} onClick={() => func()}>
+      <b>&#10006;</b>
+    </Button>
+  );
+};
+
+export const FooterContent = (SaveForm: Function) => {
+  const styleFormPK03 = {
+    maxHeight: "24px",
+    minHeight: "24px",
+    backgroundColor: "#E6F5D6", // светло салатовый
+    border: "1px solid #d4d4d4", // серый
+    borderRadius: 1,
+    textTransform: "unset !important",
+    boxShadow: 6,
+    textShadow: "2px 2px 3px rgba(0,0,0,0.3)",
+    color: "black",
+    padding: "2px 8px 0px 8px",
+  };
+
+  return (
+    <Box sx={styleSetPK04}>
+      <Box sx={{ display: "inline-block", margin: "0px 5px 0px 0px" }}>
+        <Button sx={styleFormPK03} onClick={() => SaveForm(0)}>
+          Выйти без сохранения
+        </Button>
+      </Box>
+      <Box sx={{ display: "inline-block", margin: "0px 5px 0px 5px" }}>
+        <Button sx={styleFormPK03} onClick={() => SaveForm(1)}>
+          Сохранить изменения
+        </Button>
+      </Box>
+    </Box>
   );
 };
 
@@ -110,9 +155,9 @@ export const CenterCoordBegin = (map: any) => {
 };
 
 export const SaveZoom = (zoom: number, pointCenter: Array<number>) => {
-  window.localStorage.ZoomGS = zoom.toString();
-  window.localStorage.PointCenterGS0 = pointCenter[0];
-  window.localStorage.PointCenterGS1 = pointCenter[1];
+  window.localStorage.ZoomDU = zoom;
+  window.localStorage.PointCenterDU0 = pointCenter[0];
+  window.localStorage.PointCenterDU1 = pointCenter[1];
 };
 
 export const Distance = (coord1: Array<number>, coord2: Array<number>) => {
@@ -137,7 +182,7 @@ export const Distance = (coord1: Array<number>, coord2: Array<number>) => {
 export const Сrossroad = () => {
   return (
     <>
-      <Box sx={{ fontSize: 15 }}>
+      <Box sx={{ fontSize: 15, padding: "4px 0px 3px 0px" }}>
         <MdOpenWith />
       </Box>
       {StrokaHelp("]", 1)}
@@ -320,14 +365,15 @@ export const InputDirect = (props: { func: any }) => {
         break;
       case 3: // Настройки
         props.func(46);
-        //setCurrency(1);
+        setCurrency(1);
         break;
       case 4: // режим Demo
         props.func(47);
+        setCurrency(1);
         break;
       case 5: // Фрагменты
         props.func(48);
-        //setCurrency(1);
+        setCurrency(1);
     }
   };
 
@@ -447,3 +493,263 @@ export const StrokaHelpPusto = () => {
   };
   return <Button sx={styleInfoSoob}> </Button>;
 };
+//=== GsSetup ======================================
+export const BadExit = (badExit: boolean, handleCloseEnd: Function) => {
+  const styleSetPoint = {
+    outline: "none",
+    position: "absolute",
+    left: "50%",
+    top: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 400,
+    //bgcolor: "background.paper",
+    bgcolor: "#fff6d2", // светло-жёлтый
+    border: "1px solid #fff6d2", // светло-жёлтый
+    borderRadius: 1,
+    textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
+    boxShadow: 24,
+    textAlign: "center",
+    p: 1,
+  };
+
+  const styleModalMenu = {
+    marginTop: 0.5,
+    maxHeight: "24px",
+    minHeight: "24px",
+    backgroundColor: "#E6F5D6",
+    border: "1px solid #d4d4d4", // серый
+    borderRadius: 1,
+    boxShadow: 6,
+    textTransform: "unset !important",
+    lineHeight: 2.0,
+    color: "black",
+  };
+
+  const handleClose = (mode: boolean) => handleCloseEnd(mode);
+
+  return (
+    <Modal open={badExit} onClose={() => handleClose(false)}>
+      <Box sx={styleSetPoint}>
+        {ExitCross(() => handleClose(false))}
+        <Typography variant="h6" sx={{ color: "red" }}>
+          ⚠️Предупреждение
+        </Typography>
+        <Box sx={{ marginTop: 0.5 }}>
+          <Box sx={{ marginBottom: 1.2 }}>
+            Будет произведён выход без сохранения. Продолжать?
+          </Box>
+          <Button sx={styleModalMenu} onClick={() => handleClose(true)}>
+            Да
+          </Button>
+          &nbsp;
+          <Button sx={styleModalMenu} onClick={() => handleClose(false)}>
+            Нет
+          </Button>
+        </Box>
+      </Box>
+    </Modal>
+  );
+};
+
+export const StrTablVert = (
+  mode: boolean,
+  xss: number,
+  recLeft: string,
+  recRight: any
+) => {
+  let coler = mode ? "black" : "#A8A8A8";
+  return (
+    <>
+      <Grid container sx={{ marginTop: 1 }}>
+        <Grid item xs={0.25}></Grid>
+
+        <Grid item xs={xss} sx={{ color: coler }}>
+          <b>{recLeft}</b>
+        </Grid>
+
+        {typeof recRight === "object" ? (
+          <Grid item xs>
+            {recRight}
+          </Grid>
+        ) : (
+          <Grid item xs sx={{ fontSize: 15, color: "#5B1080", border: 8 }}>
+            <b>{recRight}</b>
+          </Grid>
+        )}
+      </Grid>
+    </>
+  );
+};
+
+export const ShiftOptimal = (
+  mode: boolean,
+  ChangeOptimal: Function,
+  shift: number
+) => {
+  const styleOptimalNo = {
+    marginTop: shift,
+    marginRight: 1,
+    maxHeight: "27px",
+    minHeight: "27px",
+    maxWidth: 58,
+    minWidth: 58,
+    backgroundColor: "#E6F5D6", // светло салатовый
+    border: "1px solid #d4d4d4", // серый
+    borderRadius: 1,
+    textTransform: "unset !important",
+    boxShadow: 2,
+    color: "black",
+  };
+
+  const styleOptimalYes = {
+    marginTop: shift,
+    marginRight: 1,
+    maxHeight: "27px",
+    minHeight: "27px",
+    maxWidth: 58,
+    minWidth: 58,
+    backgroundColor: "#bae186", // тёмно салатовый
+    border: "1px solid #bae186", // тёмно салатовый
+    borderRadius: 1,
+    textTransform: "unset !important",
+    boxShadow: 6,
+    color: "black",
+  };
+
+  let illum = mode ? styleOptimalYes : styleOptimalNo;
+  let soob = mode ? "Да" : "Нет";
+
+  return (
+    <Button sx={illum} onClick={() => ChangeOptimal()}>
+      {soob}
+    </Button>
+  );
+};
+
+export const PreparCurrenciesDispVert = () => {
+  const currencies: any = [];
+  let dat = ["значками светофоров", "картинками фаз", "номерами фаз"];
+  let massKey: any = [];
+  let massDat: any = [];
+  for (let key in dat) {
+    massKey.push(key);
+    massDat.push(dat[key]);
+  }
+  for (let i = 0; i < massKey.length; i++)
+    currencies.push({ value: massKey[i], label: massDat[i] });
+  return currencies;
+};
+
+export const WaysInput = (
+  idx: number,
+  VALUE: any,
+  SetValue: Function,
+  MIN: number,
+  MAX: number
+) => {
+  let value = VALUE;
+
+  const styleSetID = {
+    width: "33px",
+    maxHeight: "1px",
+    minHeight: "1px",
+    border: "1px solid #d4d4d4", // серый
+    borderRadius: 1,
+    bgcolor: "#FFFBE5", // топлёное молоко
+    boxShadow: 6,
+    textAlign: "center",
+    p: 1.5,
+  };
+
+  const styleBoxFormID = {
+    "& > :not(style)": {
+      marginTop: "3px",
+      marginLeft: "-9px",
+      width: "53px",
+    },
+  };
+
+  const handleChange = (event: any) => {
+    let valueInp = event.target.value.replace(/^0+/, "");
+    if (Number(valueInp) < MIN) valueInp = MIN;
+    if (valueInp === "") valueInp = MIN;
+    valueInp = Math.trunc(Number(valueInp));
+    if (valueInp <= MAX) {
+      value = valueInp.toString();
+      SetValue(valueInp, idx);
+    }
+  };
+
+  return (
+    <Box sx={styleSetID}>
+      <Box component="form" sx={styleBoxFormID}>
+        <TextField
+          size="small"
+          onKeyPress={handleKey} //отключение Enter
+          type="number"
+          InputProps={{ disableUnderline: true }}
+          inputProps={{
+            style: {
+              marginTop: "-16px",
+              padding: "4px 0px 0px 0px",
+              fontSize: 14,
+              backgroundColor: "#FFFBE5", // топлёное молоко
+              cursor: "pointer",
+            },
+          }}
+          value={value}
+          onChange={handleChange}
+          variant="standard"
+          color="secondary"
+        />
+      </Box>
+    </Box>
+  );
+};
+
+export const InputFromList = (func: any, currency: any, currencies: any) => {
+  const styleSet = {
+    width: "165px",
+    maxHeight: "6px",
+    minHeight: "6px",
+    bgcolor: "#FFFBE5",
+    border: "1px solid #d4d4d4", // серый
+    borderRadius: 1,
+    textAlign: "left",
+    p: 1.45,
+    boxShadow: 6,
+  };
+
+  const styleBoxForm = {
+    "& > :not(style)": {
+      marginTop: "-7px",
+      marginLeft: "-12px",
+      width: "175px",
+      padding: "0px 0px 0px 5px",
+    },
+  };
+
+  return (
+    <Box sx={styleSet}>
+      <Box component="form" sx={styleBoxForm}>
+        <TextField
+          select
+          size="small"
+          onKeyPress={handleKey} //отключение Enter
+          value={currency}
+          onChange={func}
+          InputProps={{ disableUnderline: true, style: { fontSize: 14 } }}
+          variant="standard"
+          color="secondary"
+        >
+          {currencies.map((option: any) => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
+        </TextField>
+      </Box>
+    </Box>
+  );
+};
+//==================================================

@@ -16,7 +16,9 @@ import { OutputFazaImg, NameMode } from "../MapServiceFunctions";
 import { SendSocketCreateRoute } from "../MapSocketFunctions";
 import { SendSocketUpdateRoute } from "../MapSocketFunctions";
 
-import { styleModalEnd } from "../MainMapStyle";
+import { ExitCross } from "../MapServiceFunctions";
+
+//import { styleModalEnd } from "../MainMapStyle";
 
 import { styleSetInf, styleModalMenu } from "./GsComponentsStyle";
 import { styleBoxFormFaza, styleSaveRed } from "./GsComponentsStyle";
@@ -416,9 +418,10 @@ const GsSetPhase = (props: {
 
   return (
     <Box sx={styleSetInf}>
-      <Button sx={styleModalEnd} onClick={handleCloseSetEnd}>
+      {/* <Button sx={styleModalEnd} onClick={handleCloseSetEnd}>
         <b>&#10006;</b>
-      </Button>
+      </Button> */}
+      {ExitCross(handleCloseSetEnd)}
 
       {props.newMode < 0 ? (
         <>{InputName()}</>

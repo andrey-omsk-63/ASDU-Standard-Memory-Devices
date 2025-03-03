@@ -13,6 +13,8 @@ import GsSetPhase from "./GsComponents/GsSetPhase";
 import GsToDoMode from "./GsComponents/GsToDoMode";
 import GsErrorMessage from "./GsComponents/GsErrorMessage";
 import GsDoPlacemarkDo from "./GsComponents/GsDoPlacemarkDo";
+import GsSetup from "./GsComponents/GsSetup";
+import GsFragments from "./GsComponents/GsFragments";
 
 import { getMultiRouteOptions, StrokaHelp } from "./MapServiceFunctions";
 import { getReferencePoints, CenterCoordBegin } from "./MapServiceFunctions";
@@ -23,6 +25,8 @@ import { StrokaMenuDop } from "./MapServiceFunctions";
 import { SendSocketUpdateRoute } from "./MapSocketFunctions";
 
 import { YMapsModul, MyYandexKey } from "./MapConst";
+
+import { styleServisTable } from "./MainMapStyle";
 
 let flagOpen = false;
 let zoom = 0;
@@ -35,7 +39,7 @@ let soobErr = "";
 let helper = true;
 
 let xsMap = 11.99;
-let xsTab = 0.01;
+//let xsTab = 0.01;
 let widthMap = "99.9%";
 let modeToDo = 0;
 let newCenter: any = [];
@@ -77,6 +81,8 @@ const MainMapGs = (props: {
   const dispatch = useDispatch();
   //===========================================================
   const [flagPusk, setFlagPusk] = React.useState(false);
+  const [needSetup, setNeedSetup] = React.useState(false);
+  const [fragments, setFragments] = React.useState(false);
   const [selectMD, setSelectMD] = React.useState(false);
   const [setPhase, setSetPhase] = React.useState(false);
   const [toDoMode, setToDoMode] = React.useState(false);
@@ -153,6 +159,24 @@ const MainMapGs = (props: {
     }
   };
 
+  const SetFragments = (idx: number) => {
+    if (idx >= 0 && ymaps) {
+      mapp.current.geoObjects.removeAll(); // удаление старой коллекции связей
+      let multiRoute: any = [];
+      multiRoute = new ymaps.multiRouter.MultiRoute(
+        { referencePoints: map.fragments[idx].bounds },
+        {
+          boundsAutoApply: true, // вписать в границы
+          routeActiveStrokeWidth: 0, // толщина линии
+          routeStrokeWidth: 0, // толщина линии альтернативного маршрута
+          wayPointVisible: false,
+        }
+      );
+      mapp.current.geoObjects.add(multiRoute);
+    }
+    setFragments(false);
+  };
+
   const MakeNewMassMem = (mass: any) => {
     if (mass.length) {
       massMem = [];
@@ -169,6 +193,8 @@ const MainMapGs = (props: {
   };
 
   const OnPlacemarkClickPoint = (index: number) => {
+    console.log("0OnPlacemarkClickPoint", index);
+
     if (!datestat.working) {
       let nomInMass = massMem.indexOf(index);
       let masscoord: any = [];
@@ -179,6 +205,8 @@ const MainMapGs = (props: {
           masscoord[0] = map.tflight[index].points.Y;
           masscoord[1] = map.tflight[index].points.X;
           massCoord.push(masscoord);
+
+          console.log("1OnPlacemarkClickPoint", massMem);
         } else {
           massMem.splice(nomInMass, 1);
           massCoord.splice(nomInMass, 1);
@@ -315,7 +343,7 @@ const MainMapGs = (props: {
 
   const OldSizeWind = (size: number) => {
     xsMap = size;
-    xsTab = 0.01;
+    //xsTab = 0.01;
     widthMap = "99.9%";
     modeToDo = 0;
     setToDoMode(false);
@@ -369,7 +397,7 @@ const MainMapGs = (props: {
           setOpenSoobErr(true);
         } else {
           xsMap = 7.7;
-          xsTab = 4.3;
+          //xsTab = 4.3;
           widthMap = "99.9%";
           modeToDo = 1;
           setToDoMode(true);
@@ -377,27 +405,37 @@ const MainMapGs = (props: {
         }
         break;
       case 46: // Настройки
-        soobErr = "Данный режим пока не реализован";
-        setOpenSoobErr(true);
+        helper = true;
+        StatusQuo();
+        setNeedSetup(true);
         break;
       case 47: // режим Demo
         soobErr = "Данный режим пока не реализован";
         setOpenSoobErr(true);
         break;
       case 48: // Фрагменты
-        soobErr = "Данный режим пока не реализован";
-        setOpenSoobErr(true);
+        soobErr =
+          "Нет фрагментов Яндекс-карты для вашего аккаунта, создайте их на главной странице системы";
+        if (!map.fragments) {
+          setOpenSoobErr(true);
+        } else {
+          if (map.fragments.length) {
+            helper = true;
+            StatusQuo();
+            setFragments(true);
+          } else setOpenSoobErr(true);
+        }
     }
   };
 
   //=== инициализация ======================================
   if (!flagOpen && Object.keys(map.tflight).length) {
-    let point0 = window.localStorage.PointCenterGS0;
-    let point1 = window.localStorage.PointCenterGS1;
+    let point0 = window.localStorage.PointCenterDU0;
+    let point1 = window.localStorage.PointCenterDU1;
     if (!Number(point0) || !Number(point1)) {
       pointCenter = CenterCoordBegin(map); // начальные координаты центра отоброжаемой карты
     } else pointCenter = [Number(point0), Number(point1)];
-    zoom = Number(window.localStorage.ZoomGS); // начальный zoom Yandex-карты ДУ
+    zoom = Number(window.localStorage.ZoomDU); // начальный zoom Yandex-карты ДУ
     flagOpen = true;
   }
   //========================================================
@@ -498,6 +536,7 @@ const MainMapGs = (props: {
                       func={MakeNewMassMem}
                     />
                   )}
+                  {fragments && <GsFragments close={SetFragments} />}
                   {openSoobErr && (
                     <GsErrorMessage setOpen={setOpenSoobErr} sErr={soobErr} />
                   )}
@@ -505,22 +544,23 @@ const MainMapGs = (props: {
               </YMaps>
             )}
           </Grid>
-          <Grid item xs={xsTab} sx={{ height: "97.0vh" }}>
-            {toDoMode && (
-              <GsToDoMode
-                newMode={newMode}
-                massMem={massMem}
-                funcMode={ModeToDo}
-                funcSize={OldSizeWind}
-                funcCenter={NewPointCenter}
-                funcHelper={SetHelper}
-                trigger={props.trigger}
-                changeFaz={changeFaz}
-              />
-            )}
-          </Grid>
         </Grid>
+        {toDoMode && (
+          <Box sx={styleServisTable}>
+            <GsToDoMode
+              newMode={newMode}
+              massMem={massMem}
+              funcMode={ModeToDo}
+              funcSize={OldSizeWind}
+              funcCenter={NewPointCenter}
+              funcHelper={SetHelper}
+              trigger={props.trigger}
+              changeFaz={changeFaz}
+            />
+          </Box>
+        )}
       </Grid>
+      {needSetup && <GsSetup close={setNeedSetup} />}
     </Grid>
   );
 };

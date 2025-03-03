@@ -26,22 +26,32 @@ export interface Stater {
   ws: any;
   debug: boolean;
   region: string;
-  phSvg: string | null;
+  phSvg: Array<any>;
   hist: any;
   toDoMode: boolean;
   working: boolean;
   create: boolean;
+  typeRoute: boolean; // тип отображаемых связей
+  typeVert: number; // тип отображаемых CO на карте: 0 - значки СО 1 - картинка фаз 2 - номер фаз(счётчик)
+  counterFaza: boolean; // наличие счётчика длительность фазы ДУ
+  intervalFaza: number; // Задаваемая длительность фазы ДУ (сек)
+  intervalFazaDop: number; // Увеличениение длительности фазы ДУ (сек)
 }
 
 export let dateStat: Stater = {
   ws: null,
   debug: false,
   region: "0",
-  phSvg: null,
+  phSvg: [null, null, null, null, null, null, null, null],
   hist: dataHistory, // для отладки
   toDoMode: false,
   working: false,
   create: true,
+  typeRoute: true, // тип отображаемых связей true - mаршрутизированные  false - неформальные
+  typeVert: 0, // тип отображаемых CO на карте: 0 - значки СО 1 - картинка фаз 2 - номер фаз(счётчик)
+  counterFaza: true, // наличие счётчика длительность фазы ДУ
+  intervalFaza: 0, // Задаваемая длительность фазы ДУ (сек)
+  intervalFazaDop: 0, // Увеличениение длительности фазы ДУ (сек)
 };
 
 export interface Pointer {
@@ -153,17 +163,58 @@ const App = () => {
     }
   };
 
-  // достать начальный zoom Yandex-карты из LocalStorage
-  if (window.localStorage.ZoomGS === undefined)
-    window.localStorage.ZoomGS = zoomStart;
+  // // достать начальный zoom Yandex-карты из LocalStorage
+  // if (window.localStorage.ZoomGS === undefined)
+  //   window.localStorage.ZoomGS = zoomStart;
 
-  // достать центр координат [0] Yandex-карты из LocalStorage
-  if (window.localStorage.PointCenterGS0 === undefined)
-    window.localStorage.PointCenterGS0 = 0;
+  // // достать центр координат [0] Yandex-карты из LocalStorage
+  // if (window.localStorage.PointCenterGS0 === undefined)
+  //   window.localStorage.PointCenterGS0 = 0;
 
-  // достать центр координат [1] Yandex-карты из LocalStorage
-  if (window.localStorage.PointCenterGS1 === undefined)
-    window.localStorage.PointCenterGS1 = 0;
+  // // достать центр координат [1] Yandex-карты из LocalStorage
+  // if (window.localStorage.PointCenterGS1 === undefined)
+  //   window.localStorage.PointCenterGS1 = 0;
+
+  // достать тип отображаемых связей из LocalStorage
+  if (window.localStorage.typeRoute === undefined)
+    window.localStorage.typeRoute = 0;
+  dateStat.typeRoute = Number(window.localStorage.typeRoute) ? true : false;
+
+  // достать тип отображаемых фаз на карте из LocalStorage
+  if (window.localStorage.typeVert === undefined)
+    window.localStorage.typeVert = 0;
+  dateStat.typeVert = Number(window.localStorage.typeVert);
+
+  // достать наличие счётчика длительность фазы ДУ из LocalStorage
+  if (window.localStorage.counterFazaD === undefined)
+    window.localStorage.counterFazaD = "0";
+  dateStat.counterFaza = Number(window.localStorage.counterFazaD)
+    ? true
+    : false;
+
+  // достать длительность фазы ДУ из LocalStorage
+  if (window.localStorage.intervalFazaD === undefined)
+    window.localStorage.intervalFazaD = "0";
+  dateStat.intervalFaza = Number(window.localStorage.intervalFazaD);
+
+  // достать увеличениение длительности фазы ДУ из LocalStorage
+  if (window.localStorage.intervalFazaDopD === undefined)
+    window.localStorage.intervalFazaDopD = "0";
+  dateStat.intervalFazaDop = !dateStat.intervalFaza
+    ? 0
+    : Number(window.localStorage.intervalFazaDopD);
+
+  // достать начальный zoom Yandex-карты ДУ из LocalStorage
+  if (window.localStorage.ZoomDU === undefined)
+    window.localStorage.ZoomDU = zoomStart;
+
+  // достать центр координат [0] Yandex-карты ДУ из LocalStorage
+  if (window.localStorage.PointCenterDU0 === undefined)
+    window.localStorage.PointCenterDU0 = 0;
+
+  // достать центр координат [1] Yandex-карты ДУ из LocalStorage
+  if (window.localStorage.PointCenterDU1 === undefined)
+    window.localStorage.PointCenterDU1 = 0;
 
   const host =
     "wss://" +
@@ -250,8 +301,8 @@ const App = () => {
         case "getPhases":
           for (let i = 0; i < massdk.length; i++) {
             if (
-              massdk[i].region.toString() === data.pos.region &&
-              massdk[i].area.toString() === data.pos.area &&
+              // massdk[i].region.toString() === data.pos.region &&
+              // massdk[i].area.toString() === data.pos.area &&
               massdk[i].ID === data.pos.id
             ) {
               if (data.images) {
@@ -288,7 +339,11 @@ const App = () => {
       if (!isNaN(Number(key))) massRegion.push(Number(key));
     homeRegion = massRegion[0].toString();
     dateStat.region = homeRegion;
-    dateStat.phSvg = imgFaza;
+    dateStat.phSvg[0] = imgFaza;
+    dateStat.phSvg[1] = null;
+    dateStat.phSvg[2] = imgFaza;
+    dateStat.phSvg[3] = null;
+    dateStat.phSvg[4] = imgFaza;
     dispatch(statsaveCreate(dateStat));
     flagInit = true;
     flagOpen = false;

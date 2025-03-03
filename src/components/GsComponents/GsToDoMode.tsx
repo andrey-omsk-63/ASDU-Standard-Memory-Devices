@@ -5,7 +5,7 @@ import { massfazCreate, statsaveCreate } from "../../redux/actions";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
+//import Typography from "@mui/material/Typography";
 
 import { Fazer } from "./../../App";
 
@@ -224,8 +224,8 @@ const GsToDoMode = (props: {
       let fazaImg: null | string = null;
       massfaz[i].img.length > massfaz[i].faza &&
         (fazaImg = massfaz[i].img[massfaz[i].faza - 1]);
-      debug && (fazaImg = datestat.phSvg); // для отладки
-      
+      debug && (fazaImg = datestat.phSvg[massfaz[i].faza - 1]); // для отладки
+
       let illum = nomIllum === i ? styleStrokaTabl01 : styleStrokaTabl02;
       let illumImg = massfaz[i].runRec ? styleStrTablImg01 : styleStrTablImg02;
 
@@ -281,6 +281,29 @@ const GsToDoMode = (props: {
     });
   };
 
+  const HeadingTabl = (DEMO: boolean) => {
+    return (
+      <Grid container sx={{}}>
+        <Grid item xs sx={styletSelectTitle}>
+          Режим:{" "}
+          <em>
+            <b>{map.routes[newMode].description}</b>
+          </em>
+          {DEMO && (
+            <>
+              <Box sx={{ color: "background.paper", display: "inline-block" }}>
+                {"."}
+              </Box>
+              <Box sx={{ fontSize: 15, color: "red", display: "inline-block" }}>
+                {" ("}демонстрационный{")"}
+              </Box>
+            </>
+          )}
+        </Grid>
+      </Grid>
+    );
+  };
+
   return (
     <>
       <Box sx={styleToDoMode}>
@@ -289,10 +312,7 @@ const GsToDoMode = (props: {
             <b>&#10006;</b>
           </Button>
         )}
-
-        <Typography variant="h6" sx={styletSelectTitle}>
-          Режим: <b>{map.routes[newMode].description}</b>
-        </Typography>
+        {HeadingTabl(false)}
 
         <Box sx={styleStrokaTabl10}>
           <Grid container sx={{ bgcolor: "#B8CBB9" }}>
