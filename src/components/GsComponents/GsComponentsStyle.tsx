@@ -1,16 +1,10 @@
 //=== GsSetPhase =========================================
 export const styleSetInf = {
-  // position: 'relative',
-  // marginTop: 4,
-  // marginLeft: 'auto',
-  // marginRight: 69,
-  //======
   position: "absolute",
-  left: "421px",
-  top: "358px",
-  transform: "translate(-50%, -50%)",
-  //======
-  width: 730,
+  left: "46px",
+  top: "27px",
+  outline: "none",
+  width: 550,
   bgcolor: "background.paper",
   border: "1px solid #FFF",
   borderRadius: 1,
@@ -41,7 +35,7 @@ export const styleBoxFormFaza = {
 };
 
 export const styleSet = {
-  width: "495px",
+  width: "344px",
   maxHeight: "4px",
   minHeight: "4px",
   bgcolor: "#FFFBE5",
@@ -56,17 +50,18 @@ export const styleBoxFormName = {
   "& > :not(style)": {
     marginTop: "-9px",
     marginLeft: "-8px",
-    width: "510px",
+    //width: "510px",
+    width: "373px",
   },
 };
 
 export const styleSaveBlack = {
-  fontSize: 15,
+  fontSize: 13.5,
   marginRight: 0.1,
   bgcolor: "#E6F5D6",
   width: "110px",
-  maxHeight: "20px",
-  minHeight: "20px",
+  maxHeight: "22px",
+  minHeight: "22px",
   border: "1px solid #d4d4d4", // серый
   borderRadius: 1,
   color: "black",
@@ -79,20 +74,13 @@ export const styleSaveRed = {
   marginRight: 0.1,
   bgcolor: "#BAE186", // тёмно-салатовый
   width: "110px",
-  maxHeight: "20px",
-  minHeight: "20px",
+  maxHeight: "22px",
+  minHeight: "22px",
   border: "1px solid #93D145", // тёмно-салатовый
   borderRadius: 1,
   color: "red",
   textTransform: "unset !important",
   boxShadow: 12,
-};
-
-export const styletFazaTitle = {
-  color: "#5B1080", // сиреневый
-  marginTop: -0.5,
-  textAlign: "center",
-  textShadow: "2px 2px 3px rgba(0,0,0,0.3)",
 };
 
 export const styletFaza01 = {
@@ -102,19 +90,14 @@ export const styletFaza01 = {
   boxShadow: 6,
   borderRadius: 1,
 };
+
+export const styletFaza02 = {
+  fontSize: 14,
+  color: "#7620a2",
+  textShadow: "2px 2px 3px rgba(0,0,0,0.3)",
+};
 //=== GsToDoMode =========================================
 export const styleToDoMode = {
-  // position: "relative",
-  // marginTop: 0.1,
-  // marginLeft: "auto",
-  // marginRight: 1,
-  // width: "96%",
-  // bgcolor: "background.paper",
-  // border: "1px solid #FFF",
-  // borderRadius: 1,
-  // boxShadow: 24,
-  // p: 1.0,
-
   bgcolor: "background.paper",
   border: "1px solid #fff",
   borderRadius: 1,
@@ -237,9 +220,9 @@ export const StyleSetFazaNull = (mesto: string) => {
     position: "relative",
     left: mesto,
     width: "12px",
-    maxHeight: "8px",
-    minHeight: "8px",
-    p: 1.5,
+    maxHeight: "36px",
+    minHeight: "36px",
+    //p: 1.5,
   };
   return styleSetFazaNull;
 };
@@ -256,7 +239,7 @@ export const styleSetSelect = {
   // top: '43%',
   // transform: 'translate(-50%, -50%)',
   //======
-  width: 580,
+  width: 550,
   //height: "421px",
   height: "601px",
   bgcolor: "background.paper",
@@ -267,6 +250,7 @@ export const styleSetSelect = {
 };
 
 export const styleModalMenuSelect = {
+  fontSize: 13.5,
   marginRight: 1,
   height: "24px",
   bgcolor: "#E6F5D6", // светло-салатовый

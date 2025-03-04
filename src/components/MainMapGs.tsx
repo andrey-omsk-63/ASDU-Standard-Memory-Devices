@@ -17,7 +17,7 @@ import GsSetup from "./GsComponents/GsSetup";
 import GsFragments from "./GsComponents/GsFragments";
 
 import { getMultiRouteOptions, StrokaHelp } from "./MapServiceFunctions";
-import { getReferencePoints, CenterCoordBegin } from "./MapServiceFunctions";
+import { CenterCoordBegin, PutItInAFrame } from "./MapServiceFunctions";
 import { ErrorHaveVertex, Distance, SaveZoom } from "./MapServiceFunctions";
 import { StrokaMenuGlob, HelpAdd, YandexServices } from "./MapServiceFunctions";
 import { StrokaMenuDop } from "./MapServiceFunctions";
@@ -39,7 +39,6 @@ let soobErr = "";
 let helper = true;
 
 let xsMap = 11.99;
-//let xsTab = 0.01;
 let widthMap = "99.9%";
 let modeToDo = 0;
 let newCenter: any = [];
@@ -76,6 +75,7 @@ const MainMapGs = (props: {
     const { statsaveReducer } = state;
     return statsaveReducer.datestat;
   });
+  const typeRoute = datestat.typeRoute; // тип отображаемых связей
   const debug = datestat.debug;
   const ws = datestat.ws;
   const dispatch = useDispatch();
@@ -137,14 +137,10 @@ const MainMapGs = (props: {
 
   const addRoute = (ymaps: any, bound: boolean) => {
     mapp.current.geoObjects.removeAll(); // удаление старой коллекции связей
+    let massMultiPath: any = []; // исходящие связи
     if (massCoord.length > 1) {
       let multiRoute: any = [];
-      if (massCoord.length === 2) {
-        multiRoute = new ymaps.multiRouter.MultiRoute(
-          getReferencePoints(massCoord[0], massCoord[1]),
-          getMultiRouteOptions()
-        );
-      } else {
+      if (typeRoute) {
         let between = [];
         for (let i = 1; i < massCoord.length - 1; i++) between.push(i);
         multiRoute = new ymaps.multiRouter.MultiRoute(
@@ -152,27 +148,27 @@ const MainMapGs = (props: {
             referencePoints: massCoord,
             params: { viaIndexes: between },
           },
-          { boundsAutoApply: bound, wayPointVisible: false }
+          getMultiRouteOptions()
         );
+        mapp.current.geoObjects.add(multiRoute);
+      } else {
+        for (let i = 0; i < massCoord.length - 1; i++) {
+          massMultiPath[i] = new ymaps.Polyline( // формальные связи
+            [massCoord[i], massCoord[i + 1]],
+            {},
+            getMultiRouteOptions()
+          );
+          mapp.current.geoObjects.add(massMultiPath[i]);
+        }
       }
-      mapp.current.geoObjects.add(multiRoute);
+      bound && PutItInAFrame(ymaps, mapp, massCoord);
     }
   };
 
   const SetFragments = (idx: number) => {
     if (idx >= 0 && ymaps) {
       mapp.current.geoObjects.removeAll(); // удаление старой коллекции связей
-      let multiRoute: any = [];
-      multiRoute = new ymaps.multiRouter.MultiRoute(
-        { referencePoints: map.fragments[idx].bounds },
-        {
-          boundsAutoApply: true, // вписать в границы
-          routeActiveStrokeWidth: 0, // толщина линии
-          routeStrokeWidth: 0, // толщина линии альтернативного маршрута
-          wayPointVisible: false,
-        }
-      );
-      mapp.current.geoObjects.add(multiRoute);
+      PutItInAFrame(ymaps, mapp, massCoord); // расположить фрагмент в границах экрана
     }
     setFragments(false);
   };
@@ -193,8 +189,6 @@ const MainMapGs = (props: {
   };
 
   const OnPlacemarkClickPoint = (index: number) => {
-    console.log("0OnPlacemarkClickPoint", index);
-
     if (!datestat.working) {
       let nomInMass = massMem.indexOf(index);
       let masscoord: any = [];
@@ -205,8 +199,6 @@ const MainMapGs = (props: {
           masscoord[0] = map.tflight[index].points.Y;
           masscoord[1] = map.tflight[index].points.X;
           massCoord.push(masscoord);
-
-          console.log("1OnPlacemarkClickPoint", massMem);
         } else {
           massMem.splice(nomInMass, 1);
           massCoord.splice(nomInMass, 1);
@@ -343,7 +335,6 @@ const MainMapGs = (props: {
 
   const OldSizeWind = (size: number) => {
     xsMap = size;
-    //xsTab = 0.01;
     widthMap = "99.9%";
     modeToDo = 0;
     setToDoMode(false);
@@ -374,7 +365,7 @@ const MainMapGs = (props: {
       case 42: // выбор режима ЗУ
         StatusQuo();
         if (massMem.length) {
-          ymaps && addRoute(ymaps, false); // перерисовка связей
+          ymaps && addRoute(ymaps, true); // перерисовка связей
           setFlagPusk(!flagPusk);
         }
         helper = false;
@@ -397,7 +388,6 @@ const MainMapGs = (props: {
           setOpenSoobErr(true);
         } else {
           xsMap = 7.7;
-          //xsTab = 4.3;
           widthMap = "99.9%";
           modeToDo = 1;
           setToDoMode(true);
@@ -439,7 +429,7 @@ const MainMapGs = (props: {
     flagOpen = true;
   }
   //========================================================
-  const MenuGl = (mod: number) => {
+  const MenuGl = () => {
     let soobHelp = "Выберите перекрёстки для создания нового маршрута";
     let soobHelpFiest = "Добавьте/удалите перекрёстки для создания маршрута [";
     soobHelpFiest += massMem.length;
@@ -451,7 +441,7 @@ const MainMapGs = (props: {
         {modeToDo > 0 && <>{StrokaHelp(soobInfo, 0)}</>}
         {modeToDo === 0 && (
           <>
-            {StrokaMenuGlob("Существующие ЗУ", PressButton, 42)}
+            {StrokaMenuGlob(PressButton)}
             {massMem.length < 1 && helper && <>{StrokaHelp(soobHelp, 0)}</>}
             {massMem.length === 1 && helper && <>{HelpAdd(soobHelpFiest)}</>}
             {massMem.length > 1 && (
@@ -497,7 +487,7 @@ const MainMapGs = (props: {
   return (
     <Grid container sx={{ height: "99.9vh" }}>
       <Grid item xs>
-        {!datestat.working && <>{MenuGl(modeToDo)}</>}
+        {!datestat.working && <>{MenuGl()}</>}
         {datestat.working && (
           <>{StrokaHelp("Происходит обработка режима", 0)}</>
         )}

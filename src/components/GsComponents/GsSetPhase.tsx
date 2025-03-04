@@ -7,7 +7,6 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
 import MenuItem from "@mui/material/MenuItem";
 
 import GsErrorMessage from "./GsErrorMessage";
@@ -20,9 +19,9 @@ import { ExitCross } from "../MapServiceFunctions";
 
 //import { styleModalEnd } from "../MainMapStyle";
 
-import { styleSetInf, styleModalMenu } from "./GsComponentsStyle";
+import { styleSetInf, styleModalMenu, styletFaza02 } from "./GsComponentsStyle";
 import { styleBoxFormFaza, styleSaveRed } from "./GsComponentsStyle";
-import { styleSaveBlack, styletFazaTitle } from "./GsComponentsStyle";
+import { styleSaveBlack, styletSelectTitle } from "./GsComponentsStyle";
 import { styleSet, styleBoxFormName, styletFaza01 } from "./GsComponentsStyle";
 import { StyleSetFaza, StyleSetFazaNull } from "./GsComponentsStyle";
 
@@ -167,9 +166,8 @@ const GsSetPhase = (props: {
           "Некорректный режим - количество светофоров не может быть меньше двух";
         setOpenSoobErr(true);
       } else {
-        for (let i = 0; i < map.routes.length; i++) {
+        for (let i = 0; i < map.routes.length; i++)
           if (nameMode === map.routes[i].description) nameMode += NameMode();
-        }
         let maskRoutes = {
           region: datestat.region,
           description: nameMode,
@@ -285,7 +283,7 @@ const GsSetPhase = (props: {
     let resStr = [];
     for (let i = 0; i < massFaz.length; i++) {
       let knop = "удалить";
-      let fSize = 15;
+      let fSize = 14;
       let colorRec = "black";
       if (massFaz[i].delRec) {
         knop = "восстановить";
@@ -293,6 +291,7 @@ const GsSetPhase = (props: {
         colorRec = "red";
       }
       let illum = massFaz[i].delRec ? styleSaveRed : styleSaveBlack;
+
       const styleTabl01 = {
         marginTop: 1,
         color: colorRec,
@@ -301,14 +300,14 @@ const GsSetPhase = (props: {
 
       resStr.push(
         <Grid key={i} container sx={styleTabl01}>
-          <Grid item xs={8.3} sx={{ paddingLeft: 1 }}>
+          <Grid item xs={7.3} sx={{ fontSize: 14, paddingLeft: 1 }}>
             {massFaz[i].name}
           </Grid>
 
           <Grid item xs={xsFaza}>
             <Box sx={{ textAlign: "center" }}>{InputFaza(i)}</Box>
           </Grid>
-          <Grid item xs={1} sx={{ border: 0 }}>
+          <Grid item xs={1} sx={{}}>
             {!massFaz[i].delRec && (
               <>
                 {OutputFazaImg(
@@ -320,7 +319,7 @@ const GsSetPhase = (props: {
           </Grid>
 
           {props.newMode < 0 && (
-            <Grid item xs={2} sx={{ textAlign: "center" }}>
+            <Grid item xs={2.8} sx={{ textAlign: "center" }}>
               <Button sx={illum} onClick={() => ClickKnop(i)}>
                 {knop}
               </Button>
@@ -334,7 +333,7 @@ const GsSetPhase = (props: {
 
   const StrokaHeader = (xss: number, soob: string) => {
     return (
-      <Grid item xs={xss} sx={{ border: 0, textAlign: "center" }}>
+      <Grid item xs={xss} sx={{ textAlign: "center" }}>
         <b>{soob}</b>
       </Grid>
     );
@@ -377,8 +376,8 @@ const GsSetPhase = (props: {
   const InputName = () => {
     return (
       <Grid container sx={{ marginTop: 1 }}>
-        <Grid item xs={3.5} sx={{ fontSize: 14, textAlign: "center" }}>
-          <b>Введите название нового ЗУ:</b>
+        <Grid item xs={4.1} sx={styletFaza02}>
+          Введите название нового ЗУ:
         </Grid>
         <Grid item xs sx={{ border: 0, textAlign: "center" }}>
           <Box sx={styleSet}>
@@ -413,34 +412,34 @@ const GsSetPhase = (props: {
   };
 
   xsFaza = 2.7;
-  if (props.newMode < 0) xsFaza = 0.7;
+  if (props.newMode < 0) xsFaza = 0.9;
   const [valuen, setValuen] = React.useState(nameMode);
 
   return (
     <Box sx={styleSetInf}>
-      {/* <Button sx={styleModalEnd} onClick={handleCloseSetEnd}>
-        <b>&#10006;</b>
-      </Button> */}
       {ExitCross(handleCloseSetEnd)}
-
       {props.newMode < 0 ? (
         <>{InputName()}</>
       ) : (
-        <Grid container sx={{}}>
-          <Grid item xs sx={{ fontSize: 14, textAlign: "left" }}>
-            Режим: <b>{map.routes[props.newMode].description.slice(0, 90)}</b>
-          </Grid>
-        </Grid>
+        <Box sx={styletFaza02}>
+          Режим:{" "}
+          <Box sx={{ display: "inline-block", color: "#000" }}>
+            <em>
+              <b>{map.routes[props.newMode].description.slice(0, 77)}</b>
+            </em>
+          </Box>
+        </Box>
       )}
 
-      <Typography variant="h6" sx={styletFazaTitle}>
-        Таблица фаз
-      </Typography>
+      <Box sx={styletSelectTitle}>
+        <b>Таблица фаз</b>
+      </Box>
+
       <Box sx={styletFaza01}>
-        <Grid container sx={{ bgcolor: "#B8CBB9" }}>
-          {StrokaHeader(8.3, "Описание")}
+        <Grid container sx={{ fontSize: 14, bgcolor: "#B8CBB9" }}>
+          {StrokaHeader(7.3, "Описание")}
           {StrokaHeader(xsFaza + 1, "Фаза")}
-          {props.newMode < 0 && <>{StrokaHeader(2, "Действие")}</>}
+          {props.newMode < 0 && <>{StrokaHeader(2.8, "Действие")}</>}
         </Grid>
         <Box sx={{ overflowX: "auto", height: "540px" }}>{StrokaTabl()}</Box>
       </Box>

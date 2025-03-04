@@ -10,15 +10,18 @@ import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import { MdOpenWith } from "react-icons/md";
 
+import { YMapsApi } from "react-yandex-maps";
+
 import { Pointer } from "./../App";
 
 import { FullscreenControl, GeolocationControl } from "react-yandex-maps";
 import { RulerControl, SearchControl } from "react-yandex-maps";
 import { TrafficControl, TypeSelector, ZoomControl } from "react-yandex-maps";
 
-import { 
-  //styleAppSt02, styleAppSt03, 
-  styleModalEnd } from "./MainMapStyle";
+import {
+  //styleAppSt02, styleAppSt03,
+  styleModalEnd,
+} from "./MainMapStyle";
 import { searchControl } from "./MainMapStyle";
 import { styleSetPK04 } from "./MainMapStyle";
 
@@ -88,7 +91,7 @@ export const MasskPoint = (debug: boolean, rec: any, imgFaza: string) => {
     phases: rec.phases,
     phSvg: [],
   };
-  let img = null;
+  let img: any = debug ? imgFaza : null;
   masskPoint.ID = rec.ID;
   masskPoint.coordinates[0] = rec.points.Y;
   masskPoint.coordinates[1] = rec.points.X;
@@ -233,19 +236,44 @@ export const ErrorHaveVertex = (rec: any) => {
 };
 
 //=== addRoute =====================================
-export const getReferencePoints = (pointA: any, pointB: any) => {
-  return {
-    referencePoints: [pointA, pointB],
-  };
-};
+// export const getReferencePoints = (pointA: any, pointB: any) => {
+//   return {
+//     referencePoints: [pointA, pointB],
+//   };
+// };
 
 export const getMultiRouteOptions = () => {
   return {
-    routeActiveStrokeWidth: 4,
-    //routeActiveStrokeColor: "#224E1F",
-    routeStrokeWidth: 0,
-    wayPointVisible: false,
+    // routeActiveStrokeWidth: 4,
+    // //routeActiveStrokeColor: "#224E1F",
+    // routeStrokeWidth: 0,
+    // wayPointVisible: false,
+    routeActiveStrokeWidth: 4, // толщина линии
+    routeStrokeWidth: 0, // толщина линии альтернативного маршрута
+    wayPointVisible: false, // отметки "начало - конец"
+    strokeWidth: 4, // толщина линии Polyline
+    strokeColor: "#9B59DA", // цвет линии Polyline - сиреневый
   };
+};
+
+export const PutItInAFrame = (
+  ymaps: YMapsApi | null,
+  mapp: any,
+  massCoord: Array<Array<number>>,
+  
+) => {
+  if (ymaps) {
+    let multiRout = new ymaps.multiRouter.MultiRoute(
+      { referencePoints: massCoord },
+      {
+        boundsAutoApply: true, // вписать в границы
+        routeActiveStrokeWidth: 0, // толщина линии
+        routeStrokeWidth: 0, // толщина линии альтернативного маршрута
+        wayPointVisible: false,
+      }
+    );
+    mapp.current.geoObjects.add(multiRout);
+  }
 };
 
 //=== GsSetPhase ===================================
@@ -266,7 +294,8 @@ export const OutputFazaImg = (img: any, i: number) => {
   const styleFazaImg = {
     fontSize: 27,
     marginTop: -0.5,
-    marginLeft: 1,
+    marginLeft: 2,
+    height: "68px",
     color: "#5B1080", // сиреневый
     textShadow: "2px 2px 3px rgba(0,0,0,0.3)",
   };
@@ -442,9 +471,9 @@ export const InputDirect = (props: { func: any }) => {
   );
 };
 
-export const StrokaMenuGlob = (soob: string, func: any, mode: number) => {
+export const StrokaMenuGlob = (func: any) => {
   const styleApp01 = {
-    fontSize: 14,
+    fontSize: 12.9,
     marginRight: 0.5,
     //marginLeft: 0.1,
     width: 185,

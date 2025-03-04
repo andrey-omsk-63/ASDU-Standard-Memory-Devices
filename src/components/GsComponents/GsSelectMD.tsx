@@ -11,10 +11,11 @@ import Modal from "@mui/material/Modal";
 import GsErrorMessage from "./GsErrorMessage";
 import GsLookHistory from "./GsLookHistory";
 
+import { ExitCross } from "../MapServiceFunctions";
+
 import { SendSocketDeleteRoute } from "../MapSocketFunctions";
 import { SendSocketRouteHistory } from "../MapSocketFunctions";
 
-import { styleModalEnd } from "../MainMapStyle";
 import { styleSetSelect, styleModalMenuSelect } from "./GsComponentsStyle";
 import { styletSelectTitle, styletSelect01 } from "./GsComponentsStyle";
 
@@ -144,7 +145,7 @@ const GsSelectMD = (props: {
         colorRec = "red";
       }
       const styleBut01 = {
-        fontSize: fSize + 2,
+        fontSize: fSize + 1,
         marginTop: 1,
         bgcolor: "#E6F5D6", // светло-салатовый
         width: "320px",
@@ -158,7 +159,7 @@ const GsSelectMD = (props: {
       };
 
       const styleBut011 = {
-        fontSize: fSize + 3,
+        fontSize: fSize + 1,
         marginTop: 1,
         bgcolor: "#82E94A", // ярко-салатовый
         width: "320px",
@@ -202,13 +203,13 @@ const GsSelectMD = (props: {
 
       resStr.push(
         <Grid key={i} container>
-          <Grid item xs={7.0} sx={{ border: 0, textAlign: "center" }}>
+          <Grid item xs={7.1} sx={{ border: 0, textAlign: "center" }}>
             <Button sx={ILLUM} onClick={() => ClickKnop1(i)}>
-              {massmode[i].name.slice(0, 39)}
+              {massmode[i].name.slice(0, 36)}
             </Button>
           </Grid>
 
-          <Grid item xs={2.5} sx={{ border: 0, textAlign: "center" }}>
+          <Grid item xs={2.5} sx={{ border:0, textAlign: "center" }}>
             <Button sx={styleBut02} onClick={() => ClickKnop2(i)}>
               история
             </Button>
@@ -228,11 +229,11 @@ const GsSelectMD = (props: {
   return (
     <Modal open={openSetMode} onClose={handleCloseEnd} hideBackdrop={false}>
       <Box sx={styleSetSelect}>
-        <Button sx={styleModalEnd} onClick={handleCloseSetEnd}>
-          <b>&#10006;</b>
-        </Button>
+        {ExitCross(handleCloseSetEnd)}
 
-        <Box sx={styletSelectTitle}><b>Выбор режима ЗУ</b></Box>
+        <Box sx={styletSelectTitle}>
+          <b>Выбор режима ЗУ</b>
+        </Box>
 
         <Box sx={styletSelect01}>{StrokaTabl()}</Box>
 

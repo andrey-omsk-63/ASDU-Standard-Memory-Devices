@@ -10,9 +10,10 @@ import Button from "@mui/material/Button";
 import { Fazer } from "./../../App";
 
 import { OutputFazaImg, OutputVertexImg } from "../MapServiceFunctions";
+import { ExitCross } from "../MapServiceFunctions";
+
 import { SendSocketRoute, SendSocketDispatch } from "../MapSocketFunctions";
 
-import { styleModalEnd } from "../MainMapStyle";
 import { styleModalMenu, styleStrTablImg01 } from "./GsComponentsStyle";
 import { styleToDoMode, styleStrokaTabl01 } from "./GsComponentsStyle";
 import { styleStrokaTabl03 } from "./GsComponentsStyle";
@@ -307,11 +308,7 @@ const GsToDoMode = (props: {
   return (
     <>
       <Box sx={styleToDoMode}>
-        {!toDoMode && (
-          <Button sx={styleModalEnd} onClick={handleCloseSetEnd}>
-            <b>&#10006;</b>
-          </Button>
-        )}
+        {!toDoMode && <>{ExitCross(handleCloseSetEnd)}</>}
         {HeadingTabl(false)}
 
         <Box sx={styleStrokaTabl10}>
