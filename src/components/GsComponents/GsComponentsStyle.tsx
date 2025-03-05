@@ -120,8 +120,8 @@ export const styleStrokaTabl10 = {
 };
 
 export const styleStrokaTabl01 = {
-  maxWidth: "33px",
-  minWidth: "33px",
+  maxWidth: "44px",
+  minWidth: "1px",
   maxHeight: "21px",
   minHeight: "21px",
   padding: "2px 8px 0px 8px",
@@ -134,8 +134,8 @@ export const styleStrokaTabl01 = {
 };
 
 export const styleStrokaTabl02 = {
-  maxWidth: "33px",
-  minWidth: "33px",
+  maxWidth: "44px",
+  minWidth: "1px",
   maxHeight: "21px",
   minHeight: "21px",
   padding: "2px 8px 0px 8px",
@@ -157,12 +157,13 @@ export const styleStrTablImg01 = {
   minWidth: "33px",
   maxHeight: "45px",
   minHeight: "45px",
-  bgcolor: "#BAE186", // салатовый
-  border: "1px solid #93D145", // тёмно-салатовый
+  //bgcolor: "#BAE186", // салатовый
+  border: "1px solid #d4d4d4", // серый
+  bgcolor: "#E6F5D6", // светло-салатовый
   borderRadius: 1,
   color: "black",
   textTransform: "unset !important",
-  boxShadow: 12,
+  boxShadow: 15,
 };
 
 export const styleStrTablImg02 = {
@@ -170,12 +171,13 @@ export const styleStrTablImg02 = {
   minWidth: "33px",
   maxHeight: "45px",
   minHeight: "45px",
-  bgcolor: "#E6F5D6", // светло-салатовый
+  //bgcolor: "#E6F5D6", // светло-салатовый
+  bgcolor: "background.paper",
   border: "1px solid #d4d4d4", // серый
   borderRadius: 1,
   color: "black",
   textTransform: "unset !important",
-  boxShadow: 2,
+  boxShadow: 1,
 };
 
 export const styleStrokaTakt = {
@@ -194,9 +196,11 @@ export const styleToDo01 = {
 };
 
 export const styleToDo02 = {
-  color: "blue",
   fontSize: 30,
+  color: "#7620A2", // тёмно-сереневый
   marginLeft: 1,
+  marginTop: "-2px",
+  textShadow: "2px 2px 3px rgba(0,0,0,0.3)",
 };
 
 export const StyleSetFaza = (mesto: string) => {
@@ -222,7 +226,6 @@ export const StyleSetFazaNull = (mesto: string) => {
     width: "12px",
     maxHeight: "36px",
     minHeight: "36px",
-    //p: 1.5,
   };
   return styleSetFazaNull;
 };
@@ -240,7 +243,6 @@ export const styleSetSelect = {
   // transform: 'translate(-50%, -50%)',
   //======
   width: 550,
-  //height: "421px",
   height: "601px",
   bgcolor: "background.paper",
   border: "1px solid #FFF",

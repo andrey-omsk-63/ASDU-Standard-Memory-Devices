@@ -236,12 +236,6 @@ export const ErrorHaveVertex = (rec: any) => {
 };
 
 //=== addRoute =====================================
-// export const getReferencePoints = (pointA: any, pointB: any) => {
-//   return {
-//     referencePoints: [pointA, pointB],
-//   };
-// };
-
 export const getMultiRouteOptions = () => {
   return {
     // routeActiveStrokeWidth: 4,
@@ -330,13 +324,39 @@ export const OutputVertexImg = (host: string) => {
     />
   );
 };
+
+const StrokaHeader = (xss: number, soob: string) => {
+  return (
+    <>
+      {soob !== "id" ? (
+        <Grid item xs={xss} sx={{ fontWeight: 500, textAlign: "center" }}>
+          {soob}
+        </Grid>
+      ) : (
+        <Grid item xs={xss} sx={{ textAlign: "center" }}>
+          <em>[{soob}]</em>
+        </Grid>
+      )}
+    </>
+  );
+};
+
+export const HeaderTabl = () => {
+  return (
+    <Grid container sx={{ bgcolor: "#B8CBB9" }}>
+      {StrokaHeader(1, "id")}
+      {StrokaHeader(3.6, "Состояние")}
+      {StrokaHeader(2.1, "Фаза")}
+      {StrokaHeader(4.5, "ДК")}
+    </Grid>
+  );
+};
 //=== MainMapGs ====================================
 export const StrokaMenuDop = (soob: string, func: any, mode: number) => {
   let dlSoob = (soob.length + 5) * 8;
   const styleApp01 = {
     fontSize: 14,
     marginRight: 0.3,
-    //marginTop: -0.2,
     width: dlSoob,
     maxHeight: "21px",
     minHeight: "21px",
@@ -494,7 +514,6 @@ export const StrokaHelp = (soobInfo: string, mode: number) => {
   let dl = mode ? 20 : 490;
 
   const styleInfoSoob = {
-    //marginTop: "-3px",
     width: dl, // 530
     maxHeight: "26px",
     minHeight: "26px",
@@ -518,7 +537,6 @@ export const StrokaHelpPusto = () => {
     maxHeight: "26px",
     minHeight: "26px",
     backgroundColor: "#E9F5D8",
-    //p: 1.5,
   };
   return <Button sx={styleInfoSoob}> </Button>;
 };
@@ -531,7 +549,6 @@ export const BadExit = (badExit: boolean, handleCloseEnd: Function) => {
     top: "50%",
     transform: "translate(-50%, -50%)",
     width: 400,
-    //bgcolor: "background.paper",
     bgcolor: "#fff6d2", // светло-жёлтый
     border: "1px solid #fff6d2", // светло-жёлтый
     borderRadius: 1,

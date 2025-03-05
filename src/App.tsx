@@ -25,6 +25,7 @@ export let dateRouteProGl: any;
 export interface Stater {
   ws: any;
   debug: boolean;
+  demo: boolean;
   region: string;
   phSvg: Array<any>;
   hist: any;
@@ -36,11 +37,16 @@ export interface Stater {
   counterFaza: boolean; // наличие счётчика длительность фазы ДУ
   intervalFaza: number; // Задаваемая длительность фазы ДУ (сек)
   intervalFazaDop: number; // Увеличениение длительности фазы ДУ (сек)
+  massPath: any; // точки рабочего маршрута
+  counterId: Array<any>; // счётчик длительности фаз
+  timerId: Array<any>; // массив времени отправки команд на счётчики
+  massInt: any[][]; // массив интервалов отправки команд на счётчики
 }
 
 export let dateStat: Stater = {
   ws: null,
   debug: false,
+  demo: false,
   region: "0",
   phSvg: [null, null, null, null, null, null, null, null],
   hist: dataHistory, // для отладки
@@ -52,6 +58,10 @@ export let dateStat: Stater = {
   counterFaza: true, // наличие счётчика длительность фазы ДУ
   intervalFaza: 0, // Задаваемая длительность фазы ДУ (сек)
   intervalFazaDop: 0, // Увеличениение длительности фазы ДУ (сек)
+  massPath: null, // точки рабочего маршрута
+  counterId: [], // счётчик длительности фаз
+  timerId: [], // массив времени отправки команд на счётчики
+  massInt: [], // массив интервалов отправки команд на счётчики
 };
 
 export interface Pointer {
@@ -69,6 +79,7 @@ export interface Fazer {
   kolOpen: number;
   runRec: boolean;
   idx: number;
+  id: number;
   coordinates: Array<number>;
   faza: number;
   fazaSist: number;
@@ -85,6 +96,7 @@ let maskFaz: Fazer = {
   kolOpen: 0,
   runRec: false,
   idx: 0,
+  id: -1,
   coordinates: [],
   faza: 1,
   fazaSist: -1,

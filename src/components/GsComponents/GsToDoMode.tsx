@@ -7,10 +7,12 @@ import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 //import Typography from "@mui/material/Typography";
 
+import GsFieldOfMiracles from "./GsFieldOfMiracles";
+
 import { Fazer } from "./../../App";
 
 import { OutputFazaImg, OutputVertexImg } from "../MapServiceFunctions";
-import { ExitCross } from "../MapServiceFunctions";
+import { ExitCross, HeaderTabl } from "../MapServiceFunctions";
 
 import { SendSocketRoute, SendSocketDispatch } from "../MapSocketFunctions";
 
@@ -57,14 +59,19 @@ const GsToDoMode = (props: {
   });
   const debug = datestat.debug;
   const ws = datestat.ws;
+  const DEMO = false; // datestat.demo;
   const dispatch = useDispatch();
+  let intervalFaza = datestat.intervalFaza; // Задаваемая длительность фазы ДУ (сек)
+  let intervalFazaDop = datestat.intervalFazaDop; // Увеличениение длительности фазы ДУ (сек)
+  if (!datestat.counterFaza) intervalFaza = intervalFazaDop = 0; // наличие счётчика длительность фазы ДУ
   //========================================================
   const [trigger, setTrigger] = React.useState(true);
+
   let newMode = props.newMode;
-  let hostt =
-    window.location.origin.slice(0, 22) === "https://localhost:3000"
-      ? "https://localhost:3000/"
-      : "./";
+  // let hostt =
+  //   window.location.origin.slice(0, 22) === "https://localhost:3000"
+  //     ? "https://localhost:3000/"
+  //     : "./";
   //=== инициализация ======================================
   const MakeMaskFaz = (i: number) => {
     let iDx = props.massMem[i];
@@ -72,6 +79,7 @@ const GsToDoMode = (props: {
       kolOpen: 0,
       runRec: false,
       idx: iDx,
+      id: map.tflight[iDx].ID,
       coordinates: [],
       faza: map.routes[newMode].listTL[i].phase,
       fazaSist: -1,
@@ -103,16 +111,54 @@ const GsToDoMode = (props: {
   if (init) {
     massfaz = [];
     timerId = [];
+    datestat.massPath = []; // точки рабочего маршрута
+    datestat.counterId = []; // счётчик длительности фаз
+    datestat.timerId = []; // массив времени отправки команд на счётчики
+    datestat.massInt = []; // массив интервалов отправки команд на счётчики
+
     for (let i = 0; i < props.massMem.length; i++) {
       massfaz.push(MakeMaskFaz(i));
       timerId.push(null);
+      datestat.counterId.push(intervalFaza); // длительность фазы ДУ
+      datestat.timerId.push(null); // массив времени отправки команд
     }
-    for (let i = 0; i < props.massMem.length; i++)
+    for (let i = 0; i < props.massMem.length; i++) {
       massInt.push(JSON.parse(JSON.stringify(timerId)));
+      datestat.massInt.push(JSON.parse(JSON.stringify(datestat.timerId)));
+    }
     init = false;
     dispatch(massfazCreate(massfaz));
+    dispatch(statsaveCreate(datestat));
   }
   //========================================================
+  const ForcedClearInterval = () => {
+    // сброс таймеров отправки фаз
+    for (let i = 0; i < timerId.length; i++) {
+      if (timerId[i]) {
+        for (let j = 0; j < massInt[i].length; j++) {
+          if (massInt[i][j]) {
+            clearInterval(massInt[i][j]);
+            massInt[i][j] = null;
+          }
+        }
+        timerId[i] = null;
+      }
+    }
+    // сброс таймеров счётчиков длительности фаз
+    for (let i = 0; i < datestat.timerId.length; i++) {
+      if (datestat.timerId[i]) {
+        for (let j = 0; j < datestat.massInt[i].length; j++) {
+          if (datestat.massInt[i][j]) {
+            clearInterval(datestat.massInt[i][j]);
+            datestat.massInt[i][j] = null;
+          }
+        }
+        datestat.timerId[i] = null;
+      }
+    }
+    dispatch(statsaveCreate(datestat));
+  };
+
   const handleCloseSetEnd = () => {
     props.funcSize(11.99);
     toDoMode = false;
@@ -141,17 +187,7 @@ const GsToDoMode = (props: {
       setTrigger(!trigger);
     } else {
       // принудительное закрытие
-      for (let i = 0; i < timerId.length; i++) {
-        if (timerId[i]) {
-          for (let j = 0; j < massInt[i].length; j++) {
-            if (massInt[i][j]) {
-              clearInterval(massInt[i][j]);
-              massInt[i][j] = null;
-            }
-          }
-          timerId[i] = null;
-        }
-      }
+      ForcedClearInterval(); // обнуление всех интервалов и остановка всех таймеров
       for (let i = 0; i < massfaz.length; i++) {
         if (massfaz[i].runRec) {
           SendSocketDispatch(debug, ws, massfaz[i].idevice, 9, 9);
@@ -164,14 +200,6 @@ const GsToDoMode = (props: {
       props.funcHelper(true);
       handleCloseSetEnd();
     }
-  };
-
-  const StrokaHeader = (xss: number, soob: string) => {
-    return (
-      <Grid item xs={xss} sx={{ fontSize: 14, textAlign: "center" }}>
-        <b>{soob}</b>
-      </Grid>
-    );
   };
 
   const ClickKnop = (mode: number) => {
@@ -206,20 +234,53 @@ const GsToDoMode = (props: {
       ClickKnop(mode);
     };
 
+    const ClickAddition = (idx: number) => {
+      for (let i = 0; i < datestat.counterId.length - 1; i++) {
+        if (i === idx) datestat.counterId[i] += intervalFazaDop;
+        if (i > idx && datestat.counterId[i] < datestat.counterId[idx])
+          datestat.counterId[i] = datestat.counterId[i - 1] + 1;
+      }
+      dispatch(statsaveCreate(datestat));
+      setTrigger(!trigger);
+    };
+
     let resStr = [];
 
     for (let i = 0; i < massfaz.length; i++) {
+      let runREC = JSON.parse(JSON.stringify(massfaz[i].runRec));
       let bull = " ";
       if (massfaz[i].runRec) bull = " •";
-      let host = hostt + "18.svg";
 
+      let hostt =
+        window.location.origin.slice(0, 22) === "https://localhost:3000"
+          ? "https://localhost:3000/"
+          : "./";
+      let host = hostt + "18.svg";
+      if (DEMO && debug) {
+        host = hostt + "1.svg";
+        if (bull === " •" && runREC === 2) host = hostt + "2.svg";
+        if (bull !== " •" && runREC === 5) host = hostt + "2.svg";
+      }
       if (!debug) {
         let num = map.tflight[massfaz[i].idx].tlsost.num.toString();
+        if (DEMO) {
+          num = "1";
+          if (bull === " •" && runREC === 2) num = "2";
+          if (bull !== " •" && runREC === 5) num = "2";
+        }
         host =
           window.location.origin + "/free/img/trafficLights/" + num + ".svg";
       }
-      let star = "";
-      if (massfaz[i].starRec) star = "*";
+
+      // let host = hostt + "18.svg";
+      // if (!debug) {
+      //   let num = map.tflight[massfaz[i].idx].tlsost.num.toString();
+      //   host =
+      //     window.location.origin + "/free/img/trafficLights/" + num + ".svg";
+      // }
+      //let star = "";
+      //if (massfaz[i].starRec) star = "*";
+
       let takt: number | string = massfaz[i].faza;
       let pad = 1.2;
       let fazaImg: null | string = null;
@@ -229,17 +290,16 @@ const GsToDoMode = (props: {
 
       let illum = nomIllum === i ? styleStrokaTabl01 : styleStrokaTabl02;
       let illumImg = massfaz[i].runRec ? styleStrTablImg01 : styleStrTablImg02;
+      let finish = runREC !== 1 && runREC !== 5 && runREC > 0 ? true : false;
 
       resStr.push(
         <Grid key={i} container sx={styleStrokaTabl03}>
           <Grid item xs={1} sx={{ paddingTop: 0.7, textAlign: "center" }}>
             <Button sx={illum} onClick={() => ClickKnop(i)}>
-              {i + 1}
+              {massfaz[i].id}
             </Button>
           </Grid>
-          <Grid item xs={1.2} sx={{ fontSize: 27, textAlign: "right" }}>
-            {star}
-          </Grid>
+          <GsFieldOfMiracles finish={finish} idx={i} func={ClickAddition} />
           <Grid item xs={1.0} sx={{}}>
             {!toDoMode ? (
               <>{OutputVertexImg(host)}</>
@@ -249,10 +309,10 @@ const GsToDoMode = (props: {
               </Button>
             )}
           </Grid>
-          <Grid item xs={0.4} sx={styleToDo02}>
+          <Grid item xs={0.2} sx={styleToDo02}>
             {bull}
           </Grid>
-          <Grid item xs={1.1} sx={styleToDo01}>
+          <Grid item xs={1.0} sx={styleToDo01}>
             {takt}
           </Grid>
           <Grid item xs={2} sx={{ paddingTop: pad, textAlign: "center" }}>
@@ -310,17 +370,10 @@ const GsToDoMode = (props: {
       <Box sx={styleToDoMode}>
         {!toDoMode && <>{ExitCross(handleCloseSetEnd)}</>}
         {HeadingTabl(false)}
-
         <Box sx={styleStrokaTabl10}>
-          <Grid container sx={{ bgcolor: "#B8CBB9" }}>
-            {StrokaHeader(1, "Номер")}
-            {StrokaHeader(3.6, "Состояние")}
-            {StrokaHeader(1.9, "Фаза")}
-            {StrokaHeader(5.5, "ДК")}
-          </Grid>
-          <Box sx={{ overflowX: "auto", height: "84.5vh" }}>{StrokaTabl()}</Box>
+          {HeaderTabl()}
+          <Box sx={{ overflowX: "auto", height: "84.0vh" }}>{StrokaTabl()}</Box>
         </Box>
-
         <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
           {!toDoMode ? (
             <Button sx={styleModalMenu} onClick={() => ToDoMode(2)}>

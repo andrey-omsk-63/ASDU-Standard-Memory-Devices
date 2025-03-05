@@ -1,7 +1,7 @@
 export const styleServisTable = {
   outline: "none",
   position: "relative",
-  marginTop: "-96vh",
+  marginTop: "-96.9vh",
   marginLeft: "auto",
   marginRight: "2px",
   width: "440px",

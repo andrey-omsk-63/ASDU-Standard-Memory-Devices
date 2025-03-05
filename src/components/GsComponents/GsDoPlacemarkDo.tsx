@@ -9,6 +9,7 @@ import { Placemark, YMapsApi } from "react-yandex-maps";
 //import { GetPointData } from "../MapServiceFunctions";
 
 let FAZASIST = -1;
+let FAZA = -1;
 let nomInMassfaz = -1;
 
 const GsDoPlacemarkDo = (props: {
@@ -36,6 +37,8 @@ const GsDoPlacemarkDo = (props: {
     return statsaveReducer.datestat;
   });
   const debug = datestat.debug;
+  const DEMO = datestat.demo;
+  const typeVert = datestat.typeVert;
   const dispatch = useDispatch();
   //===========================================================
   let id = props.idx;
@@ -45,19 +48,23 @@ const GsDoPlacemarkDo = (props: {
   let pB = -1;
   let pC = -1;
   let nomSvg = -1;
-  if (props.massMem.length >= 1) {
+  let lengMem = props.massMem.length;
+
+  if (lengMem >= 1) {
     pA = props.massMem[0];
-    pB = props.massMem[props.massMem.length - 1];
+    pB = props.massMem[lengMem - 1];
     if (datestat.toDoMode) pC = props.massMem.indexOf(props.idx);
   }
+
   let fazaImg: null | string = null;
-  FAZASIST = -1;
+  FAZASIST = FAZA = -1;
   nomInMassfaz = -1;
   if (pC >= 0) {
     let idv = mappp.idevice;
     for (let i = 0; i < massfaz.length; i++) {
       if (idv === massfaz[i].idevice) {
         FAZASIST = massfaz[i].fazaSist;
+        FAZA = massfaz[i].faza;
         nomInMassfaz = i;
         if (FAZASIST === 11 || FAZASIST === 15) {
           nomSvg = 12; // ОС
@@ -69,8 +76,15 @@ const GsDoPlacemarkDo = (props: {
           } else {
             if (FAZASIST > 0 && FAZASIST < 9 && massfaz[i].img) {
               if (FAZASIST <= massfaz[i].img.length)
-                fazaImg = massfaz[i].img[FAZASIST - 1];
+                // fazaImg = massfaz[i].img[FAZASIST - 1];
+
+                fazaImg = massfaz[i].img[FAZA - 1]; // костыль
+
               massfaz[i].fazaSistOld = FAZASIST;
+
+              // if (pC >= 0 && lengMem > 2 && typeVert)
+              //   console.log("fazaImg:", id, fazaImg);
+
               dispatch(massfazCreate(massfaz));
             }
           }
@@ -93,9 +107,37 @@ const GsDoPlacemarkDo = (props: {
       let mpp = illum ? 4 : mapp;
       if (nomSvg > 0) mpp = nomSvg.toString();
       host = window.location.origin + "/free/img/trafficLights/" + mpp + ".svg";
+    } else if (DEMO) host = hostt + "1.svg";
+
+    // if (pC >= 0 && lengMem > 2 && typeVert === 2) {
+    //   console.log("Hoster:", id, pC, FAZASIST, massfaz);
+    // }
+
+    if (typeVert && pC >= 0 && FAZASIST > 0 && FAZASIST !== 9) {
+      // картинка с номером фазы
+      let hostt =
+        window.location.origin.slice(0, 22) === "https://localhost:3000"
+          ? "https://localhost:3000/phases/"
+          : "./phases/";
+      host = debug
+        ? // ? hostt + FAZASIST + ".svg"
+          // : "/file/static/img/buttons/" + FAZASIST + ".svg";
+          hostt + FAZA + ".svg"
+        : "/file/static/img/buttons/" + FAZA + ".svg"; // костыль
     }
+
     return host;
-  }, [mapp, nomSvg, debug, datestat.create, props.massMem, id]);
+  }, [
+    mapp,
+    nomSvg,
+    debug,
+    datestat.create,
+    props.massMem,
+    id,
+    DEMO,
+    pC,
+    typeVert,
+  ]);
 
   const createChipsLayout = React.useCallback(
     (calcFunc: Function, currnum: number, rotateDeg?: number) => {
@@ -250,7 +292,9 @@ const GsDoPlacemarkDo = (props: {
         options={
           pC < 0 ||
           FAZASIST <= 0 ||
-          (FAZASIST === 9 && massfaz[nomInMassfaz].fazaSistOld < 0)
+          (FAZASIST === 9 && massfaz[nomInMassfaz].fazaSistOld < 0) ||
+          (lengMem > 2 && typeVert === 2) ||
+          (lengMem > 2 && typeVert === 1 && !fazaImg)
             ? {
                 iconLayout: createChipsLayout(calculate, mappp.tlsost.num),
               }
@@ -273,6 +317,8 @@ const GsDoPlacemarkDo = (props: {
       props,
       massfaz,
       GetPointOptions1,
+      lengMem,
+      typeVert,
     ]
   );
   return MemoPlacemarkDo;
