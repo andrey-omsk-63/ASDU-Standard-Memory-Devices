@@ -115,6 +115,8 @@ export interface NameMode {
 }
 export let massMode: NameMode[] = [];
 
+export let debug = false;
+
 export let Coordinates: Array<Array<number>> = []; // массив координат
 
 let flagOpen = true;
@@ -145,11 +147,10 @@ const App = () => {
   const dispatch = useDispatch();
   //========================================================
   const Initialisation = () => {
-    let deb = dateStat.debug;
     console.log("dateMapGl:", dateMapGl);
     for (let i = 0; i < dateMapGl.tflight.length; i++) {
-      let masskPoint = MasskPoint(deb, dateMapGl.tflight[i], imgFaza);
-      if (dateStat.debug) masskPoint.phSvg = dateStat.phSvg; // костыль
+      let masskPoint = MasskPoint(debug, dateMapGl.tflight[i], imgFaza);
+      if (debug) masskPoint.phSvg = dateStat.phSvg; // костыль
       massdk.push(masskPoint);
       coordinates.push(masskPoint.coordinates);
     }
@@ -172,7 +173,7 @@ const App = () => {
     for (let i = 0; i < massdk.length; i++) {
       let reg = massdk[i].region.toString();
       let area = massdk[i].area.toString();
-      SendSocketGetPhases(dateStat.debug, WS, reg, area, massdk[i].ID);
+      SendSocketGetPhases(debug, WS, reg, area, massdk[i].ID);
     }
   };
 
@@ -249,7 +250,7 @@ const App = () => {
       WS.url.slice(0, 20) === "wss://localhost:3000" ||
       WS.url.slice(0, 27) === "wss://andrey-omsk-63.github"
     )
-      dateStat.debug = true;
+      dateStat.debug = debug = true;
     dispatch(statsaveCreate(dateStat));
     flagOpenWS = false;
   }

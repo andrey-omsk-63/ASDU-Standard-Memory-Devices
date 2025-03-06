@@ -70,11 +70,6 @@ const GsToDoMode = (props: {
   const [trigger, setTrigger] = React.useState(true);
   const [flagPusk, setFlagPusk] = React.useState(false);
 
-  // let hostt =
-  //   window.location.origin.slice(0, 22) === "https://localhost:3000"
-  //     ? "https://localhost:3000/"
-  //     : "./";
-
   const MakeMaskFaz = (i: number) => {
     let iDx = props.massMem[i];
     let maskFaz: Fazer = {
@@ -84,6 +79,7 @@ const GsToDoMode = (props: {
       id: map.tflight[iDx].ID,
       coordinates: [],
       faza: map.routes[newMode].listTL[i].phase,
+      //faza: 0,
       fazaSist: -1,
       fazaSistOld: -1,
       phases: massdk[iDx].phases,
@@ -92,8 +88,6 @@ const GsToDoMode = (props: {
       starRec: false,
       img: [],
     };
-
-    // nomIllum = -1;
     if (debug) maskFaz.fazaSist = 1;
     maskFaz.coordinates[0] = map.tflight[iDx].points.Y;
     maskFaz.coordinates[1] = map.tflight[iDx].points.X;
@@ -122,13 +116,8 @@ const GsToDoMode = (props: {
         clearInterval(massInt[idx][i]);
         massInt[idx][i] = null;
       }
-      // if (datestat.massInt[idx][i]) {
-      //   clearInterval(datestat.massInt[idx][i]);
-      //   datestat.massInt[idx][i] = null;
-      // }
     }
     timerId[idx] = null;
-    //datestat.timerId[idx] = null;
     massfaz[idx].runRec = DEMO ? 5 : 1;
     massfaz[idx].fazaSist = -1;
     datestat.counterId[idx] = 1;
@@ -141,7 +130,7 @@ const GsToDoMode = (props: {
   };
 
   const DoTimerCount = (mode: number) => {
-    console.log ('DoTimerCount:',mode,datestat.counterId)
+    console.log("DoTimerCount:", mode, datestat.counterId);
 
     if (datestat.counterId[mode]) {
       for (let i = 0; i < datestat.massInt[mode].length - 1; i++) {
@@ -156,8 +145,8 @@ const GsToDoMode = (props: {
         return el !== null;
       });
 
-      //if (massfaz[mode].fazaSist > 0) 
-        datestat.counterId[mode]--; // счётчик
+      //if (massfaz[mode].fazaSist > 0)
+      datestat.counterId[mode]--; // счётчик
 
       if (!datestat.counterId[mode]) {
         console.log("Нужно послать КУ на", mode + 1); // остановка и очистка счётчика
@@ -258,6 +247,7 @@ const GsToDoMode = (props: {
       setTrigger(!trigger);
     } else {
       // принудительное закрытие
+      console.log("Принудительное закрытие!!!");
       ForcedClearInterval(); // обнуление всех интервалов и остановка всех таймеров
       for (let i = 0; i < massfaz.length; i++) {
         if (massfaz[i].runRec === 2) {
@@ -307,23 +297,17 @@ const GsToDoMode = (props: {
 
         console.log(mode + 1 + "-й светофор пошёл", datestat.counterId);
       } else {
-        
-        SendSocketDispatch(debug, ws, fazer.idevice, 9, 9);
+        SendSocketDispatch(debug, ws, fazer.idevice, 9, 9); // КУ
         for (let i = 0; i < massInt[mode].length; i++) {
           if (massInt[mode][i]) {
             clearInterval(massInt[mode][i]);
             massInt[mode][i] = null;
           }
-          // if (datestat.massInt[mode][i]) {
-          //   clearInterval(datestat.massInt[mode][i]);
-          //   datestat.massInt[mode][i] = null;
-          // }
         }
         timerId[mode] = null;
-        //datestat.timerId[mode] = null;
         fazer.runRec = DEMO ? 5 : 1; // финиш
         fazer.fazaSist = -1;
-        datestat.counterId[mode] = 1
+        datestat.counterId[mode] = 1;
 
         console.log(mode + 1 + "-й светофор закрыт", datestat.counterId);
       }

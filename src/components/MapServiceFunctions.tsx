@@ -12,7 +12,7 @@ import { MdOpenWith } from "react-icons/md";
 
 import { YMapsApi } from "react-yandex-maps";
 
-import { Pointer } from "./../App";
+import { Pointer, Fazer, debug } from "./../App";
 
 import { FullscreenControl, GeolocationControl } from "react-yandex-maps";
 import { RulerControl, SearchControl } from "react-yandex-maps";
@@ -278,6 +278,44 @@ export const NameMode = () => {
   return nameMode;
 };
 //=== GsToDoMode ===================================
+const MakeMaskFaz = (
+  i: number,
+  iDx: number,
+  map: any,
+  massdk: any,
+  newMode: number
+) => {
+  //let iDx = props.massMem[i];
+  let maskFaz: Fazer = {
+    kolOpen: 0,
+    runRec: 0,
+    idx: iDx,
+    id: map.tflight[iDx].ID,
+    coordinates: [],
+    faza: map.routes[newMode].listTL[i].phase,
+    fazaSist: -1,
+    fazaSistOld: -1,
+    phases: massdk[iDx].phases,
+    idevice: map.tflight[iDx].idevice,
+    name: massdk[iDx].nameCoordinates,
+    starRec: false,
+    img: [],
+  };
+  if (debug) maskFaz.fazaSist = 1;
+  maskFaz.coordinates[0] = map.tflight[iDx].points.Y;
+  maskFaz.coordinates[1] = map.tflight[iDx].points.X;
+  if (
+    map.tflight[maskFaz.idx].points.X !==
+      map.routes[newMode].listTL[i].point.X ||
+    map.tflight[maskFaz.idx].points.Y !== map.routes[newMode].listTL[i].point.Y
+  )
+    maskFaz.starRec = true; // было изменение координат
+  if (!maskFaz.phases.length) {
+    maskFaz.img = [null, null, null];
+  } else maskFaz.img = massdk[maskFaz.idx].phSvg;
+  return maskFaz;
+};
+
 export const OutputFazaImg = (img: any, i: number) => {
   let widthHeight = 60;
   if (!img) widthHeight = 30;
