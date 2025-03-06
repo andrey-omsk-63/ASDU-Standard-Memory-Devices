@@ -77,7 +77,7 @@ export let massDk: Pointer[] = [];
 
 export interface Fazer {
   kolOpen: number;
-  runRec: boolean;
+  runRec: number; // 0-начало 1-финиш 2-актив 3-хз 4-активДемо 5-финишДемо
   idx: number;
   id: number;
   coordinates: Array<number>;
@@ -94,7 +94,7 @@ export let massFaz: Fazer[] = [];
 
 let maskFaz: Fazer = {
   kolOpen: 0,
-  runRec: false,
+  runRec: 0, // 0-начало 1-финиш 2-актив 3-хз 4-активДемо 5-финишДемо
   idx: 0,
   id: -1,
   coordinates: [],

@@ -18,12 +18,10 @@ import { FullscreenControl, GeolocationControl } from "react-yandex-maps";
 import { RulerControl, SearchControl } from "react-yandex-maps";
 import { TrafficControl, TypeSelector, ZoomControl } from "react-yandex-maps";
 
-import {
-  //styleAppSt02, styleAppSt03,
-  styleModalEnd,
-} from "./MainMapStyle";
-import { searchControl } from "./MainMapStyle";
-import { styleSetPK04 } from "./MainMapStyle";
+import { styleModalEnd } from "./MainMapStyle";
+import { searchControl, styleSetPK04 } from "./MainMapStyle";
+
+import { styletSelectTitle } from "./GsComponents/GsComponentsStyle";
 
 const handleKey = (event: any) => {
   if (event.key === "Enter") event.preventDefault();
@@ -253,8 +251,7 @@ export const getMultiRouteOptions = () => {
 export const PutItInAFrame = (
   ymaps: YMapsApi | null,
   mapp: any,
-  massCoord: Array<Array<number>>,
-  
+  massCoord: Array<Array<number>>
 ) => {
   if (ymaps) {
     let multiRout = new ymaps.multiRouter.MultiRoute(
@@ -348,6 +345,29 @@ export const HeaderTabl = () => {
       {StrokaHeader(3.6, "Состояние")}
       {StrokaHeader(2.1, "Фаза")}
       {StrokaHeader(4.5, "ДК")}
+    </Grid>
+  );
+};
+
+export const HeadingTabl = (DEMO: boolean, map: any, newMode: number) => {
+  return (
+    <Grid container sx={{}}>
+      <Grid item xs sx={styletSelectTitle}>
+        Режим:{" "}
+        <em>
+          <b>{map.routes[newMode].description}</b>
+        </em>
+        {DEMO && (
+          <>
+            <Box sx={{ color: "background.paper", display: "inline-block" }}>
+              {"."}
+            </Box>
+            <Box sx={{ fontSize: 15, color: "red", display: "inline-block" }}>
+              {" ("}демонстрационный{")"}
+            </Box>
+          </>
+        )}
+      </Grid>
     </Grid>
   );
 };

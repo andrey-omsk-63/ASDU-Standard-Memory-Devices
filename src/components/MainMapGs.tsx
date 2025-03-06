@@ -214,7 +214,7 @@ const MainMapGs = (props: {
             NewPointCenter(masscoord);
           }
           if (datestat.toDoMode) {
-            massfaz[nomInMass].runRec = true; // включить исполнение
+            massfaz[nomInMass].runRec = datestat.demo ? 4 : 2; // включить исполнение
             dispatch(massfazCreate(massfaz));
             setChangeFaz(!changeFaz);
           }
@@ -282,14 +282,14 @@ const MainMapGs = (props: {
       if (nomInMap < 0) {
         // нажали правой кнопкой в чистое поле
         for (let i = 0; i < massMem.length; i++) {
-          if (massfaz[i].runRec) {
+          if (massfaz[i].runRec === 2) {
             nomInMap = i;
             break;
           }
         }
       }
       if (nomInMap >= 0) {
-        massfaz[nomInMap].runRec = false;
+        massfaz[nomInMap].runRec = datestat.demo ? 5 : 1; // выключение
         dispatch(massfazCreate(massfaz));
         setChangeFaz(!changeFaz);
         setRisovka(true);

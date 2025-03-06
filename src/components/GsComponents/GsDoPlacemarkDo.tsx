@@ -77,7 +77,6 @@ const GsDoPlacemarkDo = (props: {
             if (FAZASIST > 0 && FAZASIST < 9 && massfaz[i].img) {
               if (FAZASIST <= massfaz[i].img.length)
                 // fazaImg = massfaz[i].img[FAZASIST - 1];
-
                 fazaImg = massfaz[i].img[FAZA - 1]; // костыль
 
               massfaz[i].fazaSistOld = FAZASIST;
@@ -295,9 +294,7 @@ const GsDoPlacemarkDo = (props: {
           (FAZASIST === 9 && massfaz[nomInMassfaz].fazaSistOld < 0) ||
           (lengMem > 2 && typeVert === 2) ||
           (lengMem > 2 && typeVert === 1 && !fazaImg)
-            ? {
-                iconLayout: createChipsLayout(calculate, mappp.tlsost.num),
-              }
+            ? { iconLayout: createChipsLayout(calculate, mappp.tlsost.num) }
             : GetPointOptions1(fazaImg)
         }
         modules={["geoObject.addon.balloon", "geoObject.addon.hint"]}

@@ -125,8 +125,9 @@ export const styleStrokaTabl01 = {
   maxHeight: "21px",
   minHeight: "21px",
   padding: "2px 8px 0px 8px",
-  bgcolor: "#BAE186", // салатовый
-  border: "1px solid #93D145", // тёмно-салатовый
+  bgcolor: "#82E94A", // ярко-салатовый
+  //bgcolor: "#BAE186", // салатовый
+  border: "1px solid #d4d4d4", // серый
   borderRadius: 1,
   color: "black",
   textTransform: "unset !important",
@@ -157,13 +158,12 @@ export const styleStrTablImg01 = {
   minWidth: "33px",
   maxHeight: "45px",
   minHeight: "45px",
-  //bgcolor: "#BAE186", // салатовый
-  border: "1px solid #d4d4d4", // серый
   bgcolor: "#E6F5D6", // светло-салатовый
+  border: "1px solid #d4d4d4", // серый
   borderRadius: 1,
   color: "black",
   textTransform: "unset !important",
-  boxShadow: 15,
+  boxShadow: 1,
 };
 
 export const styleStrTablImg02 = {
@@ -171,13 +171,12 @@ export const styleStrTablImg02 = {
   minWidth: "33px",
   maxHeight: "45px",
   minHeight: "45px",
-  //bgcolor: "#E6F5D6", // светло-салатовый
-  bgcolor: "background.paper",
+  bgcolor: "#d0f0c0", // зелёный чай
   border: "1px solid #d4d4d4", // серый
   borderRadius: 1,
   color: "black",
   textTransform: "unset !important",
-  boxShadow: 1,
+  boxShadow: 15,
 };
 
 export const styleStrokaTakt = {
