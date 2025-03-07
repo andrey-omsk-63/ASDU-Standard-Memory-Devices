@@ -9,16 +9,17 @@ import Button from "@mui/material/Button";
 
 import GsFieldOfMiracles from "./GsFieldOfMiracles";
 
-import { Fazer } from "./../../App";
+//import { Fazer } from "./../../App";
 
 import { OutputFazaImg, OutputVertexImg } from "../MapServiceFunctions";
 import { ExitCross, HeaderTabl, HeadingTabl } from "../MapServiceFunctions";
+import { MakeMaskFaz } from "../MapServiceFunctions";
 
 import { SendSocketRoute, SendSocketDispatch } from "../MapSocketFunctions";
 
 import { styleModalMenu, styleStrTablImg01 } from "./GsComponentsStyle";
 import { styleToDoMode, styleStrokaTabl01 } from "./GsComponentsStyle";
-import { styleStrokaTabl03 } from "./GsComponentsStyle";
+import { styleStrokaTabl03, styleStrokaTabl04 } from "./GsComponentsStyle";
 import { styleStrokaTabl02, styleStrTablImg02 } from "./GsComponentsStyle";
 import { styleStrokaTabl10 } from "./GsComponentsStyle";
 import { styleToDo01, styleToDo02 } from "./GsComponentsStyle";
@@ -70,40 +71,6 @@ const GsToDoMode = (props: {
   const [trigger, setTrigger] = React.useState(true);
   const [flagPusk, setFlagPusk] = React.useState(false);
 
-  const MakeMaskFaz = (i: number) => {
-    let iDx = props.massMem[i];
-    let maskFaz: Fazer = {
-      kolOpen: 0,
-      runRec: 0,
-      idx: iDx,
-      id: map.tflight[iDx].ID,
-      coordinates: [],
-      faza: map.routes[newMode].listTL[i].phase,
-      //faza: 0,
-      fazaSist: -1,
-      fazaSistOld: -1,
-      phases: massdk[iDx].phases,
-      idevice: map.tflight[iDx].idevice,
-      name: massdk[iDx].nameCoordinates,
-      starRec: false,
-      img: [],
-    };
-    if (debug) maskFaz.fazaSist = 1;
-    maskFaz.coordinates[0] = map.tflight[iDx].points.Y;
-    maskFaz.coordinates[1] = map.tflight[iDx].points.X;
-    if (
-      map.tflight[maskFaz.idx].points.X !==
-        map.routes[newMode].listTL[i].point.X ||
-      map.tflight[maskFaz.idx].points.Y !==
-        map.routes[newMode].listTL[i].point.Y
-    )
-      maskFaz.starRec = true; // было изменение координат
-    if (!maskFaz.phases.length) {
-      maskFaz.img = [null, null, null];
-    } else maskFaz.img = massdk[maskFaz.idx].phSvg;
-    return maskFaz;
-  };
-
   const CloseVertex = (idx: number) => {
     if (!DEMO) {
       SendSocketDispatch(debug, ws, massfaz[idx].idevice, 9, 9);
@@ -126,12 +93,9 @@ const GsToDoMode = (props: {
 
     dispatch(statsaveCreate(datestat));
     dispatch(massfazCreate(massfaz));
-    //FindEnd();
   };
 
   const DoTimerCount = (mode: number) => {
-    console.log("DoTimerCount:", mode, datestat.counterId);
-
     if (datestat.counterId[mode]) {
       for (let i = 0; i < datestat.massInt[mode].length - 1; i++) {
         if (datestat.massInt[mode][i]) {
@@ -145,8 +109,7 @@ const GsToDoMode = (props: {
         return el !== null;
       });
 
-      //if (massfaz[mode].fazaSist > 0)
-      datestat.counterId[mode]--; // счётчик
+      if (massfaz[mode].fazaSist > 0) datestat.counterId[mode]--; // счётчик
 
       if (!datestat.counterId[mode]) {
         console.log("Нужно послать КУ на", mode + 1); // остановка и очистка счётчика
@@ -157,7 +120,6 @@ const GsToDoMode = (props: {
           }
         }
         datestat.timerId[mode] = null;
-        //RemovalFromTheRoute();
         CloseVertex(mode); // закрыть светофор
       }
       dispatch(statsaveCreate(datestat));
@@ -177,7 +139,7 @@ const GsToDoMode = (props: {
     nomIllum = -1;
 
     for (let i = 0; i < props.massMem.length; i++) {
-      massfaz.push(MakeMaskFaz(i));
+      massfaz.push(MakeMaskFaz(i, props.massMem[i], map, massdk, newMode));
       timerId.push(null);
       datestat.counterId.push(intervalFaza); // длительность фазы ДУ
       datestat.timerId.push(null); // массив времени отправки команд
@@ -330,7 +292,6 @@ const GsToDoMode = (props: {
     for (let i = 0; i < massfaz.length; i++) {
       let runREC = JSON.parse(JSON.stringify(massfaz[i].runRec));
       let bull = runREC === 2 || runREC === 4 ? " •" : " ";
-
       let hostt =
         window.location.origin.slice(0, 22) === "https://localhost:3000"
           ? "https://localhost:3000/"
@@ -363,6 +324,25 @@ const GsToDoMode = (props: {
       let illumImg =
         runREC === 4 || runREC !== 2 ? styleStrTablImg01 : styleStrTablImg02;
       let finish = runREC === 4 || runREC === 2 ? true : false;
+      let hinter = map.tflight[massfaz[i].idx].tlsost.description;
+
+      const LabelVertex = (props: { i: number }) => {
+        const [hint, setHint] = React.useState(false);
+
+        return (
+          <>
+            <Button
+              sx={illumImg}
+              onMouseEnter={() => setHint(true)}
+              onMouseLeave={() => setHint(false)}
+              onClick={() => ClickVertex(i)}
+            >
+              {OutputVertexImg(host)}
+            </Button>
+            {hint && <Box sx={styleStrokaTabl04}>{hinter}</Box>}
+          </>
+        );
+      };
 
       resStr.push(
         <Grid key={i} container sx={styleStrokaTabl03}>
@@ -373,13 +353,7 @@ const GsToDoMode = (props: {
           </Grid>
           <GsFieldOfMiracles finish={finish} idx={i} func={ClickAddition} />
           <Grid item xs={1.0} sx={{}}>
-            {!toDoMode ? (
-              <>{OutputVertexImg(host)}</>
-            ) : (
-              <Button sx={illumImg} onClick={() => ClickVertex(i)}>
-                {OutputVertexImg(host)}
-              </Button>
-            )}
+            {!toDoMode ? <>{OutputVertexImg(host)}</> : <LabelVertex i={i} />}
           </Grid>
           <Grid item xs={0.2} sx={styleToDo02}>
             {bull}

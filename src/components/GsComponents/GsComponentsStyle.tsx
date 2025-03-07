@@ -153,6 +153,15 @@ export const styleStrokaTabl03 = {
   textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
 };
 
+export const styleStrokaTabl04 = {
+  position: "absolute",
+  left: "12px",
+  marginTop: "-1px",
+  fontSize: 12.0,
+  color: "#8D9194", // серый
+  textShadow: "0px 0px 0px rgba(0,0,0,0.3)",
+};
+
 export const styleStrTablImg01 = {
   maxWidth: "33px",
   minWidth: "33px",

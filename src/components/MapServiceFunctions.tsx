@@ -278,7 +278,7 @@ export const NameMode = () => {
   return nameMode;
 };
 //=== GsToDoMode ===================================
-const MakeMaskFaz = (
+export const MakeMaskFaz = (
   i: number,
   iDx: number,
   map: any,

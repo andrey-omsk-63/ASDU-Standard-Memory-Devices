@@ -314,11 +314,7 @@ const App = () => {
           break;
         case "getPhases":
           for (let i = 0; i < massdk.length; i++) {
-            if (
-              // massdk[i].region.toString() === data.pos.region &&
-              // massdk[i].area.toString() === data.pos.area &&
-              massdk[i].ID === data.pos.id
-            ) {
+            if (massdk[i].ID === data.pos.id) {
               if (data.images) {
                 if (data.images.length) {
                   for (let j = 0; j < data.images.length; j++) {
@@ -329,6 +325,12 @@ const App = () => {
                   dispatch(massdkCreate(massdk));
                 }
                 break;
+              } else {
+                massdk[i].phSvg[0] = imgFaza; // костыль
+                massdk[i].phSvg[1] = null;
+                massdk[i].phSvg[2] = imgFaza;
+                massdk[i].phSvg[3] = null;
+                massdk[i].phSvg[4] = imgFaza;
               }
             }
           }
