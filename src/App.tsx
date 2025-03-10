@@ -284,6 +284,7 @@ const App = () => {
           setTrigger(!trigger);
           break;
         case "phases":
+          //console.log("phases:", data);
           let flagChange = false;
           for (let i = 0; i < data.phases.length; i++) {
             for (let j = 0; j < massfaz.length; j++) {

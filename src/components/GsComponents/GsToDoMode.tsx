@@ -11,16 +11,17 @@ import GsFieldOfMiracles from "./GsFieldOfMiracles";
 
 //import { Fazer } from "./../../App";
 
-import { OutputFazaImg, OutputVertexImg } from "../MapServiceFunctions";
+import { OutputFazaImg, MakeMaskFaz } from "../MapServiceFunctions";
 import { ExitCross, HeaderTabl, HeadingTabl } from "../MapServiceFunctions";
-import { MakeMaskFaz } from "../MapServiceFunctions";
+//import { MakeMaskFaz } from "../MapServiceFunctions";
 
 import { SendSocketRoute, SendSocketDispatch } from "../MapSocketFunctions";
 
-import { styleModalMenu, styleStrTablImg01 } from "./GsComponentsStyle";
+import { CLINCH, BadCODE } from "./../MapConst";
+
 import { styleToDoMode, styleStrokaTabl01 } from "./GsComponentsStyle";
-import { styleStrokaTabl03, styleStrokaTabl04 } from "./GsComponentsStyle";
-import { styleStrokaTabl02, styleStrTablImg02 } from "./GsComponentsStyle";
+import { styleStrokaTabl03, styleModalMenu } from "./GsComponentsStyle";
+import { styleStrokaTabl02 } from "./GsComponentsStyle";
 import { styleStrokaTabl10 } from "./GsComponentsStyle";
 import { styleToDo01, styleToDo02 } from "./GsComponentsStyle";
 
@@ -41,6 +42,8 @@ const GsToDoMode = (props: {
   funcHelper: any;
   trigger: boolean;
   changeFaz: boolean;
+  stop: number; // номер останавливаемого светофора в massfaz
+  funcStop: Function; // функция возврата остановки светофора
 }) => {
   //== Piece of Redux ======================================
   const map = useSelector((state: any) => {
@@ -61,7 +64,7 @@ const GsToDoMode = (props: {
   });
   const debug = datestat.debug;
   const ws = datestat.ws;
-  const DEMO = false; // datestat.demo;
+  const DEMO = datestat.demo;
   const dispatch = useDispatch();
   let intervalFaza = datestat.intervalFaza; // Задаваемая длительность фазы ДУ (сек)
   let intervalFazaDop = datestat.intervalFazaDop; // Увеличениение длительности фазы ДУ (сек)
@@ -73,10 +76,12 @@ const GsToDoMode = (props: {
 
   const CloseVertex = (idx: number) => {
     if (!DEMO) {
-      SendSocketDispatch(debug, ws, massfaz[idx].idevice, 9, 9);
-      let massIdevice: Array<number> = [];
-      massIdevice.push(massfaz[idx].idevice);
-      SendSocketRoute(debug, ws, massIdevice, false); // завершенение режима
+      let idevice = JSON.parse(JSON.stringify(massfaz[idx].idevice))
+      SendSocketDispatch(debug, ws, massfaz[idx].idevice, 9, 9); // КУ
+      //SendSocketDispatch(debug, ws, idevice, 4, 0); // закрытие id
+      setTimeout(() => {
+        SendSocketDispatch(debug, ws, idevice, 4, 0); // закрытие id
+      }, 1000);
     }
     for (let i = 0; i < massInt[idx].length; i++) {
       if (massInt[idx][i]) {
@@ -109,8 +114,15 @@ const GsToDoMode = (props: {
         return el !== null;
       });
 
-      if (massfaz[mode].fazaSist > 0) datestat.counterId[mode]--; // счётчик
+      let statusVertex = map.tflight[massfaz[mode].idx].tlsost.num;
+      let clinch = CLINCH.indexOf(statusVertex) < 0 ? false : true;
+      let badCode = BadCODE.indexOf(statusVertex) < 0 ? false : true;
 
+      if (massfaz[mode].fazaSist > 0) {
+        if (debug || DEMO) {
+          datestat.counterId[mode]--; // счётчик
+        } else if (!clinch && !badCode) datestat.counterId[mode]--; // счётчик
+      }
       if (!datestat.counterId[mode]) {
         console.log("Нужно послать КУ на", mode + 1); // остановка и очистка счётчика
         for (let i = 0; i < datestat.massInt[mode].length; i++) {
@@ -126,6 +138,16 @@ const GsToDoMode = (props: {
       needRend = true; // нужен ререндеринг
       setFlagPusk(!flagPusk);
     }
+  };
+
+  const StopSendFaza = (idx: number) => {
+    for (let i = 0; i < massInt[idx].length; i++) {
+      if (massInt[idx][i]) {
+        clearInterval(massInt[idx][i]);
+        massInt[idx][i] = null;
+      }
+    }
+    timerId[idx] = null;
   };
 
   //=== инициализация ======================================
@@ -152,6 +174,19 @@ const GsToDoMode = (props: {
     dispatch(massfazCreate(massfaz));
     dispatch(statsaveCreate(datestat));
   }
+  if (props.stop >= 0) {
+    //StopSendFaza(props.stop); // остановить отправку фазы
+
+    // for (let i = 0; i < massInt[props.stop].length; i++) {
+    //   if (massInt[props.stop][i]) {
+    //     clearInterval(massInt[props.stop][i]);
+    //     massInt[props.stop][i] = null;
+    //   }
+    // }
+    // timerId[props.stop] = null;
+    CloseVertex(props.stop); // закрыть светофор
+    props.funcStop(-1);
+  }
   //========================================================
   const ForcedClearInterval = () => {
     // сброс таймеров отправки фаз
@@ -168,15 +203,17 @@ const GsToDoMode = (props: {
     }
     // сброс таймеров счётчиков длительности фаз
     for (let i = 0; i < datestat.timerId.length; i++) {
-      if (datestat.timerId[i]) {
-        for (let j = 0; j < datestat.massInt[i].length; j++) {
-          if (datestat.massInt[i][j]) {
-            clearInterval(datestat.massInt[i][j]);
-            datestat.massInt[i][j] = null;
-          }
-        }
-        datestat.timerId[i] = null;
-      }
+      if (datestat.timerId[i])
+        // {
+        StopSendFaza(i);
+      // for (let j = 0; j < datestat.massInt[i].length; j++) {
+      //   if (datestat.massInt[i][j]) {
+      //     clearInterval(datestat.massInt[i][j]);
+      //     datestat.massInt[i][j] = null;
+      //   }
+      // }
+      // datestat.timerId[i] = null;
+      //}
     }
     dispatch(statsaveCreate(datestat));
   };
@@ -246,7 +283,6 @@ const GsToDoMode = (props: {
         timerId[mode] = setInterval(() => DoTimerId(mode), 60000);
         massInt[mode].push(timerId[mode]);
         fazer.runRec = DEMO ? 4 : 2; // активирование
-
         // запуск таймеров счётчиков длительности фаз
         if (intervalFaza) {
           datestat.timerId[mode] = setInterval(() => DoTimerCount(mode), 1000);
@@ -259,30 +295,23 @@ const GsToDoMode = (props: {
 
         console.log(mode + 1 + "-й светофор пошёл", datestat.counterId);
       } else {
-        SendSocketDispatch(debug, ws, fazer.idevice, 9, 9); // КУ
-        for (let i = 0; i < massInt[mode].length; i++) {
-          if (massInt[mode][i]) {
-            clearInterval(massInt[mode][i]);
-            massInt[mode][i] = null;
-          }
-        }
-        timerId[mode] = null;
-        fazer.runRec = DEMO ? 5 : 1; // финиш
-        fazer.fazaSist = -1;
-        datestat.counterId[mode] = 1;
+        CloseVertex(mode); // закрыть светофор
 
-        console.log(mode + 1 + "-й светофор закрыт", datestat.counterId);
+        // SendSocketDispatch(debug, ws, fazer.idevice, 9, 9); // КУ
+        // StopSendFaza(mode); // остановить отправку фазы
+        // fazer.runRec = DEMO ? 5 : 1; // финиш
+        // fazer.fazaSist = -1;
+        // datestat.counterId[mode] = 1;
+
+        // console.log(mode + 1 + "-й светофор закрыт", datestat.counterId);
       }
       dispatch(massfazCreate(massfaz));
       ClickKnop(mode);
     };
 
     const ClickAddition = (idx: number) => {
-      for (let i = 0; i < datestat.counterId.length - 1; i++) {
+      for (let i = 0; i < datestat.counterId.length; i++)
         if (i === idx) datestat.counterId[i] += intervalFazaDop;
-        if (i > idx && datestat.counterId[i] < datestat.counterId[idx])
-          datestat.counterId[i] = datestat.counterId[i - 1] + 1;
-      }
       dispatch(statsaveCreate(datestat));
       setTrigger(!trigger);
     };
@@ -292,57 +321,14 @@ const GsToDoMode = (props: {
     for (let i = 0; i < massfaz.length; i++) {
       let runREC = JSON.parse(JSON.stringify(massfaz[i].runRec));
       let bull = runREC === 2 || runREC === 4 ? " •" : " ";
-      let hostt =
-        window.location.origin.slice(0, 22) === "https://localhost:3000"
-          ? "https://localhost:3000/"
-          : "./";
-      let host = hostt + "18.svg";
-      if (DEMO && debug) {
-        host = hostt + "1.svg";
-        if (bull === " •" && runREC === 2) host = hostt + "2.svg";
-        if (bull !== " •" && runREC === 5) host = hostt + "2.svg";
-      }
-      if (!debug) {
-        let num = map.tflight[massfaz[i].idx].tlsost.num.toString();
-        if (DEMO) {
-          num = "1";
-          if (bull === " •" && runREC === 2) num = "2";
-          if (bull !== " •" && runREC === 5) num = "2";
-        }
-        host =
-          window.location.origin + "/free/img/trafficLights/" + num + ".svg";
-      }
-
       let takt: number | string = massfaz[i].faza;
       let pad = 1.2;
       let fazaImg: null | string = null;
       massfaz[i].img.length > massfaz[i].faza &&
         (fazaImg = massfaz[i].img[massfaz[i].faza - 1]);
       debug && (fazaImg = datestat.phSvg[massfaz[i].faza - 1]); // для отладки
-
       let illum = nomIllum === i ? styleStrokaTabl01 : styleStrokaTabl02;
-      let illumImg =
-        runREC === 4 || runREC !== 2 ? styleStrTablImg01 : styleStrTablImg02;
       let finish = runREC === 4 || runREC === 2 ? true : false;
-      let hinter = map.tflight[massfaz[i].idx].tlsost.description;
-
-      const LabelVertex = (props: { i: number }) => {
-        const [hint, setHint] = React.useState(false);
-
-        return (
-          <>
-            <Button
-              sx={illumImg}
-              onMouseEnter={() => setHint(true)}
-              onMouseLeave={() => setHint(false)}
-              onClick={() => ClickVertex(i)}
-            >
-              {OutputVertexImg(host)}
-            </Button>
-            {hint && <Box sx={styleStrokaTabl04}>{hinter}</Box>}
-          </>
-        );
-      };
 
       resStr.push(
         <Grid key={i} container sx={styleStrokaTabl03}>
@@ -351,10 +337,12 @@ const GsToDoMode = (props: {
               {massfaz[i].id}
             </Button>
           </Grid>
-          <GsFieldOfMiracles finish={finish} idx={i} func={ClickAddition} />
-          <Grid item xs={1.0} sx={{}}>
-            {!toDoMode ? <>{OutputVertexImg(host)}</> : <LabelVertex i={i} />}
-          </Grid>
+          <GsFieldOfMiracles
+            finish={finish}
+            idx={i}
+            func={ClickAddition}
+            ClVert={ClickVertex}
+          />
           <Grid item xs={0.2} sx={styleToDo02}>
             {bull}
           </Grid>

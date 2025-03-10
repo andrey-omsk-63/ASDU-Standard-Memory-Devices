@@ -6,6 +6,8 @@ import { massfazCreate } from "../../redux/actions";
 
 import { Placemark, YMapsApi } from "react-yandex-maps";
 
+import { CLINCH, BadCODE } from "./../MapConst";
+
 //import { GetPointData } from "../MapServiceFunctions";
 
 let FAZASIST = -1;
@@ -119,10 +121,10 @@ const GsDoPlacemarkDo = (props: {
           ? "https://localhost:3000/phases/"
           : "./phases/";
       host = debug
-        ? // ? hostt + FAZASIST + ".svg"
-          // : "/file/static/img/buttons/" + FAZASIST + ".svg";
-          hostt + FAZA + ".svg"
-        : "/file/static/img/buttons/" + FAZA + ".svg"; // костыль
+        ? hostt + FAZASIST + ".svg"
+        : "/file/static/img/buttons/" + FAZASIST + ".svg";
+      //   hostt + FAZA + ".svg"
+      // : "/file/static/img/buttons/" + FAZA + ".svg"; // костыль
     }
 
     return host;
@@ -223,6 +225,7 @@ const GsDoPlacemarkDo = (props: {
       let Hoster = hoster;
       let imger: any = "";
       let FZSIST = FAZASIST;
+
       if (FAZASIST === 9 || !FAZASIST) {
         FZSIST = massfaz[nomInMassfaz].fazaSistOld;
         Hoster =
@@ -242,7 +245,6 @@ const GsDoPlacemarkDo = (props: {
             : window.location.origin + "/free/img/" + FZSIST + ".jpg";
         }
       }
-      //console.log('###:')
 
       return {
         // данный тип макета
@@ -282,6 +284,10 @@ const GsDoPlacemarkDo = (props: {
     };
   };
 
+  let statusVertex = map.tflight[id].tlsost.num;
+  let clinch = CLINCH.indexOf(statusVertex) < 0 ? false : true;
+  let badCode = BadCODE.indexOf(statusVertex) < 0 ? false : true;
+
   const MemoPlacemarkDo = React.useMemo(
     () => (
       <Placemark
@@ -293,7 +299,10 @@ const GsDoPlacemarkDo = (props: {
           FAZASIST <= 0 ||
           (FAZASIST === 9 && massfaz[nomInMassfaz].fazaSistOld < 0) ||
           (lengMem > 2 && typeVert === 2) ||
-          (lengMem > 2 && typeVert === 1 && !fazaImg)
+          (lengMem > 2 && typeVert === 1 && !fazaImg) 
+           ||
+           clinch ||
+           badCode
             ? { iconLayout: createChipsLayout(calculate, mappp.tlsost.num) }
             : GetPointOptions1(fazaImg)
         }

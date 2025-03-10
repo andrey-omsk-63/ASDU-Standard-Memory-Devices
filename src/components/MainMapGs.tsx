@@ -23,6 +23,7 @@ import { StrokaMenuGlob, HelpAdd, YandexServices } from "./MapServiceFunctions";
 import { StrokaMenuDop } from "./MapServiceFunctions";
 
 import { SendSocketUpdateRoute } from "./MapSocketFunctions";
+import { SendSocketDispatch } from "./MapSocketFunctions";
 
 import { YMapsModul, MyYandexKey } from "./MapConst";
 
@@ -79,6 +80,7 @@ const MainMapGs = (props: {
   const debug = datestat.debug;
   const ws = datestat.ws;
   const dispatch = useDispatch();
+  const DEMO = datestat.demo;
   //===========================================================
   const [flagPusk, setFlagPusk] = React.useState(false);
   const [needSetup, setNeedSetup] = React.useState(false);
@@ -91,6 +93,7 @@ const MainMapGs = (props: {
   const [risovka, setRisovka] = React.useState(false);
   const [trigger, setTrigger] = React.useState(false);
   const [changeFaz, setChangeFaz] = React.useState(false);
+  const [stopCount, setStopCount] = React.useState(-1);
   const [ymaps, setYmaps] = React.useState<YMapsApi | null>(null);
   const mapp = React.useRef<any>(null);
 
@@ -163,6 +166,16 @@ const MainMapGs = (props: {
       }
       bound && PutItInAFrame(ymaps, mapp, massCoord);
     }
+  };
+
+  const StatusQuo = () => {
+    massMem = [];
+    massCoord = [];
+    newMode = -1;
+    datestat.create = true;
+    dispatch(statsaveCreate(datestat));
+    ymaps && addRoute(ymaps, false); // перерисовка связей
+    setTrigger(!trigger);
   };
 
   const SetFragments = (idx: number) => {
@@ -289,7 +302,10 @@ const MainMapGs = (props: {
         }
       }
       if (nomInMap >= 0) {
-        massfaz[nomInMap].runRec = datestat.demo ? 5 : 1; // выключение
+        // massfaz[nomInMap].runRec = datestat.demo ? 5 : 1; // выключение
+        // massfaz[nomInMap].fazaSist = -1;
+        // !DEMO && SendSocketDispatch(debug, ws, massfaz[nomInMap].idevice, 9, 9); // КУ
+        setStopCount(nomInMap) // запрос на остановку отправки фазы
         dispatch(massfazCreate(massfaz));
         setChangeFaz(!changeFaz);
         setRisovka(true);
@@ -468,20 +484,40 @@ const MainMapGs = (props: {
       </Box>
     );
   };
+  //=== Закрытие или перезапуск вкладки ====================
+  function removePlayerFromGame() {
+    throw new Error("Функция не реализована");
+  }
 
+  const Closing = () => {
+    for (let i = 0; i < massfaz.length; i++) {
+      if (massfaz[i].runRec === 2)
+        !DEMO && SendSocketDispatch(debug, ws, massfaz[i].idevice, 9, 9);
+    }
+  };
+
+  const handleTabClosing = () => {
+    Closing();
+    removePlayerFromGame();
+  };
+
+  const alertUser = (event: any) => {
+    Closing();
+  };
+
+  React.useEffect(() => {
+    window.addEventListener("beforeunload", alertUser);
+    window.addEventListener("unload", handleTabClosing);
+
+    return () => {
+      window.removeEventListener("beforeunload", alertUser);
+      window.removeEventListener("unload", handleTabClosing);
+    };
+  });
+  //========================================================
   let mapState: any = {
     center: pointCenter,
     zoom: zoom,
-  };
-
-  const StatusQuo = () => {
-    massMem = [];
-    massCoord = [];
-    newMode = -1;
-    datestat.create = true;
-    dispatch(statsaveCreate(datestat));
-    ymaps && addRoute(ymaps, false); // перерисовка связей
-    setTrigger(!trigger);
   };
 
   return (
@@ -546,6 +582,8 @@ const MainMapGs = (props: {
               funcHelper={SetHelper}
               trigger={props.trigger}
               changeFaz={changeFaz}
+              stop={stopCount}
+              funcStop={setStopCount}
             />
           </Box>
         )}
