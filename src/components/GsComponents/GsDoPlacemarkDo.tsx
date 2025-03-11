@@ -8,8 +8,6 @@ import { Placemark, YMapsApi } from "react-yandex-maps";
 
 import { CLINCH, BadCODE } from "./../MapConst";
 
-//import { GetPointData } from "../MapServiceFunctions";
-
 let FAZASIST = -1;
 let FAZA = -1;
 let nomInMassfaz = -1;
@@ -52,6 +50,10 @@ const GsDoPlacemarkDo = (props: {
   let nomSvg = -1;
   let lengMem = props.massMem.length;
 
+  let statusVertex = mappp.tlsost.num;
+  let clinch = CLINCH.indexOf(statusVertex) < 0 ? false : true;
+  let badCode = BadCODE.indexOf(statusVertex) < 0 ? false : true;
+
   if (lengMem >= 1) {
     pA = props.massMem[0];
     pB = props.massMem[lengMem - 1];
@@ -82,10 +84,6 @@ const GsDoPlacemarkDo = (props: {
                 fazaImg = massfaz[i].img[FAZA - 1]; // костыль
 
               massfaz[i].fazaSistOld = FAZASIST;
-
-              // if (pC >= 0 && lengMem > 2 && typeVert)
-              //   console.log("fazaImg:", id, fazaImg);
-
               dispatch(massfazCreate(massfaz));
             }
           }
@@ -110,11 +108,13 @@ const GsDoPlacemarkDo = (props: {
       host = window.location.origin + "/free/img/trafficLights/" + mpp + ".svg";
     } else if (DEMO) host = hostt + "1.svg";
 
-    // if (pC >= 0 && lengMem > 2 && typeVert === 2) {
-    //   console.log("Hoster:", id, pC, FAZASIST, massfaz);
-    // }
-
-    if (typeVert && pC >= 0 && FAZASIST > 0 && FAZASIST !== 9) {
+    if (
+      typeVert &&
+      pC >= 0 &&
+      FAZASIST > 0 &&
+      FAZASIST !== 9 &&
+      statusVertex !== 1
+    ) {
       // картинка с номером фазы
       let hostt =
         window.location.origin.slice(0, 22) === "https://localhost:3000"
@@ -138,6 +138,7 @@ const GsDoPlacemarkDo = (props: {
     DEMO,
     pC,
     typeVert,
+    statusVertex,
   ]);
 
   const createChipsLayout = React.useCallback(
@@ -284,10 +285,6 @@ const GsDoPlacemarkDo = (props: {
     };
   };
 
-  let statusVertex = map.tflight[id].tlsost.num;
-  let clinch = CLINCH.indexOf(statusVertex) < 0 ? false : true;
-  let badCode = BadCODE.indexOf(statusVertex) < 0 ? false : true;
-
   const MemoPlacemarkDo = React.useMemo(
     () => (
       <Placemark
@@ -299,10 +296,10 @@ const GsDoPlacemarkDo = (props: {
           FAZASIST <= 0 ||
           (FAZASIST === 9 && massfaz[nomInMassfaz].fazaSistOld < 0) ||
           (lengMem > 2 && typeVert === 2) ||
-          (lengMem > 2 && typeVert === 1 && !fazaImg) 
-           ||
-           clinch ||
-           badCode
+          (lengMem > 2 && typeVert === 1 && !fazaImg) ||
+          clinch ||
+          badCode ||
+          statusVertex === 1
             ? { iconLayout: createChipsLayout(calculate, mappp.tlsost.num) }
             : GetPointOptions1(fazaImg)
         }
@@ -325,6 +322,9 @@ const GsDoPlacemarkDo = (props: {
       GetPointOptions1,
       lengMem,
       typeVert,
+      clinch,
+      badCode,
+      statusVertex,
     ]
   );
   return MemoPlacemarkDo;

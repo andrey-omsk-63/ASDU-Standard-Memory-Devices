@@ -94,6 +94,7 @@ const MainMapGs = (props: {
   const [trigger, setTrigger] = React.useState(false);
   const [changeFaz, setChangeFaz] = React.useState(false);
   const [stopCount, setStopCount] = React.useState(-1);
+  const [startCount, setStartCount] = React.useState(-1);
   const [ymaps, setYmaps] = React.useState<YMapsApi | null>(null);
   const mapp = React.useRef<any>(null);
 
@@ -229,6 +230,7 @@ const MainMapGs = (props: {
           if (datestat.toDoMode) {
             massfaz[nomInMass].runRec = datestat.demo ? 4 : 2; // включить исполнение
             dispatch(massfazCreate(massfaz));
+            setStartCount(nomInMass); // запрос на запуск отправки фазы
             setChangeFaz(!changeFaz);
           }
         }
@@ -302,10 +304,7 @@ const MainMapGs = (props: {
         }
       }
       if (nomInMap >= 0) {
-        // massfaz[nomInMap].runRec = datestat.demo ? 5 : 1; // выключение
-        // massfaz[nomInMap].fazaSist = -1;
-        // !DEMO && SendSocketDispatch(debug, ws, massfaz[nomInMap].idevice, 9, 9); // КУ
-        setStopCount(nomInMap) // запрос на остановку отправки фазы
+        setStopCount(nomInMap); // запрос на остановку отправки фазы
         dispatch(massfazCreate(massfaz));
         setChangeFaz(!changeFaz);
         setRisovka(true);
@@ -582,6 +581,8 @@ const MainMapGs = (props: {
               funcHelper={SetHelper}
               trigger={props.trigger}
               changeFaz={changeFaz}
+              start={startCount}
+              funcStart={setStartCount}
               stop={stopCount}
               funcStop={setStopCount}
             />

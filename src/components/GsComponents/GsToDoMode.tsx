@@ -42,6 +42,8 @@ const GsToDoMode = (props: {
   funcHelper: any;
   trigger: boolean;
   changeFaz: boolean;
+  start: number; // номер запускемого светофора в massfaz
+  funcStart: Function; // функция возврата запуска светофора
   stop: number; // номер останавливаемого светофора в massfaz
   funcStop: Function; // функция возврата остановки светофора
 }) => {
@@ -70,19 +72,13 @@ const GsToDoMode = (props: {
   let intervalFazaDop = datestat.intervalFazaDop; // Увеличениение длительности фазы ДУ (сек)
   if (!datestat.counterFaza) intervalFaza = intervalFazaDop = 0; // наличие счётчика длительность фазы ДУ
   let newMode = props.newMode;
+
+  console.log('######:',datestat.counterFaza,intervalFaza, intervalFazaDop)
   //========================================================
   const [trigger, setTrigger] = React.useState(true);
   const [flagPusk, setFlagPusk] = React.useState(false);
 
-  const CloseVertex = (idx: number) => {
-    if (!DEMO) {
-      let idevice = JSON.parse(JSON.stringify(massfaz[idx].idevice))
-      SendSocketDispatch(debug, ws, massfaz[idx].idevice, 9, 9); // КУ
-      //SendSocketDispatch(debug, ws, idevice, 4, 0); // закрытие id
-      setTimeout(() => {
-        SendSocketDispatch(debug, ws, idevice, 4, 0); // закрытие id
-      }, 1000);
-    }
+  const StopSendFaza = (idx: number) => {
     for (let i = 0; i < massInt[idx].length; i++) {
       if (massInt[idx][i]) {
         clearInterval(massInt[idx][i]);
@@ -90,9 +86,20 @@ const GsToDoMode = (props: {
       }
     }
     timerId[idx] = null;
+  };
+
+  const CloseId = (fazer: any) => {
+    if (!DEMO) {
+      SendSocketDispatch(debug, ws, fazer.idevice, 9, 9); // КУ
+      SendSocketDispatch(debug, ws, fazer.idevice, 4, 0); // закрытие id
+    }
+  };
+
+  const CloseVertex = (idx: number) => {
+    StopSendFaza(idx);
     massfaz[idx].runRec = DEMO ? 5 : 1;
     massfaz[idx].fazaSist = -1;
-    datestat.counterId[idx] = 1;
+    datestat.counterId[idx] = -1;
 
     console.log(idx + 1 + "-й светофор закрыт!!!", datestat.counterId);
 
@@ -118,13 +125,15 @@ const GsToDoMode = (props: {
       let clinch = CLINCH.indexOf(statusVertex) < 0 ? false : true;
       let badCode = BadCODE.indexOf(statusVertex) < 0 ? false : true;
 
-      if (massfaz[mode].fazaSist > 0) {
+      if (massfaz[mode].runRec !== 5 && massfaz[mode].runRec !== 1) {
         if (debug || DEMO) {
           datestat.counterId[mode]--; // счётчик
         } else if (!clinch && !badCode) datestat.counterId[mode]--; // счётчик
       }
-      if (!datestat.counterId[mode]) {
-        console.log("Нужно послать КУ на", mode + 1); // остановка и очистка счётчика
+      if (datestat.counterId[mode] <= 0) {
+        // остановка и очистка счётчика
+        console.log("Прекращена отправка с", mode + 1,datestat.counterId);
+
         for (let i = 0; i < datestat.massInt[mode].length; i++) {
           if (datestat.massInt[mode][i]) {
             clearInterval(datestat.massInt[mode][i]);
@@ -132,7 +141,10 @@ const GsToDoMode = (props: {
           }
         }
         datestat.timerId[mode] = null;
-        CloseVertex(mode); // закрыть светофор
+        if (!datestat.counterId[mode]) {
+          CloseId(massfaz[mode]);
+          CloseVertex(mode); // закрыть светофор при достижении сч-ка 0
+        }
       }
       dispatch(statsaveCreate(datestat));
       needRend = true; // нужен ререндеринг
@@ -140,16 +152,44 @@ const GsToDoMode = (props: {
     }
   };
 
-  const StopSendFaza = (idx: number) => {
-    for (let i = 0; i < massInt[idx].length; i++) {
-      if (massInt[idx][i]) {
-        clearInterval(massInt[idx][i]);
-        massInt[idx][i] = null;
+  const DoTimerId = (mode: number) => {
+    let fazer = massfaz[mode];
+
+    console.log("Отправка с " + String(mode + 1) + "-го", timerId);
+
+    !DEMO && SendSocketDispatch(debug, ws, fazer.idevice, 9, fazer.faza);
+    for (let i = 0; i < massInt[mode].length - 1; i++) {
+      if (massInt[mode][i]) {
+        clearInterval(massInt[mode][i]);
+        massInt[mode][i] = null;
       }
     }
-    timerId[idx] = null;
+    massInt[mode] = massInt[mode].filter(function (el: any) {
+      return el !== null;
+    });
   };
 
+  const StartVertex = (mode: number) => {
+    let fazer = massfaz[mode];
+    if (!DEMO) {
+      SendSocketDispatch(debug, ws, fazer.idevice, 4, 1); // начало работы
+      SendSocketDispatch(debug, ws, fazer.idevice, 9, fazer.faza);
+    }
+    timerId[mode] = setInterval(() => DoTimerId(mode), 60000);
+    massInt[mode].push(timerId[mode]);
+    fazer.runRec = DEMO ? 4 : 2; // активирование
+    // запуск таймеров счётчиков длительности фаз
+    if (intervalFaza) {
+      datestat.timerId[mode] = setInterval(() => DoTimerCount(mode), 1000);
+      datestat.massInt[mode].push(
+        JSON.parse(JSON.stringify(datestat.timerId[mode]))
+      );
+      datestat.counterId[mode] = intervalFaza; // длительность фазы ДУ
+      dispatch(statsaveCreate(datestat));
+    }
+
+    console.log(mode + 1 + "-й светофор пошёл", datestat.counterId);
+  };
   //=== инициализация ======================================
   if (init) {
     massfaz = [];
@@ -174,16 +214,13 @@ const GsToDoMode = (props: {
     dispatch(massfazCreate(massfaz));
     dispatch(statsaveCreate(datestat));
   }
+  if (props.start >= 0) {
+    console.log("props.start:", props.start);
+    StartVertex(props.start);
+    props.funcStart(-1);
+  }
   if (props.stop >= 0) {
-    //StopSendFaza(props.stop); // остановить отправку фазы
-
-    // for (let i = 0; i < massInt[props.stop].length; i++) {
-    //   if (massInt[props.stop][i]) {
-    //     clearInterval(massInt[props.stop][i]);
-    //     massInt[props.stop][i] = null;
-    //   }
-    // }
-    // timerId[props.stop] = null;
+    CloseId(massfaz[props.stop]);
     CloseVertex(props.stop); // закрыть светофор
     props.funcStop(-1);
   }
@@ -202,19 +239,8 @@ const GsToDoMode = (props: {
       }
     }
     // сброс таймеров счётчиков длительности фаз
-    for (let i = 0; i < datestat.timerId.length; i++) {
-      if (datestat.timerId[i])
-        // {
-        StopSendFaza(i);
-      // for (let j = 0; j < datestat.massInt[i].length; j++) {
-      //   if (datestat.massInt[i][j]) {
-      //     clearInterval(datestat.massInt[i][j]);
-      //     datestat.massInt[i][j] = null;
-      //   }
-      // }
-      // datestat.timerId[i] = null;
-      //}
-    }
+    for (let i = 0; i < datestat.timerId.length; i++)
+      if (datestat.timerId[i]) StopSendFaza(i);
     dispatch(statsaveCreate(datestat));
   };
 
@@ -250,7 +276,7 @@ const GsToDoMode = (props: {
       ForcedClearInterval(); // обнуление всех интервалов и остановка всех таймеров
       for (let i = 0; i < massfaz.length; i++) {
         if (massfaz[i].runRec === 2) {
-          SendSocketDispatch(debug, ws, massfaz[i].idevice, 9, 9);
+          !DEMO && SendSocketDispatch(debug, ws, massfaz[i].idevice, 9, 9);
           massfaz[mode].runRec = 1;
           massIdevice.push(massfaz[i].idevice);
         }
@@ -278,33 +304,8 @@ const GsToDoMode = (props: {
         fazer.runRec === 0 || // 0 -начало
         fazer.runRec === 1 || // 1 - финиш
         fazer.runRec === 5 // 5 - финиш Демо
-      ) {
-        SendSocketDispatch(debug, ws, fazer.idevice, 9, fazer.faza);
-        timerId[mode] = setInterval(() => DoTimerId(mode), 60000);
-        massInt[mode].push(timerId[mode]);
-        fazer.runRec = DEMO ? 4 : 2; // активирование
-        // запуск таймеров счётчиков длительности фаз
-        if (intervalFaza) {
-          datestat.timerId[mode] = setInterval(() => DoTimerCount(mode), 1000);
-          datestat.massInt[mode].push(
-            JSON.parse(JSON.stringify(datestat.timerId[mode]))
-          );
-          datestat.counterId[mode] = intervalFaza; // длительность фазы ДУ
-          dispatch(statsaveCreate(datestat));
-        }
-
-        console.log(mode + 1 + "-й светофор пошёл", datestat.counterId);
-      } else {
-        CloseVertex(mode); // закрыть светофор
-
-        // SendSocketDispatch(debug, ws, fazer.idevice, 9, 9); // КУ
-        // StopSendFaza(mode); // остановить отправку фазы
-        // fazer.runRec = DEMO ? 5 : 1; // финиш
-        // fazer.fazaSist = -1;
-        // datestat.counterId[mode] = 1;
-
-        // console.log(mode + 1 + "-й светофор закрыт", datestat.counterId);
-      }
+      )
+        StartVertex(mode);
       dispatch(massfazCreate(massfaz));
       ClickKnop(mode);
     };
@@ -359,21 +360,6 @@ const GsToDoMode = (props: {
       );
     }
     return resStr;
-  };
-
-  const DoTimerId = (mode: number) => {
-    let fazer = massfaz[mode];
-    console.log("Отправка с " + String(mode + 1) + "-го", timerId);
-    SendSocketDispatch(debug, ws, fazer.idevice, 9, fazer.faza);
-    for (let i = 0; i < massInt[mode].length - 1; i++) {
-      if (massInt[mode][i]) {
-        clearInterval(massInt[mode][i]);
-        massInt[mode][i] = null;
-      }
-    }
-    massInt[mode] = massInt[mode].filter(function (el: any) {
-      return el !== null;
-    });
   };
 
   if (needRend) {
