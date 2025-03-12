@@ -21,7 +21,9 @@ import { TrafficControl, TypeSelector, ZoomControl } from "react-yandex-maps";
 import { styleModalEnd } from "./MainMapStyle";
 import { searchControl, styleSetPK04 } from "./MainMapStyle";
 
-import { styletSelectTitle } from "./GsComponents/GsComponentsStyle";
+import { styletSelectTitle, styleSet } from "./GsComponents/GsComponentsStyle";
+import { styleBoxFormName } from "./GsComponents/GsComponentsStyle";
+import { styletFaza02 } from "./GsComponents/GsComponentsStyle";
 
 const handleKey = (event: any) => {
   if (event.key === "Enter") event.preventDefault();
@@ -409,6 +411,49 @@ export const HeadingTabl = (DEMO: boolean, map: any, newMode: number) => {
     </Grid>
   );
 };
+
+export const InputName = (
+  valuen: string,
+  handleChangeName: any,
+  nameZU: string
+) => {
+  return (
+    <Grid container sx={{ marginTop: 1 }}>
+      <Grid item xs={3.3} sx={styletFaza02}>
+        {nameZU}
+      </Grid>
+      <Grid item xs sx={{ border: 0, textAlign: "center" }}>
+        <Box sx={styleSet}>
+          <Box component="form" sx={styleBoxFormName}>
+            <TextField
+              size="small"
+              onKeyPress={handleKey} //отключение Enter
+              InputProps={{ disableUnderline: true }}
+              inputProps={{
+                style: {
+                  cursor: "pointer",
+                  paddingLeft: "3px",
+                  fontSize: 12.9,
+                },
+              }}
+              value={valuen}
+              onChange={handleChangeName}
+              variant="standard"
+            />
+          </Box>
+        </Box>
+      </Grid>
+    </Grid>
+  );
+};
+
+export const PointMenu = (xss: number, soob: string) => {
+    return (
+      <Grid item xs={xss} sx={{ textAlign: "center" }}>
+        <b>{soob}</b>
+      </Grid>
+    );
+  };
 //=== MainMapGs ====================================
 export const StrokaMenuDop = (soob: string, func: any, mode: number) => {
   let dlSoob = (soob.length + 5) * 8;
@@ -469,6 +514,7 @@ export const InputDirect = (props: { func: any }) => {
         break;
       case 2: // выбор режима ЗУ
         props.func(42);
+        setCurrency(0);
         break;
       case 3: // Настройки
         props.func(46);
@@ -502,7 +548,7 @@ export const InputDirect = (props: { func: any }) => {
   for (let i = 0; i < massKey.length; i++)
     currencies.push({ value: massKey[i], label: massDat[i] });
 
-  const [currency, setCurrency] = React.useState(1);
+  const [currency, setCurrency] = React.useState(0);
 
   return (
     <Box sx={styleSetNapr}>
@@ -553,11 +599,9 @@ export const StrokaMenuGlob = (func: any) => {
   const styleApp01 = {
     fontSize: 12.9,
     marginRight: 0.5,
-    //marginLeft: 0.1,
     width: 185,
     maxHeight: "26px",
     minHeight: "26px",
-    //border: 1,
   };
 
   return (

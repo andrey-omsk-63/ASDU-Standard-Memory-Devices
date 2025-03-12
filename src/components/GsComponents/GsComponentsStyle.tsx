@@ -35,14 +35,14 @@ export const styleBoxFormFaza = {
 };
 
 export const styleSet = {
-  width: "344px",
+  width: "380px",
   maxHeight: "4px",
   minHeight: "4px",
   bgcolor: "#FFFBE5",
   border: "1px solid #d4d4d4", // серый
   borderRadius: 1,
   boxShadow: 4,
-  textAlign: "center",
+  //textAlign: "center",
   p: 1,
 };
 
@@ -50,8 +50,7 @@ export const styleBoxFormName = {
   "& > :not(style)": {
     marginTop: "-9px",
     marginLeft: "-8px",
-    //width: "510px",
-    width: "373px",
+    width: "380px",
   },
 };
 

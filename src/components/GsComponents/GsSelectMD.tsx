@@ -205,7 +205,7 @@ const GsSelectMD = (props: {
         <Grid key={i} container>
           <Grid item xs={7.1} sx={{ border: 0, textAlign: "center" }}>
             <Button sx={ILLUM} onClick={() => ClickKnop1(i)}>
-              {massmode[i].name.slice(0, 36)}
+              {massmode[i].name.slice(0, 46)}
             </Button>
           </Grid>
 

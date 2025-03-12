@@ -352,6 +352,7 @@ const MainMapGs = (props: {
     xsMap = size;
     widthMap = "99.9%";
     modeToDo = 0;
+    //modeToDo = 1;
     setToDoMode(false);
     setFlagPusk(!flagPusk);
   };
@@ -441,6 +442,12 @@ const MainMapGs = (props: {
       pointCenter = CenterCoordBegin(map); // начальные координаты центра отоброжаемой карты
     } else pointCenter = [Number(point0), Number(point1)];
     zoom = Number(window.localStorage.ZoomDU); // начальный zoom Yandex-карты ДУ
+
+    helper = false;
+    datestat.create = false;
+    dispatch(statsaveCreate(datestat));
+    setSelectMD(true);
+
     flagOpen = true;
   }
   //========================================================
@@ -456,9 +463,9 @@ const MainMapGs = (props: {
         {modeToDo > 0 && <>{StrokaHelp(soobInfo, 0)}</>}
         {modeToDo === 0 && (
           <>
-            {StrokaMenuGlob(PressButton)}
-            {massMem.length < 1 && helper && <>{StrokaHelp(soobHelp, 0)}</>}
-            {massMem.length === 1 && helper && <>{HelpAdd(soobHelpFiest)}</>}
+            {massMem.length === 0 && StrokaMenuGlob(PressButton)}
+            {massMem.length < 1 && helper && StrokaHelp(soobHelp, 0)}
+            {massMem.length === 1 && helper && HelpAdd(soobHelpFiest)}
             {massMem.length > 1 && (
               <>
                 {newMode < 0 && (
@@ -470,10 +477,11 @@ const MainMapGs = (props: {
                 {newMode < 0 && <>{HelpAdd(soobHelpFiest)}</>}
                 {newMode >= 0 && (
                   <>
+                    {StrokaMenuDop("Выполнить режим", PressButton, 45)}
+                    {StrokaMenuDop("Редактировать имя и фазы", PressButton, 44)}
                     {StrokaMenuDop("Закрыть режим", PressButton, 43)}
                     {StrokaMenuDop("Удалить режим", PressButton, 41)}
-                    {StrokaMenuDop("Редактировать фазы", PressButton, 44)}
-                    {StrokaMenuDop("Выполнить режим", PressButton, 45)}
+                    {StrokaHelp(' ', 0)}
                   </>
                 )}
               </>
