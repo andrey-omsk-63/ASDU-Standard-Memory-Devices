@@ -23,7 +23,7 @@ import { searchControl, styleSetPK04 } from "./MainMapStyle";
 
 import { styletSelectTitle, styleSet } from "./GsComponents/GsComponentsStyle";
 import { styleBoxFormName } from "./GsComponents/GsComponentsStyle";
-import { styletFaza02 } from "./GsComponents/GsComponentsStyle";
+import { styletFaza02, styleModalMenu } from "./GsComponents/GsComponentsStyle";
 
 const handleKey = (event: any) => {
   if (event.key === "Enter") event.preventDefault();
@@ -447,13 +447,37 @@ export const InputName = (
   );
 };
 
+export const StrokaFooter = (func: any, mode: number, soob: string) => {
+  return (
+    <Button sx={styleModalMenu} onClick={() => func(mode)}>
+      {soob}
+    </Button>
+  );
+};
+
 export const PointMenu = (xss: number, soob: string) => {
-    return (
-      <Grid item xs={xss} sx={{ textAlign: "center" }}>
-        <b>{soob}</b>
-      </Grid>
-    );
-  };
+  return (
+    <Grid item xs={xss} sx={{ textAlign: "center" }}>
+      <b>{soob}</b>
+    </Grid>
+  );
+};
+
+export const FooterContentToDo = (toDoMode: boolean, ToDoMode: any) => {
+  return (
+    <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
+      {!toDoMode ? (
+        <Button sx={styleModalMenu} onClick={() => ToDoMode(2)}>
+          Начать исполнение
+        </Button>
+      ) : (
+        <Button sx={styleModalMenu} onClick={() => ToDoMode(0)}>
+          Закончить исполнение
+        </Button>
+      )}
+    </Box>
+  );
+};
 //=== MainMapGs ====================================
 export const StrokaMenuDop = (soob: string, func: any, mode: number) => {
   let dlSoob = (soob.length + 5) * 8;
@@ -480,7 +504,7 @@ export const StrokaMenuDop = (soob: string, func: any, mode: number) => {
   );
 };
 
-export const InputDirect = (props: { func: any }) => {
+export const InputDirect = (props: { func: any; rec: boolean }) => {
   const styleSetNapr = {
     width: "185px",
     maxHeight: "1px",
@@ -501,6 +525,10 @@ export const InputDirect = (props: { func: any }) => {
     },
   };
 
+  let rec = props.rec ? 1 : 0;
+
+  const [currency, setCurrency] = React.useState(rec);
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     //let curr = currency
     setCurrency(Number(event.target.value));
@@ -514,11 +542,11 @@ export const InputDirect = (props: { func: any }) => {
         break;
       case 2: // выбор режима ЗУ
         props.func(42);
-        setCurrency(0);
+        setCurrency(1);
         break;
       case 3: // Настройки
         props.func(46);
-        setCurrency(1);
+        setCurrency(0);
         break;
       case 4: // режим Demo
         props.func(47);
@@ -526,7 +554,7 @@ export const InputDirect = (props: { func: any }) => {
         break;
       case 5: // Фрагменты
         props.func(48);
-        setCurrency(1);
+        setCurrency(0);
     }
   };
 
@@ -547,8 +575,6 @@ export const InputDirect = (props: { func: any }) => {
   }
   for (let i = 0; i < massKey.length; i++)
     currencies.push({ value: massKey[i], label: massDat[i] });
-
-  const [currency, setCurrency] = React.useState(0);
 
   return (
     <Box sx={styleSetNapr}>
@@ -595,7 +621,11 @@ export const InputDirect = (props: { func: any }) => {
   );
 };
 
-export const StrokaMenuGlob = (func: any) => {
+export const StrokaMenuGlob = (
+  func: any,
+  massMemLength: number,
+  helper: boolean
+) => {
   const styleApp01 = {
     fontSize: 12.9,
     marginRight: 0.5,
@@ -604,9 +634,11 @@ export const StrokaMenuGlob = (func: any) => {
     minHeight: "26px",
   };
 
+  let rec = !massMemLength && helper ? true : false;
+
   return (
     <Box sx={styleApp01}>
-      <InputDirect func={func} />
+      <InputDirect func={func} rec={rec} />
     </Box>
   );
 };
@@ -776,7 +808,7 @@ export const ShiftOptimal = (
 
 export const PreparCurrenciesDispVert = () => {
   const currencies: any = [];
-  let dat = ["значками светофоров", "картинками фаз", "номерами фаз"];
+  let dat = ["значками светофоров", "изображениями фаз", "номерами фаз"];
   let massKey: any = [];
   let massDat: any = [];
   for (let key in dat) {

@@ -359,7 +359,10 @@ const MainMapGs = (props: {
 
   const ModeToDo = (mod: number) => {
     modeToDo = mod;
-    if (!modeToDo) StatusQuo();
+    if (!modeToDo) {
+      helper = true;
+      StatusQuo();
+    }
     setFlagPusk(!flagPusk);
   };
 
@@ -451,6 +454,8 @@ const MainMapGs = (props: {
     flagOpen = true;
   }
   //========================================================
+  //console.log("@@@:", massMem.length, helper);
+
   const MenuGl = () => {
     let soobHelp = "Выберите перекрёстки для создания нового маршрута";
     let soobHelpFiest = "Добавьте/удалите перекрёстки для создания маршрута [";
@@ -463,7 +468,8 @@ const MainMapGs = (props: {
         {modeToDo > 0 && <>{StrokaHelp(soobInfo, 0)}</>}
         {modeToDo === 0 && (
           <>
-            {massMem.length === 0 && StrokaMenuGlob(PressButton)}
+            {massMem.length === 0 &&
+              StrokaMenuGlob(PressButton, massMem.length, helper)}
             {massMem.length < 1 && helper && StrokaHelp(soobHelp, 0)}
             {massMem.length === 1 && helper && HelpAdd(soobHelpFiest)}
             {massMem.length > 1 && (
@@ -481,7 +487,7 @@ const MainMapGs = (props: {
                     {StrokaMenuDop("Редактировать имя и фазы", PressButton, 44)}
                     {StrokaMenuDop("Закрыть режим", PressButton, 43)}
                     {StrokaMenuDop("Удалить режим", PressButton, 41)}
-                    {StrokaHelp(' ', 0)}
+                    {StrokaHelp(" ", 0)}
                   </>
                 )}
               </>

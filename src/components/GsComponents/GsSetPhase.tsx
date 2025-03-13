@@ -12,17 +12,16 @@ import MenuItem from "@mui/material/MenuItem";
 import GsErrorMessage from "./GsErrorMessage";
 
 import { OutputFazaImg, NameMode, InputName } from "../MapServiceFunctions";
-import { ExitCross, PointMenu } from "../MapServiceFunctions";
+import { ExitCross, PointMenu, StrokaFooter } from "../MapServiceFunctions";
 
 import { SendSocketCreateRoute } from "../MapSocketFunctions";
 import { SendSocketUpdateRoute } from "../MapSocketFunctions";
 
 //import { styleModalEnd } from "../MainMapStyle";
 
-import { styleSetInf, styleModalMenu, styletFaza01 } from "./GsComponentsStyle";
+import { styleSetInf, styletFaza01 } from "./GsComponentsStyle";
 import { styleBoxFormFaza, styleSaveRed } from "./GsComponentsStyle";
 import { styleSaveBlack, styletSelectTitle } from "./GsComponentsStyle";
-//import { styletFaza01 } from "./GsComponentsStyle";
 import { StyleSetFaza, StyleSetFazaNull } from "./GsComponentsStyle";
 
 let newInput = true;
@@ -31,6 +30,7 @@ let nameMode = "";
 
 let soobErr = "";
 let chFaz = 0;
+let chName = 0;
 let xsFaza = 2;
 
 const GsSetPhase = (props: {
@@ -59,6 +59,7 @@ const GsSetPhase = (props: {
   });
   const debug = datestat.debug;
   const ws = datestat.ws;
+  const DEMO = datestat.demo;
   const dispatch = useDispatch();
   //========================================================
   const [openSoobErr, setOpenSoobErr] = React.useState(false);
@@ -74,7 +75,6 @@ const GsSetPhase = (props: {
 
   //=== инициализация ======================================
   const MakeMaskFaz = (i: number) => {
-    chFaz = 0;
     let im: Array<string | null> = [];
     let iDx = props.massMem[i];
     let maskFaz = {
@@ -98,6 +98,7 @@ const GsSetPhase = (props: {
   if (props.newMode >= 0) {
     if (newInput) {
       massFaz = []; // существующий режим
+      chFaz = chName = 0;
       for (let i = 0; i < props.massMem.length; i++)
         massFaz.push(MakeMaskFaz(i));
       newInput = false;
@@ -108,6 +109,7 @@ const GsSetPhase = (props: {
   } else {
     if (newInput) {
       massFaz = []; // новый режим
+      chFaz = chName = 0;
       nameMode = "Режим ЗУ" + NameMode();
       for (let i = 0; i < props.massMem.length; i++)
         massFaz.push(MakeMaskFaz(i));
@@ -160,18 +162,36 @@ const GsSetPhase = (props: {
     setChDel(0);
   };
 
-  const SaveFaz = () => {
+  const SaveFaz = (mode: number) => {
+    let maskRoutes = JSON.parse(JSON.stringify(map.routes[props.newMode]));
     for (let i = 0; i < massFaz.length; i++)
-      map.routes[props.newMode].listTL[i].phase = massFaz[i].faza; // перезапись фаз
-
+      maskRoutes.listTL[i].phase = massFaz[i].faza; // перезапись фаз
+    maskRoutes.description = nameMode; // перезапись названия ЗУ
     //if(nameMode !== map.routes[props.newMode].description)
-    map.routes[props.newMode].description = nameMode; // перезапись названия ЗУ
-    massmode[props.newMode].name = nameMode;
+    
+    if (mode) {
+      // Сохранить как новый режим ЗУ
+      map.routes.push(maskRoutes);
+      dispatch(mapCreate(map));
+       !DEMO &&  SendSocketCreateRoute(debug, ws, maskRoutes);
+        massmode.push({
+          name: nameMode,
+          delRec: false,
+          kolOpen: 0,
+        });
+        dispatch(massmodeCreate(massmode));
+    } else {
+      // Сохранить изменения в старом ЗУ
+      map.routes[props.newMode] = maskRoutes;
+      massmode[props.newMode].name = nameMode; // изменение пункта меню режимов ЗУ
+      !DEMO && SendSocketUpdateRoute(debug, ws, map.routes[props.newMode]);
+    }
 
     dispatch(massmodeCreate(massmode));
     dispatch(mapCreate(map));
-    SendSocketUpdateRoute(debug, ws, map.routes[props.newMode]);
-    chFaz = 0;
+
+    chFaz = chName = 0;
+    massFaz = [];
     handleCloseSetEnd();
   };
 
@@ -217,7 +237,7 @@ const GsSetPhase = (props: {
         }
         map.routes.push(maskRoutes);
         dispatch(mapCreate(map));
-        SendSocketCreateRoute(debug, ws, maskRoutes);
+        !DEMO && SendSocketCreateRoute(debug, ws, maskRoutes);
         massmode.push({
           name: nameMode,
           delRec: false,
@@ -235,6 +255,14 @@ const GsSetPhase = (props: {
 
   const handleKey = (event: any) => {
     if (event.key === "Enter") event.preventDefault();
+  };
+
+  const handleChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.value) {
+      setValuen(event.target.value.trimStart()); // удаление пробелов в начале строки
+      nameMode = event.target.value.trimStart();
+      chName++;
+    }
   };
 
   const InputFaza = (mode: number) => {
@@ -348,39 +376,27 @@ const GsSetPhase = (props: {
     return resStr;
   };
 
-  // const PointMenu = (xss: number, soob: string) => {
-  //   return (
-  //     <Grid item xs={xss} sx={{ textAlign: "center" }}>
-  //       <b>{soob}</b>
-  //     </Grid>
-  //   );
-  // };
-
-  const StrokaFooter = (mode: number, soob: string) => {
-    return (
-      <Button sx={styleModalMenu} onClick={() => SaveRec(mode)}>
-        {soob}
-      </Button>
-    );
-  };
-
   const FooterMenu = () => {
     return (
       <>
         {props.newMode < 0 ? (
           <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
-            {StrokaFooter(0, "Сохранить режим")}
-            {/* {chDel > 0 && <>{StrokaFooter(2, "Удалить помеченные")}</>} */}
-            {StrokaFooter(2, "Продолжить создание")}
-            {StrokaFooter(1, "Отмена режима")}
+            {StrokaFooter(SaveRec, 0, "Сохранить режим")}
+            {StrokaFooter(SaveRec, 2, "Продолжить создание")}
+            {StrokaFooter(SaveRec, 1, "Отмена режима")}
           </Box>
         ) : (
           <>
-            {chFaz > 0 ? (
+            {!!chFaz || !!chName ? (
               <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
-                <Button sx={styleModalMenu} onClick={() => SaveFaz()}>
-                  Сохранить изменения
-                </Button>
+                <>
+                  {!!chName && (
+                    <>
+                      {StrokaFooter(SaveFaz, 1, "Сохранить как новый режим ЗУ")}
+                    </>
+                  )}
+                  {StrokaFooter(SaveFaz, 0, "Сохранить изменения")}
+                </>
               </Box>
             ) : (
               <Box sx={{ height: "29px" }}> </Box>
@@ -389,14 +405,6 @@ const GsSetPhase = (props: {
         )}
       </>
     );
-  };
-
-  const handleChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value) {
-      setValuen(event.target.value.trimStart()); // удаление пробелов в начале строки
-      nameMode = event.target.value.trimStart();
-      chFaz++;
-    }
   };
 
   const [valuen, setValuen] = React.useState(nameMode);

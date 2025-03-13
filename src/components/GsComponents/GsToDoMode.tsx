@@ -5,7 +5,6 @@ import { massfazCreate, statsaveCreate } from "../../redux/actions";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
-//import Typography from "@mui/material/Typography";
 
 import GsFieldOfMiracles from "./GsFieldOfMiracles";
 
@@ -13,15 +12,14 @@ import GsFieldOfMiracles from "./GsFieldOfMiracles";
 
 import { OutputFazaImg, MakeMaskFaz } from "../MapServiceFunctions";
 import { ExitCross, HeaderTabl, HeadingTabl } from "../MapServiceFunctions";
-//import { MakeMaskFaz } from "../MapServiceFunctions";
+import { FooterContentToDo } from "../MapServiceFunctions";
 
 import { SendSocketRoute, SendSocketDispatch } from "../MapSocketFunctions";
 
 import { CLINCH, BadCODE } from "./../MapConst";
 
 import { styleToDoMode, styleStrokaTabl01 } from "./GsComponentsStyle";
-import { styleStrokaTabl03, styleModalMenu } from "./GsComponentsStyle";
-import { styleStrokaTabl02 } from "./GsComponentsStyle";
+import { styleStrokaTabl03, styleStrokaTabl02 } from "./GsComponentsStyle";
 import { styleStrokaTabl10 } from "./GsComponentsStyle";
 import { styleToDo01, styleToDo02 } from "./GsComponentsStyle";
 
@@ -72,8 +70,6 @@ const GsToDoMode = (props: {
   let intervalFazaDop = datestat.intervalFazaDop; // Увеличениение длительности фазы ДУ (сек)
   if (!datestat.counterFaza) intervalFaza = intervalFazaDop = 0; // наличие счётчика длительность фазы ДУ
   let newMode = props.newMode;
-
-  console.log('######:',datestat.counterFaza,intervalFaza, intervalFazaDop)
   //========================================================
   const [trigger, setTrigger] = React.useState(true);
   const [flagPusk, setFlagPusk] = React.useState(false);
@@ -86,6 +82,16 @@ const GsToDoMode = (props: {
       }
     }
     timerId[idx] = null;
+  };
+
+  const StopCounter = (i: number) => {
+    for (let j = 0; j < datestat.massInt[i].length; j++) {
+      if (datestat.massInt[i][j]) {
+        clearInterval(datestat.massInt[i][j]);
+        datestat.massInt[i][j] = null;
+      }
+    }
+    datestat.timerId[i] = null;
   };
 
   const CloseId = (fazer: any) => {
@@ -132,15 +138,8 @@ const GsToDoMode = (props: {
       }
       if (datestat.counterId[mode] <= 0) {
         // остановка и очистка счётчика
-        console.log("Прекращена отправка с", mode + 1,datestat.counterId);
-
-        for (let i = 0; i < datestat.massInt[mode].length; i++) {
-          if (datestat.massInt[mode][i]) {
-            clearInterval(datestat.massInt[mode][i]);
-            datestat.massInt[mode][i] = null;
-          }
-        }
-        datestat.timerId[mode] = null;
+        console.log("Прекращена отправка с", mode + 1, datestat.counterId);
+        StopCounter(mode);
         if (!datestat.counterId[mode]) {
           CloseId(massfaz[mode]);
           CloseVertex(mode); // закрыть светофор при достижении сч-ка 0
@@ -153,10 +152,9 @@ const GsToDoMode = (props: {
   };
 
   const DoTimerId = (mode: number) => {
-    let fazer = massfaz[mode];
-
     console.log("Отправка с " + String(mode + 1) + "-го", timerId);
 
+    let fazer = massfaz[mode];
     !DEMO && SendSocketDispatch(debug, ws, fazer.idevice, 9, fazer.faza);
     for (let i = 0; i < massInt[mode].length - 1; i++) {
       if (massInt[mode][i]) {
@@ -227,20 +225,11 @@ const GsToDoMode = (props: {
   //========================================================
   const ForcedClearInterval = () => {
     // сброс таймеров отправки фаз
-    for (let i = 0; i < timerId.length; i++) {
-      if (timerId[i]) {
-        for (let j = 0; j < massInt[i].length; j++) {
-          if (massInt[i][j]) {
-            clearInterval(massInt[i][j]);
-            massInt[i][j] = null;
-          }
-        }
-        timerId[i] = null;
-      }
-    }
+    for (let i = 0; i < timerId.length; i++) 
+      if (timerId[i]) StopSendFaza(i);
     // сброс таймеров счётчиков длительности фаз
     for (let i = 0; i < datestat.timerId.length; i++)
-      if (datestat.timerId[i]) StopSendFaza(i);
+      if (datestat.timerId[i]) StopCounter(i);
     dispatch(statsaveCreate(datestat));
   };
 
@@ -325,7 +314,7 @@ const GsToDoMode = (props: {
       let takt: number | string = massfaz[i].faza;
       let pad = 1.2;
       let fazaImg: null | string = null;
-      massfaz[i].img.length > massfaz[i].faza &&
+      massfaz[i].img.length >= massfaz[i].faza &&
         (fazaImg = massfaz[i].img[massfaz[i].faza - 1]);
       debug && (fazaImg = datestat.phSvg[massfaz[i].faza - 1]); // для отладки
       let illum = nomIllum === i ? styleStrokaTabl01 : styleStrokaTabl02;
@@ -376,17 +365,7 @@ const GsToDoMode = (props: {
           {HeaderTabl()}
           <Box sx={{ overflowX: "auto", height: "84.0vh" }}>{StrokaTabl()}</Box>
         </Box>
-        <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
-          {!toDoMode ? (
-            <Button sx={styleModalMenu} onClick={() => ToDoMode(2)}>
-              Начать исполнение
-            </Button>
-          ) : (
-            <Button sx={styleModalMenu} onClick={() => ToDoMode(0)}>
-              Закончить исполнение
-            </Button>
-          )}
-        </Box>
+        {FooterContentToDo(toDoMode, ToDoMode)}
       </Box>
     </>
   );
