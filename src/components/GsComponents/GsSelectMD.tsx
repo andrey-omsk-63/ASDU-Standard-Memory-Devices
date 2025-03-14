@@ -49,6 +49,7 @@ const GsSelectMD = (props: {
   });
   const debug = datestat.debug;
   const ws = datestat.ws;
+  const DEMO = datestat.demo;
   const dispatch = useDispatch();
   //===========================================================
   const [trigger, setTrigger] = React.useState(true);
@@ -155,7 +156,7 @@ const GsSelectMD = (props: {
         color: colorRec,
         textTransform: "unset !important",
         boxShadow: 3,
-        justifyContent: "flex-start",
+        justifyContent: "flex-start", // прижато к левому краю
       };
 
       const styleBut011 = {
@@ -169,7 +170,7 @@ const GsSelectMD = (props: {
         color: colorRec,
         textTransform: "unset !important",
         boxShadow: 9,
-        justifyContent: "flex-start",
+        justifyContent: "flex-start", // прижато к левому краю
       };
 
       const styleBut02 = {
@@ -183,6 +184,20 @@ const GsSelectMD = (props: {
         color: colorRec,
         textTransform: "unset !important",
         boxShadow: 3,
+      };
+
+      const styleBut021 = {
+        fontSize: 12.5,
+        marginTop: 1,
+        bgcolor: "#FDFEFA", // бледно-салатовый
+        width: "107px",
+        height: "19px",
+        border: "1px solid #d4d4d4", // серый
+        borderRadius: 1,
+        color: "#ADADAD", // серый
+        textTransform: "unset !important",
+        padding: "1px 0 0 0",
+        boxShadow: 2,
       };
 
       const styleBut03 = {
@@ -202,23 +217,31 @@ const GsSelectMD = (props: {
       let ILLUM = nomPlan === i ? styleBut011 : styleBut01;
 
       resStr.push(
-        <Grid key={i} container>
-          <Grid item xs={7.1} sx={{ border: 0, textAlign: "center" }}>
+        <Grid key={i} container sx={{}}>
+          <Grid item xs={7.1} sx={{ textAlign: "center" }}>
             <Button sx={ILLUM} onClick={() => ClickKnop1(i)}>
-              {massmode[i].name.slice(0, 46)}
+              {massmode[i].name.slice(0, 42)}
             </Button>
           </Grid>
 
-          <Grid item xs={2.5} sx={{ border:0, textAlign: "center" }}>
-            <Button sx={styleBut02} onClick={() => ClickKnop2(i)}>
-              история
-            </Button>
+          <Grid item xs={2.45} sx={{ border: 0, textAlign: "center" }}>
+            {!DEMO ? (
+              <Button sx={styleBut02} onClick={() => ClickKnop2(i)}>
+                история
+              </Button>
+            ) : (
+              <Box sx={styleBut021}>история</Box>
+            )}
           </Grid>
 
           <Grid item xs sx={{ border: 0, textAlign: "center" }}>
+          {!DEMO ? (
             <Button sx={illum} onClick={() => ClickKnop3(i)}>
               {knop2}
             </Button>
+            ) : (
+              <Box sx={styleBut021}>удалить</Box>
+            )}
           </Grid>
         </Grid>
       );
@@ -226,18 +249,36 @@ const GsSelectMD = (props: {
     return resStr;
   };
 
+  const styleBut04 = (coler: string) => {
+    const styleBut = {
+      fontSize: 15,
+      color: coler,
+      display: "inline-block",
+    };
+    return styleBut;
+  };
+
   return (
     <Modal open={openSetMode} onClose={handleCloseEnd} hideBackdrop={false}>
       <Box sx={styleSetSelect}>
         {ExitCross(handleCloseSetEnd)}
-
-        <Box sx={styletSelectTitle}>
-          <b>Выбор режима ЗУ</b>
+        <Box sx={{ textAlign: "center" }}>
+          <Box sx={styletSelectTitle}>
+            <b>Выбор режима ЗУ</b>
+            {DEMO && (
+              <>
+                <Box sx={styleBut04("background.paper")}>{"."}</Box>
+                <Box sx={styleBut04("red")}>
+                  {" ("}демонстрация{")"}
+                </Box>
+              </>
+            )}
+          </Box>
         </Box>
 
         <Box sx={styletSelect01}>{StrokaTabl()}</Box>
 
-        {LookDel() > 0 && (
+        {LookDel() > 0 && !DEMO && (
           <Box sx={{ marginTop: 1, textAlign: "center" }}>
             <Button sx={styleModalMenuSelect} onClick={() => DeleteRec()}>
               Удалить отмеченные

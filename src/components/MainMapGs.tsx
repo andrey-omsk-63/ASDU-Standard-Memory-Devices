@@ -174,6 +174,7 @@ const MainMapGs = (props: {
     massCoord = [];
     newMode = -1;
     datestat.create = true;
+    datestat.demo = false;
     dispatch(statsaveCreate(datestat));
     ymaps && addRoute(ymaps, false); // перерисовка связей
     setTrigger(!trigger);
@@ -296,8 +297,9 @@ const MainMapGs = (props: {
       }
       if (nomInMap < 0) {
         // нажали правой кнопкой в чистое поле
+        // нужно найти первый запущенный светофор на маршруте
         for (let i = 0; i < massMem.length; i++) {
-          if (massfaz[i].runRec === 2) {
+          if (massfaz[i].runRec === 2 || massfaz[i].runRec === 4) {
             nomInMap = i;
             break;
           }
@@ -305,7 +307,7 @@ const MainMapGs = (props: {
       }
       if (nomInMap >= 0) {
         setStopCount(nomInMap); // запрос на остановку отправки фазы
-        dispatch(massfazCreate(massfaz));
+        //dispatch(massfazCreate(massfaz));
         setChangeFaz(!changeFaz);
         setRisovka(true);
       }
@@ -419,8 +421,17 @@ const MainMapGs = (props: {
         setNeedSetup(true);
         break;
       case 47: // режим Demo
-        soobErr = "Данный режим пока не реализован";
-        setOpenSoobErr(true);
+        StatusQuo();
+        datestat.finish = false;
+        datestat.demo = true;
+        if (massMem.length) {
+          ymaps && addRoute(ymaps, true); // перерисовка связей
+          setFlagPusk(!flagPusk);
+        }
+        helper = false;
+        datestat.create = false;
+        dispatch(statsaveCreate(datestat));
+        setSelectMD(true);
         break;
       case 48: // Фрагменты
         soobErr =
@@ -462,6 +473,7 @@ const MainMapGs = (props: {
     soobHelpFiest += massMem.length;
     let soobInfo = "Подготовка к выпонению режима";
     modeToDo === 2 && (soobInfo = "Происходит выполнение режима");
+    let punkt = "Редактировать имя и фазы";
 
     return (
       <Box sx={{ display: "flex" }}>
@@ -484,9 +496,11 @@ const MainMapGs = (props: {
                 {newMode >= 0 && (
                   <>
                     {StrokaMenuDop("Выполнить режим", PressButton, 45)}
-                    {StrokaMenuDop("Редактировать имя и фазы", PressButton, 44)}
+                    {!DEMO && <>{StrokaMenuDop(punkt, PressButton, 44)}</>}
                     {StrokaMenuDop("Закрыть режим", PressButton, 43)}
-                    {StrokaMenuDop("Удалить режим", PressButton, 41)}
+                    {!DEMO && (
+                      <>{StrokaMenuDop("Удалить режим", PressButton, 41)}</>
+                    )}
                     {StrokaHelp(" ", 0)}
                   </>
                 )}

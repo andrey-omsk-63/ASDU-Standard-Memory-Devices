@@ -395,7 +395,7 @@ export const HeadingTabl = (DEMO: boolean, map: any, newMode: number) => {
       <Grid item xs sx={styletSelectTitle}>
         Режим:{" "}
         <em>
-          <b>{map.routes[newMode].description}</b>
+          <b>{map.routes[newMode].description.slice(0, 40)}</b>
         </em>
         {DEMO && (
           <>

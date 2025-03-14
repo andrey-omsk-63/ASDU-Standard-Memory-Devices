@@ -276,7 +276,7 @@ export const styletSelectTitle = {
   textAlign: "center",
   color: "#7620a2", // сиреневый
   textShadow: "2px 2px 3px rgba(0,0,0,0.3)",
-  //display: "inline-block",
+  display: "inline-block",
 };
 
 export const styletSelect01 = {

@@ -80,8 +80,8 @@ const GsDoPlacemarkDo = (props: {
           } else {
             if (FAZASIST > 0 && FAZASIST < 9 && massfaz[i].img) {
               if (FAZASIST <= massfaz[i].img.length)
-                // fazaImg = massfaz[i].img[FAZASIST - 1];
-                fazaImg = massfaz[i].img[FAZA - 1]; // костыль
+                fazaImg = massfaz[i].img[FAZASIST - 1];
+                //fazaImg = massfaz[i].img[FAZA - 1]; // костыль
 
               massfaz[i].fazaSistOld = FAZASIST;
               dispatch(massfazCreate(massfaz));
@@ -105,6 +105,7 @@ const GsDoPlacemarkDo = (props: {
     if (!debug) {
       let mpp = illum ? 4 : mapp;
       if (nomSvg > 0) mpp = nomSvg.toString();
+      if (DEMO) mpp = '1'
       host = window.location.origin + "/free/img/trafficLights/" + mpp + ".svg";
     } else if (DEMO) host = hostt + "1.svg";
 
@@ -299,7 +300,8 @@ const GsDoPlacemarkDo = (props: {
           (lengMem > 2 && typeVert === 1 && !fazaImg) ||
           clinch ||
           badCode ||
-          statusVertex === 1
+          statusVertex === 1 ||
+          (DEMO && datestat.toDoMode)
             ? { iconLayout: createChipsLayout(calculate, mappp.tlsost.num) }
             : GetPointOptions1(fazaImg)
         }

@@ -67,8 +67,8 @@ const GsFieldOfMiracles = (props: {
   let host = hostt + "18.svg";
   if (DEMO && debug) {
     host = hostt + "1.svg";
-    if (bull === " •" && runREC === 2) host = hostt + "2.svg";
-    if (bull !== " •" && runREC === 5) host = hostt + "2.svg";
+    if (bull === " •") host = hostt + "2.svg";
+    if (bull !== " •") host = hostt + "1.svg";
   }
   if (!debug) {
     let num = map.tflight[massfaz[IDX].idx].tlsost.num.toString();
