@@ -527,8 +527,9 @@ export const InputDirect = (props: { func: any; rec: boolean }) => {
     },
   };
 
-  let rec = props.rec ? 1 : 0;
-
+  //let rec = props.rec ? 1 : 0;
+  let rec = 0 // выход на заголовок
+  
   const [currency, setCurrency] = React.useState(rec);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -544,7 +545,7 @@ export const InputDirect = (props: { func: any; rec: boolean }) => {
         break;
       case 2: // выбор режима ЗУ
         props.func(42);
-        setCurrency(1);
+        setCurrency(0);
         break;
       case 3: // Настройки
         props.func(46);

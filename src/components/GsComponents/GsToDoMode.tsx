@@ -68,7 +68,8 @@ const GsToDoMode = (props: {
   let intervalFaza = datestat.intervalFaza; // Задаваемая длительность фазы ДУ (сек)
   let intervalFazaDop = datestat.intervalFazaDop; // Увеличениение длительности фазы ДУ (сек)
   if (!datestat.counterFaza) intervalFaza = intervalFazaDop = 0; // наличие счётчика длительность фазы ДУ
-  let newMode = props.newMode;
+  const newMode = props.newMode;
+  const timer = debug || DEMO ? 20000 : 60000;
   //========================================================
   const [trigger, setTrigger] = React.useState(true);
   const [flagPusk, setFlagPusk] = React.useState(false);
@@ -100,7 +101,7 @@ const GsToDoMode = (props: {
     }
     StopSendFaza(idx);
     massfaz[idx].runRec = DEMO ? 5 : 1;
-    massfaz[idx].fazaSist = -1;
+    massfaz[idx].fazaSist = massfaz[idx].fazaSistOld = -1;
     datestat.counterId[idx] = -1;
     dispatch(statsaveCreate(datestat));
     dispatch(massfazCreate(massfaz));
@@ -137,6 +138,7 @@ const GsToDoMode = (props: {
         StopCounter(mode);
         if (!datestat.counterId[mode]) {
           CloseVertex(mode); // закрыть светофор при достижении сч-ка 0
+          props.changeDemo(mode);
         }
       }
       dispatch(statsaveCreate(datestat));
@@ -160,8 +162,8 @@ const GsToDoMode = (props: {
       }
       dispatch(massfazCreate(massfaz));
       props.changeDemo(mode);
-      needRend = true; // нужен ререндеринг
-      setFlagPusk(!flagPusk);
+      // needRend = true; // нужен ререндеринг
+      // setFlagPusk(!flagPusk);
     }
 
     console.log("Отправка с " + String(mode + 1) + "-го", massfaz);
@@ -183,9 +185,15 @@ const GsToDoMode = (props: {
       SendSocketDispatch(debug, ws, fazer.idevice, 4, 1); // начало работы
       SendSocketDispatch(debug, ws, fazer.idevice, 9, fazer.faza);
     }
-    timerId[mode] = setInterval(() => DoTimerId(mode), 60000);
+    timerId[mode] = setInterval(() => DoTimerId(mode), timer);
     massInt[mode].push(timerId[mode]);
     fazer.runRec = DEMO ? 4 : 2; // активирование
+    if (fazer.fazaSist < 0) massfaz[mode].fazaSist = massfaz[mode].faza;
+    if (DEMO) {
+      props.changeDemo(mode);
+      // needRend = true; // нужен ререндеринг
+      // setFlagPusk(!flagPusk);
+    }
     // запуск таймеров счётчиков длительности фаз
     if (intervalFaza) {
       datestat.timerId[mode] = setInterval(() => DoTimerCount(mode), 1000);
