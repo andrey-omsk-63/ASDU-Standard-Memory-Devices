@@ -74,14 +74,16 @@ const GsFieldOfMiracles = (props: {
     let num = map.tflight[massfaz[IDX].idx].tlsost.num.toString();
     if (DEMO) {
       num = "1";
+      // if (bull === " •" && runREC === 2) num = "2";
+      // if (bull !== " •" && runREC === 5) num = "2";
       if (bull === " •" && runREC === 2) num = "2";
-      if (bull !== " •" && runREC === 5) num = "2";
+      if (bull === " •" && runREC === 4) num = "2";
     }
     host = window.location.origin + "/free/img/trafficLights/" + num + ".svg";
   }
 
   let illumImg =
-    runREC === 4 || runREC !== 2 ? styleStrTablImg01 : styleStrTablImg02;
+    runREC === 4 || runREC === 2 ? styleStrTablImg01 : styleStrTablImg02;
   let hinter = map.tflight[massfaz[IDX].idx].tlsost.description;
 
   const LabelVertex = () => {

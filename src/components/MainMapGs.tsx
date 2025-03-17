@@ -96,6 +96,7 @@ const MainMapGs = (props: {
   const [stopCount, setStopCount] = React.useState(-1);
   const [startCount, setStartCount] = React.useState(-1);
   const [ymaps, setYmaps] = React.useState<YMapsApi | null>(null);
+  const [demoSost, setDemoSost] = React.useState(-1);
   const mapp = React.useRef<any>(null);
 
   const ReceiveIdxGs = (mode: number) => {
@@ -307,7 +308,6 @@ const MainMapGs = (props: {
       }
       if (nomInMap >= 0) {
         setStopCount(nomInMap); // запрос на остановку отправки фазы
-        //dispatch(massfazCreate(massfaz));
         setChangeFaz(!changeFaz);
         setRisovka(true);
       }
@@ -354,7 +354,6 @@ const MainMapGs = (props: {
     xsMap = size;
     widthMap = "99.9%";
     modeToDo = 0;
-    //modeToDo = 1;
     setToDoMode(false);
     setFlagPusk(!flagPusk);
   };
@@ -374,7 +373,6 @@ const MainMapGs = (props: {
   };
 
   const PressButton = (mode: number) => {
-    console.log("Mode:", mode);
     switch (mode) {
       case 41: // удалить режим
         massmode[newMode].delRec = true;
@@ -465,8 +463,6 @@ const MainMapGs = (props: {
     flagOpen = true;
   }
   //========================================================
-  //console.log("@@@:", massMem.length, helper);
-
   const MenuGl = () => {
     let soobHelp = "Выберите перекрёстки для создания нового маршрута";
     let soobHelpFiest = "Добавьте/удалите перекрёстки для создания маршрута [";
@@ -547,6 +543,8 @@ const MainMapGs = (props: {
     zoom: zoom,
   };
 
+  const ChangeDemoSost = (mode: number) => setDemoSost(mode + demoSost); // костыль
+
   return (
     <Grid container sx={{ height: "99.9vh" }}>
       <Grid item xs>
@@ -613,6 +611,7 @@ const MainMapGs = (props: {
               funcStart={setStartCount}
               stop={stopCount}
               funcStop={setStopCount}
+              changeDemo={ChangeDemoSost}
             />
           </Box>
         )}

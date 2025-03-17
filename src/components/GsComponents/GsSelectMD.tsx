@@ -68,6 +68,7 @@ const GsSelectMD = (props: {
 
   const handleCloseSetEnd = () => {
     datestat.create = true;
+    datestat.demo = false;
     dispatch(statsaveCreate(datestat));
     props.setOpen(false);
     props.funcHelper(true);

@@ -42,6 +42,7 @@ const GsToDoMode = (props: {
   funcStart: Function; // функция возврата запуска светофора
   stop: number; // номер останавливаемого светофора в massfaz
   funcStop: Function; // функция возврата остановки светофора
+  changeDemo: Function;
 }) => {
   //== Piece of Redux ======================================
   const map = useSelector((state: any) => {
@@ -101,11 +102,10 @@ const GsToDoMode = (props: {
     massfaz[idx].runRec = DEMO ? 5 : 1;
     massfaz[idx].fazaSist = -1;
     datestat.counterId[idx] = -1;
-
-    console.log(idx + 1 + "-й светофор закрыт!!!", datestat.counterId);
-
     dispatch(statsaveCreate(datestat));
     dispatch(massfazCreate(massfaz));
+
+    console.log(idx + 1 + "-й светофор закрыт!!!", datestat.counterId);
   };
 
   const DoTimerCount = (mode: number) => {
@@ -127,7 +127,6 @@ const GsToDoMode = (props: {
       let badCode = BadCODE.indexOf(statusVertex) < 0 ? false : true;
 
       if (massfaz[mode].runRec !== 5 && massfaz[mode].runRec !== 1) {
-        //if (debug || DEMO) {
         if (DEMO) {
           datestat.counterId[mode]--; // счётчик
         } else if (!clinch && !badCode) datestat.counterId[mode]--; // счётчик
@@ -147,10 +146,7 @@ const GsToDoMode = (props: {
   };
 
   const DoTimerId = (mode: number) => {
-    console.log("Отправка с " + String(mode + 1) + "-го", timerId);
-
     let fazer = massfaz[mode];
-    //!DEMO && SendSocketDispatch(debug, ws, fazer.idevice, 9, fazer.faza);
     if (!DEMO) {
       fazer.runRec === 2 &&
         SendSocketDispatch(debug, ws, fazer.idevice, 9, fazer.faza);
@@ -163,10 +159,12 @@ const GsToDoMode = (props: {
         } else fazer.fazaSist = fazer.fazaSist === 2 ? 1 : 2;
       }
       dispatch(massfazCreate(massfaz));
-      //props.changeDemo(mode);
+      props.changeDemo(mode);
       needRend = true; // нужен ререндеринг
       setFlagPusk(!flagPusk);
     }
+
+    console.log("Отправка с " + String(mode + 1) + "-го", massfaz);
 
     for (let i = 0; i < massInt[mode].length - 1; i++) {
       if (massInt[mode][i]) {
@@ -210,7 +208,9 @@ const GsToDoMode = (props: {
     nomIllum = -1;
 
     for (let i = 0; i < props.massMem.length; i++) {
-      massfaz.push(MakeMaskFaz(i, props.massMem[i], map, massdk, newMode));
+      massfaz.push(
+        MakeMaskFaz(i, props.massMem[i], map, massdk, newMode, DEMO)
+      );
       timerId.push(null);
       datestat.counterId.push(intervalFaza); // длительность фазы ДУ
       datestat.timerId.push(null); // массив времени отправки команд
