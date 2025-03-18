@@ -74,6 +74,8 @@ const GsToDoMode = (props: {
   const [trigger, setTrigger] = React.useState(true);
   const [flagPusk, setFlagPusk] = React.useState(false);
 
+  console.log("timer:", timer);
+
   const StopSendFaza = (idx: number) => {
     for (let i = 0; i < massInt[idx].length; i++) {
       if (massInt[idx][i]) {
@@ -162,8 +164,6 @@ const GsToDoMode = (props: {
       }
       dispatch(massfazCreate(massfaz));
       props.changeDemo(mode);
-      // needRend = true; // нужен ререндеринг
-      // setFlagPusk(!flagPusk);
     }
 
     console.log("Отправка с " + String(mode + 1) + "-го", massfaz);
@@ -189,11 +189,7 @@ const GsToDoMode = (props: {
     massInt[mode].push(timerId[mode]);
     fazer.runRec = DEMO ? 4 : 2; // активирование
     if (fazer.fazaSist < 0) massfaz[mode].fazaSist = massfaz[mode].faza;
-    if (DEMO) {
-      props.changeDemo(mode);
-      // needRend = true; // нужен ререндеринг
-      // setFlagPusk(!flagPusk);
-    }
+    if (DEMO) props.changeDemo(mode);
     // запуск таймеров счётчиков длительности фаз
     if (intervalFaza) {
       datestat.timerId[mode] = setInterval(() => DoTimerCount(mode), 1000);
