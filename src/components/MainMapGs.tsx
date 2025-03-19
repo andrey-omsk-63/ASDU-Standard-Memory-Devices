@@ -455,10 +455,10 @@ const MainMapGs = (props: {
     } else pointCenter = [Number(point0), Number(point1)];
     zoom = Number(window.localStorage.ZoomDU); // начальный zoom Yandex-карты ДУ
 
-    helper = false;
-    datestat.create = false;
-    dispatch(statsaveCreate(datestat));
-    setSelectMD(true);
+    // helper = false; // это для выхода на выбор существующих режимов
+    // datestat.create = false;
+    //dispatch(statsaveCreate(datestat));
+    //setSelectMD(true);
 
     flagOpen = true;
   }

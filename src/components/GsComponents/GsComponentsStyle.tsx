@@ -42,7 +42,6 @@ export const styleSet = {
   border: "1px solid #d4d4d4", // серый
   borderRadius: 1,
   boxShadow: 4,
-  //textAlign: "center",
   p: 1,
 };
 
@@ -279,12 +278,18 @@ export const styletSelectTitle = {
   display: "inline-block",
 };
 
+export const styletSelectTit = {
+  fontSize: 16,
+  textAlign: "center",
+  color: "#7620a2", // сиреневый
+  textShadow: "2px 2px 3px rgba(0,0,0,0.3)",
+  //display: "inline-block",
+};
+
 export const styletSelect01 = {
   overflowX: "auto",
   marginTop: 1,
-  //height: "358px",
   height: "540px",
-  //top: "358px",
   background: "linear-gradient(180deg, #F1F5FB 59%, #DEE8F5 )",
   border: "1px solid #d4d4d4",
   borderRadius: 1,

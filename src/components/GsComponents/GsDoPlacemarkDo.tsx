@@ -98,6 +98,8 @@ const GsDoPlacemarkDo = (props: {
   const Hoster = React.useCallback(() => {
     let nomInRoute = props.massMem.indexOf(id);
     let illum = datestat.create && nomInRoute >= 0 ? true : false;
+    let runREC = -1;
+    if (nomInMassfaz >= 0) runREC = massfaz[nomInMassfaz].runRec;
 
     let hostt =
       window.location.origin.slice(0, 22) === "https://localhost:3000"
@@ -108,9 +110,14 @@ const GsDoPlacemarkDo = (props: {
     if (!debug) {
       let mpp = illum ? 4 : mapp;
       if (nomSvg > 0) mpp = nomSvg.toString();
-      if (DEMO) mpp = "1";
+      if (DEMO) mpp = runREC === 2 || runREC === 4 ? "2" : "1";
       host = window.location.origin + "/free/img/trafficLights/" + mpp + ".svg";
-    } else if (DEMO) host = hostt + "1.svg";
+    } else {
+      if (DEMO) {
+        host = hostt + "1.svg";
+        if (runREC === 2 || runREC === 4) host = hostt + "2.svg";
+      }
+    }
 
     if (
       typeVert &&
@@ -143,6 +150,7 @@ const GsDoPlacemarkDo = (props: {
     pC,
     typeVert,
     statusVertex,
+    massfaz,
   ]);
 
   const createChipsLayout = React.useCallback(
@@ -236,8 +244,8 @@ const GsDoPlacemarkDo = (props: {
         Hoster =
           massfaz[nomInMassfaz].img[massfaz[nomInMassfaz].fazaSistOld - 1];
       }
-      let iconSize = Hoster ? 50 : 25;
-      let iconOffset = Hoster ? -25 : -12.5;
+      let iconSize = Hoster ? 60 : 30;
+      let iconOffset = Hoster ? -30 : -15;
       if (Hoster) imger = "data:image/png;base64," + Hoster;
       if (!Hoster) {
         let hostt =
@@ -301,14 +309,13 @@ const GsDoPlacemarkDo = (props: {
           pC < 0 ||
           FAZASIST <= 0 ||
           (FAZASIST === 9 && massfaz[nomInMassfaz].fazaSistOld < 0) ||
+          (lengMem > 2 && typeVert === 0) ||
           (lengMem > 2 && typeVert === 2) ||
           (lengMem > 2 && typeVert === 1 && !fazaImg) ||
           clinch ||
           badCode ||
           statusVertex === 1
-            ? //||
-              //(DEMO && datestat.toDoMode)
-              DEMO && datestat.toDoMode && fazaImg
+            ? DEMO && datestat.toDoMode && fazaImg && typeVert === 1
               ? GetPointOptions1(fazaImg)
               : { iconLayout: createChipsLayout(calculate, mappp.tlsost.num) }
             : GetPointOptions1(fazaImg)

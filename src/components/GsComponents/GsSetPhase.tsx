@@ -6,22 +6,19 @@ import { statsaveCreate } from "../../redux/actions";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import MenuItem from "@mui/material/MenuItem";
 
 import GsErrorMessage from "./GsErrorMessage";
 
 import { OutputFazaImg, NameMode, InputName } from "../MapServiceFunctions";
 import { ExitCross, PointMenu, StrokaFooter } from "../MapServiceFunctions";
+import { ChangeFaza } from "../MapServiceFunctions";
 
 import { SendSocketCreateRoute } from "../MapSocketFunctions";
 import { SendSocketUpdateRoute } from "../MapSocketFunctions";
 
-//import { styleModalEnd } from "../MainMapStyle";
-
 import { styleSetInf, styletFaza01 } from "./GsComponentsStyle";
-import { styleBoxFormFaza, styleSaveRed } from "./GsComponentsStyle";
-import { styleSaveBlack, styletSelectTitle } from "./GsComponentsStyle";
+import { styleSaveRed } from "./GsComponentsStyle";
+import { styleSaveBlack, styletSelectTit } from "./GsComponentsStyle";
 import { StyleSetFaza, StyleSetFazaNull } from "./GsComponentsStyle";
 
 let newInput = true;
@@ -69,10 +66,8 @@ const GsSetPhase = (props: {
   let massCoord = props.massCoord;
   xsFaza = 2.7;
   if (props.newMode < 0) xsFaza = 0.9;
-
   let nameZU =
     props.newMode < 0 ? "Введите название ЗУ:" : "Измените название ЗУ:";
-
   //=== инициализация ======================================
   const MakeMaskFaz = (i: number) => {
     let im: Array<string | null> = [];
@@ -132,6 +127,8 @@ const GsSetPhase = (props: {
     }
   }
   //========================================================
+  const [valuen, setValuen] = React.useState(nameMode);
+
   const handleCloseSetEnd = () => {
     if (chDel) DelRec();
     props.func(massFaz);
@@ -167,26 +164,23 @@ const GsSetPhase = (props: {
     for (let i = 0; i < massFaz.length; i++)
       maskRoutes.listTL[i].phase = massFaz[i].faza; // перезапись фаз
     maskRoutes.description = nameMode; // перезапись названия ЗУ
-    //if(nameMode !== map.routes[props.newMode].description)
-    
     if (mode) {
       // Сохранить как новый режим ЗУ
       map.routes.push(maskRoutes);
       dispatch(mapCreate(map));
-       !DEMO &&  SendSocketCreateRoute(debug, ws, maskRoutes);
-        massmode.push({
-          name: nameMode,
-          delRec: false,
-          kolOpen: 0,
-        });
-        dispatch(massmodeCreate(massmode));
+      !DEMO && SendSocketCreateRoute(debug, ws, maskRoutes);
+      massmode.push({
+        name: nameMode,
+        delRec: false,
+        kolOpen: 0,
+      });
+      dispatch(massmodeCreate(massmode));
     } else {
       // Сохранить изменения в старом ЗУ
       map.routes[props.newMode] = maskRoutes;
       massmode[props.newMode].name = nameMode; // изменение пункта меню режимов ЗУ
       !DEMO && SendSocketUpdateRoute(debug, ws, map.routes[props.newMode]);
     }
-
     dispatch(massmodeCreate(massmode));
     dispatch(mapCreate(map));
 
@@ -253,10 +247,6 @@ const GsSetPhase = (props: {
     }
   };
 
-  const handleKey = (event: any) => {
-    if (event.key === "Enter") event.preventDefault();
-  };
-
   const handleChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.value) {
       setValuen(event.target.value.trimStart()); // удаление пробелов в начале строки
@@ -266,16 +256,16 @@ const GsSetPhase = (props: {
   };
 
   const InputFaza = (mode: number) => {
-    let mesto = props.newMode < 0 ? "12%" : "0%";
-    const styleSetFaza = StyleSetFaza(mesto);
-    const styleSetFazaNull = StyleSetFazaNull(mesto);
-
     const handleChangeFaza = (event: React.ChangeEvent<HTMLInputElement>) => {
       chFaz++;
       setCurrency(Number(event.target.value));
       massFaz[mode].faza = massDat[Number(event.target.value)];
     };
 
+    const mesto = props.newMode < 0 ? "12%" : "0%";
+    const styleSetFaza = StyleSetFaza(mesto);
+    const styleSetFazaNull = StyleSetFazaNull(mesto);
+    const styleFaz = massFaz[mode].delRec ? styleSetFazaNull : styleSetFaza;
     let dat = massFaz[mode].phases;
     if (!dat.length) dat = [1, 2, 3];
     let massKey = [];
@@ -292,33 +282,10 @@ const GsSetPhase = (props: {
       dat.indexOf(massFaz[mode].faza)
     );
 
-    let styleFaz = massFaz[mode].delRec ? styleSetFazaNull : styleSetFaza;
-
     return (
       <Box sx={styleFaz}>
         {!massFaz[mode].delRec && (
-          <Box component="form" sx={styleBoxFormFaza}>
-            <TextField
-              select
-              size="small"
-              onKeyPress={handleKey} //отключение Enter
-              value={currency}
-              onChange={handleChangeFaza}
-              InputProps={{ disableUnderline: true, style: { fontSize: 14 } }}
-              variant="standard"
-              color="secondary"
-            >
-              {currencies.map((option: any) => (
-                <MenuItem
-                  key={option.value}
-                  value={option.value}
-                  sx={{ fontSize: 14 }}
-                >
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Box>
+          <>{ChangeFaza(currency, currencies, handleChangeFaza)}</>
         )}
       </Box>
     );
@@ -336,6 +303,7 @@ const GsSetPhase = (props: {
         colorRec = "red";
       }
       let illum = massFaz[i].delRec ? styleSaveRed : styleSaveBlack;
+      let recMF = massFaz[i].faza - 1;
 
       const styleTabl01 = {
         marginTop: 1,
@@ -348,21 +316,14 @@ const GsSetPhase = (props: {
           <Grid item xs={7.3} sx={{ fontSize: 14, paddingLeft: 1 }}>
             {massFaz[i].name}
           </Grid>
-
           <Grid item xs={xsFaza}>
             <Box sx={{ textAlign: "center" }}>{InputFaza(i)}</Box>
           </Grid>
           <Grid item xs={1} sx={{}}>
             {!massFaz[i].delRec && (
-              <>
-                {OutputFazaImg(
-                  massFaz[i].img[massFaz[i].faza - 1],
-                  massFaz[i].faza
-                )}
-              </>
+              <>{OutputFazaImg(massFaz[i].img[recMF], massFaz[i].faza)}</>
             )}
           </Grid>
-
           {props.newMode < 0 && (
             <Grid item xs={2.8} sx={{ textAlign: "center" }}>
               <Button sx={illum} onClick={() => ClickKnop(i)}>
@@ -377,6 +338,7 @@ const GsSetPhase = (props: {
   };
 
   const FooterMenu = () => {
+    let soob = "Сохранить как новый режим ЗУ";
     return (
       <>
         {props.newMode < 0 ? (
@@ -389,14 +351,8 @@ const GsSetPhase = (props: {
           <>
             {!!chFaz || !!chName ? (
               <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
-                <>
-                  {!!chName && (
-                    <>
-                      {StrokaFooter(SaveFaz, 1, "Сохранить как новый режим ЗУ")}
-                    </>
-                  )}
-                  {StrokaFooter(SaveFaz, 0, "Сохранить изменения")}
-                </>
+                {!!chName && <>{StrokaFooter(SaveFaz, 1, soob)}</>}
+                {StrokaFooter(SaveFaz, 0, "Сохранить изменения")}
               </Box>
             ) : (
               <Box sx={{ height: "29px" }}> </Box>
@@ -407,18 +363,13 @@ const GsSetPhase = (props: {
     );
   };
 
-  const [valuen, setValuen] = React.useState(nameMode);
-
   return (
     <Box sx={styleSetInf}>
       {ExitCross(handleCloseSetEnd)}
-
       {InputName(valuen, handleChangeName, nameZU)}
-
-      <Box sx={styletSelectTitle}>
+      <Box sx={styletSelectTit}>
         <b>Таблица фаз</b>
       </Box>
-
       <Box sx={styletFaza01}>
         <Grid container sx={{ fontSize: 14, bgcolor: "#B8CBB9" }}>
           {PointMenu(7.3, "Описание")}

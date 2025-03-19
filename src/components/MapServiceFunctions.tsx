@@ -22,8 +22,9 @@ import { styleModalEnd } from "./MainMapStyle";
 import { searchControl, styleSetPK04 } from "./MainMapStyle";
 
 import { styletSelectTitle, styleSet } from "./GsComponents/GsComponentsStyle";
-import { styleBoxFormName } from "./GsComponents/GsComponentsStyle";
 import { styletFaza02, styleModalMenu } from "./GsComponents/GsComponentsStyle";
+import { styleBoxFormFaza } from "./GsComponents/GsComponentsStyle";
+import { styleBoxFormName } from "./GsComponents/GsComponentsStyle";
 
 const handleKey = (event: any) => {
   if (event.key === "Enter") event.preventDefault();
@@ -88,7 +89,7 @@ export const MasskPoint = (debug: boolean, rec: any, imgFaza: string) => {
     nameCoordinates: rec.description,
     region: Number(rec.region.num),
     area: Number(rec.area.num),
-    phases: rec.phases,
+    phases: rec.phases.length ? rec.phases : [1, 2],
     phSvg: [],
   };
   let img: any = debug ? imgFaza : null;
@@ -242,10 +243,10 @@ export const getMultiRouteOptions = () => {
     // //routeActiveStrokeColor: "#224E1F",
     // routeStrokeWidth: 0,
     // wayPointVisible: false,
-    routeActiveStrokeWidth: 4, // толщина линии
+    routeActiveStrokeWidth: 3, // толщина линии
     routeStrokeWidth: 0, // толщина линии альтернативного маршрута
     wayPointVisible: false, // отметки "начало - конец"
-    strokeWidth: 4, // толщина линии Polyline
+    strokeWidth: 3, // толщина линии Polyline
     strokeColor: "#9B59DA", // цвет линии Polyline - сиреневый
   };
 };
@@ -288,7 +289,6 @@ export const MakeMaskFaz = (
   newMode: number,
   DEMO: boolean
 ) => {
-  //let iDx = props.massMem[i];
   let maskFaz: Fazer = {
     kolOpen: 0,
     runRec: 0,
@@ -480,6 +480,37 @@ export const FooterContentToDo = (toDoMode: boolean, ToDoMode: any) => {
     </Box>
   );
 };
+
+export const ChangeFaza = (
+  currency: any,
+  currencies: any,
+  handleChangeFaza: any
+) => {
+  return (
+    <Box component="form" sx={styleBoxFormFaza}>
+      <TextField
+        select
+        size="small"
+        onKeyPress={handleKey} //отключение Enter
+        value={currency}
+        onChange={handleChangeFaza}
+        InputProps={{ disableUnderline: true, style: { fontSize: 14 } }}
+        variant="standard"
+        color="secondary"
+      >
+        {currencies.map((option: any) => (
+          <MenuItem
+            key={option.value}
+            value={option.value}
+            sx={{ fontSize: 14 }}
+          >
+            {option.label}
+          </MenuItem>
+        ))}
+      </TextField>
+    </Box>
+  );
+};
 //=== MainMapGs ====================================
 export const StrokaMenuDop = (soob: string, func: any, mode: number) => {
   let dlSoob = (soob.length + 5) * 8;
@@ -528,12 +559,12 @@ export const InputDirect = (props: { func: any; rec: boolean }) => {
   };
 
   //let rec = props.rec ? 1 : 0;
-  let rec = 0 // выход на заголовок
-  
-  const [currency, setCurrency] = React.useState(rec);
+  //let rec = 0; // выход на заголовок
+
+  //const [currency, setCurrency] = React.useState(rec);
+  const [currency, setCurrency] = React.useState(1);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    //let curr = currency
     setCurrency(Number(event.target.value));
     switch (Number(event.target.value)) {
       case 0: // // заголовок
@@ -545,19 +576,19 @@ export const InputDirect = (props: { func: any; rec: boolean }) => {
         break;
       case 2: // выбор режима ЗУ
         props.func(42);
-        setCurrency(0);
+        setCurrency(1);
         break;
       case 3: // Настройки
         props.func(46);
-        setCurrency(0);
+        setCurrency(1);
         break;
       case 4: // режим Demo
         props.func(47);
-        setCurrency(0);
+        setCurrency(1);
         break;
       case 5: // Фрагменты
         props.func(48);
-        setCurrency(0);
+        setCurrency(1);
     }
   };
 
@@ -719,7 +750,7 @@ export const BadExit = (badExit: boolean, handleCloseEnd: Function) => {
         </Typography>
         <Box sx={{ marginTop: 0.5 }}>
           <Box sx={{ marginBottom: 1.2 }}>
-            Будет произведён выход без сохранения. Продолжать?
+            Будет произведён выход без сохранения. Продолжить?
           </Box>
           <Button sx={styleModalMenu} onClick={() => handleClose(true)}>
             Да

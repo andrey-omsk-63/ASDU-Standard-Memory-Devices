@@ -74,8 +74,6 @@ const GsToDoMode = (props: {
   const [trigger, setTrigger] = React.useState(true);
   const [flagPusk, setFlagPusk] = React.useState(false);
 
-  console.log("timer:", timer);
-
   const StopSendFaza = (idx: number) => {
     for (let i = 0; i < massInt[idx].length; i++) {
       if (massInt[idx][i]) {
@@ -375,7 +373,7 @@ const GsToDoMode = (props: {
         {HeadingTabl(DEMO, map, newMode)}
         <Box sx={styleStrokaTabl10}>
           {HeaderTabl()}
-          <Box sx={{ overflowX: "auto", height: "84.0vh" }}>{StrokaTabl()}</Box>
+          <Box sx={{ overflowX: "auto", height: "83.0vh" }}>{StrokaTabl()}</Box>
         </Box>
         {FooterContentToDo(toDoMode, ToDoMode)}
       </Box>

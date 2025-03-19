@@ -164,7 +164,7 @@ const App = () => {
         kolOpen: 0,
       });
     }
-    massfaz.push(maskFaz);
+    massfaz.push(maskFaz); // заготовка для massfaz
     dispatch(massdkCreate(massdk));
     dispatch(massfazCreate(massfaz));
     dispatch(coordinatesCreate(coordinates));

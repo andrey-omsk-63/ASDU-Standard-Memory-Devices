@@ -265,7 +265,7 @@ const GsSelectMD = (props: {
         {ExitCross(handleCloseSetEnd)}
         <Box sx={{ textAlign: "center" }}>
           <Box sx={styletSelectTitle}>
-            <b>Выбор режима ЗУ</b>
+            <b>Выбор существующей ЗУ</b>
             {DEMO && (
               <>
                 <Box sx={styleBut04("background.paper")}>{"."}</Box>
