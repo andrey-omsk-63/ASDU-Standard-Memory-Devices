@@ -11,7 +11,7 @@ import AppSocketError from "./AppSocketError";
 
 import { MasskPoint } from "./components/MapServiceFunctions";
 
-import { SendSocketGetPhases } from "./components/MapSocketFunctions";
+//import { SendSocketGetPhases } from "./components/MapSocketFunctions";
 
 import { dataMap } from "./otladkaMaps";
 import { imgFaza } from "./otladkaRoutes";
@@ -72,6 +72,7 @@ export interface Pointer {
   area: number;
   phases: Array<number>;
   phSvg: Array<string | null>;
+  readIt: boolean;
 }
 export let massDk: Pointer[] = [];
 
@@ -96,13 +97,13 @@ let maskFaz: Fazer = {
   kolOpen: 0,
   runRec: 0, // 0-начало 1-финиш 2-актив 3-хз 4-активДемо 5-финишДемо
   idx: 0,
-  id: -1,
+  id: -1, // id cветофора
   coordinates: [],
   faza: 1,
   fazaSist: -1,
   fazaSistOld: -1,
   phases: [],
-  idevice: 0,
+  idevice: 0, // idevice cветофора
   name: "",
   starRec: false,
   img: [],
@@ -116,15 +117,16 @@ export interface NameMode {
 export let massMode: NameMode[] = [];
 
 export let debug = false;
+export let WS: any = null;
 
 export let Coordinates: Array<Array<number>> = []; // массив координат
 
 let flagOpen = true;
 let flagOpenWS = true;
-let WS: any = null;
 let homeRegion: string = "0";
 let soob = "";
 let flagInit = false;
+let flagChange = false;
 
 const App = () => {
   //== Piece of Redux ======================================
@@ -170,24 +172,12 @@ const App = () => {
     dispatch(coordinatesCreate(coordinates));
     dispatch(massmodeCreate(massmode));
     // запросы на получение изображения фаз
-    for (let i = 0; i < massdk.length; i++) {
-      let reg = massdk[i].region.toString();
-      let area = massdk[i].area.toString();
-      SendSocketGetPhases(debug, WS, reg, area, massdk[i].ID);
-    }
+    // for (let i = 0; i < massdk.length; i++) {
+    //   let reg = massdk[i].region.toString();
+    //   let area = massdk[i].area.toString();
+    //   SendSocketGetPhases(debug, WS, reg, area, massdk[i].ID);
+    // }
   };
-
-  // // достать начальный zoom Yandex-карты из LocalStorage
-  // if (window.localStorage.ZoomGS === undefined)
-  //   window.localStorage.ZoomGS = zoomStart;
-
-  // // достать центр координат [0] Yandex-карты из LocalStorage
-  // if (window.localStorage.PointCenterGS0 === undefined)
-  //   window.localStorage.PointCenterGS0 = 0;
-
-  // // достать центр координат [1] Yandex-карты из LocalStorage
-  // if (window.localStorage.PointCenterGS1 === undefined)
-  //   window.localStorage.PointCenterGS1 = 0;
 
   // достать тип отображаемых связей из LocalStorage
   if (window.localStorage.typeRoute === undefined)
@@ -274,7 +264,7 @@ const App = () => {
       //console.log("пришло:", data.error, allData.type, data);
       switch (allData.type) {
         case "tflight":
-          console.log("Tflight:", data, data.tflight);
+          //console.log("Tflight:", data, data.tflight);
           for (let j = 0; j < data.tflight.length; j++) {
             for (let i = 0; i < dateMapGl.tflight.length; i++)
               if (data.tflight[j].idevice === dateMapGl.tflight[i].idevice)
@@ -285,7 +275,7 @@ const App = () => {
           break;
         case "phases":
           //console.log("phases:", data);
-          let flagChange = false;
+          flagChange = false;
           for (let i = 0; i < data.phases.length; i++) {
             for (let j = 0; j < massfaz.length; j++) {
               if (massfaz[j].idevice === data.phases[i].device) {
@@ -304,19 +294,17 @@ const App = () => {
         case "mapInfo":
           dateMapGl = JSON.parse(JSON.stringify(data));
           dispatch(mapCreate(dateMapGl));
-          // let massRegion = [];
-          // for (let key in dateMapGl.regionInfo)
-          //   if (!isNaN(Number(key))) massRegion.push(Number(key));
-          // homeRegion = massRegion[0].toString();
-          homeRegion = dateMapGl.tflight[0].region.num
+          homeRegion = dateMapGl.tflight[0].region.num;
           dateStat.region = homeRegion;
           dispatch(statsaveCreate(dateStat));
           flagInit = true;
           setOpenMapInfo(true);
           break;
         case "getPhases":
+          //console.log("getPhases:", data);
           for (let i = 0; i < massdk.length; i++) {
             if (massdk[i].ID === data.pos.id) {
+              massdk[i].readIt = true; // флаг прочтения картинок фаз
               if (data.images) {
                 if (data.images.length) {
                   for (let j = 0; j < data.images.length; j++) {
@@ -327,7 +315,7 @@ const App = () => {
                   dispatch(massdkCreate(massdk));
                 }
                 break;
-              } 
+              }
               // else {
               //   massdk[i].phSvg[0] = imgFaza; // костыль
               //   massdk[i].phSvg[1] = null;

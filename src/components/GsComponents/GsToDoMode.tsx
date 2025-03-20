@@ -62,7 +62,6 @@ const GsToDoMode = (props: {
     return statsaveReducer.datestat;
   });
   const debug = datestat.debug;
-  const ws = datestat.ws;
   const DEMO = datestat.demo;
   const dispatch = useDispatch();
   let intervalFaza = datestat.intervalFaza; // Задаваемая длительность фазы ДУ (сек)
@@ -96,8 +95,8 @@ const GsToDoMode = (props: {
 
   const CloseVertex = (idx: number) => {
     if (!DEMO) {
-      SendSocketDispatch(debug, ws, massfaz[idx].idevice, 9, 9); // КУ
-      SendSocketDispatch(debug, ws, massfaz[idx].idevice, 4, 0); // закрытие id
+      SendSocketDispatch(massfaz[idx].idevice, 9, 9); // КУ
+      SendSocketDispatch(massfaz[idx].idevice, 4, 0); // закрытие id
     }
     StopSendFaza(idx);
     massfaz[idx].runRec = DEMO ? 5 : 1;
@@ -150,8 +149,7 @@ const GsToDoMode = (props: {
   const DoTimerId = (mode: number) => {
     let fazer = massfaz[mode];
     if (!DEMO) {
-      fazer.runRec === 2 &&
-        SendSocketDispatch(debug, ws, fazer.idevice, 9, fazer.faza);
+      fazer.runRec === 2 && SendSocketDispatch(fazer.idevice, 9, fazer.faza);
     } else {
       if (!fazer.runRec || fazer.runRec === 5 || fazer.runRec === 1) {
         fazer.fazaSist = fazer.faza; // начало или финиш
@@ -180,8 +178,8 @@ const GsToDoMode = (props: {
   const StartVertex = (mode: number) => {
     let fazer = massfaz[mode];
     if (!DEMO) {
-      SendSocketDispatch(debug, ws, fazer.idevice, 4, 1); // начало работы
-      SendSocketDispatch(debug, ws, fazer.idevice, 9, fazer.faza);
+      SendSocketDispatch(fazer.idevice, 4, 1); // начало работы
+      SendSocketDispatch(fazer.idevice, 9, fazer.faza);
     }
     timerId[mode] = setInterval(() => DoTimerId(mode), timer);
     massInt[mode].push(timerId[mode]);
@@ -224,7 +222,7 @@ const GsToDoMode = (props: {
     init = false;
     dispatch(massfazCreate(massfaz));
     dispatch(statsaveCreate(datestat));
-  }
+  } 
   if (props.start >= 0) {
     StartVertex(props.start); // запустить светофор
     props.funcStart(-1);
@@ -263,7 +261,7 @@ const GsToDoMode = (props: {
         massfaz[i].kolOpen++;
       }
       dispatch(massfazCreate(massfaz));
-      !DEMO && SendSocketRoute(debug, ws, massIdevice, true); // открыть маршрут
+      !DEMO && SendSocketRoute(massIdevice, true); // открыть маршрут
       toDoMode = true; // выполнение режима
       datestat.toDoMode = true;
       dispatch(statsaveCreate(datestat));
@@ -275,13 +273,13 @@ const GsToDoMode = (props: {
       ForcedClearInterval(); // обнуление всех интервалов и остановка всех таймеров
       for (let i = 0; i < massfaz.length; i++) {
         if (massfaz[i].runRec === 2) {
-          !DEMO && SendSocketDispatch(debug, ws, massfaz[i].idevice, 9, 9);
+          !DEMO && SendSocketDispatch(massfaz[i].idevice, 9, 9);
           massfaz[mode].runRec = 1;
           massIdevice.push(massfaz[i].idevice);
         }
       }
       dispatch(massfazCreate(massfaz));
-      !DEMO && SendSocketRoute(debug, ws, massIdevice, false); // закрыть маршрут
+      !DEMO && SendSocketRoute(massIdevice, false); // закрыть маршрут
       props.funcMode(mode); // закончить исполнение
       props.funcHelper(true);
       handleCloseSetEnd();
@@ -317,7 +315,6 @@ const GsToDoMode = (props: {
     };
 
     let resStr = [];
-
     for (let i = 0; i < massfaz.length; i++) {
       let runREC = JSON.parse(JSON.stringify(massfaz[i].runRec));
       let bull = runREC === 2 || runREC === 4 ? " •" : " ";

@@ -1,14 +1,12 @@
+import { debug, WS } from "./../App";
+
 //=== GsSetPhase ===================================
-export const SendSocketCreateRoute = (
-  debug: boolean,
-  ws: WebSocket,
-  maskRoutes: any
-) => {
+export const SendSocketCreateRoute = (maskRoutes: any) => {
   console.log("CreateRoute:", maskRoutes);
   const handleSendOpen = () => {
     if (!debug) {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.send(
+      if (WS.readyState === WebSocket.OPEN) {
+        WS.send(
           JSON.stringify({
             type: "createRoute",
             region: maskRoutes.region,
@@ -26,16 +24,12 @@ export const SendSocketCreateRoute = (
   handleSendOpen();
 };
 
-export const SendSocketUpdateRoute = (
-  debug: boolean,
-  ws: WebSocket,
-  maskRoutes: any
-) => {
-  console.log("UpdateRoute:", maskRoutes);
+export const SendSocketUpdateRoute = (maskRoutes: any) => {
+  //console.log("UpdateRoute:", maskRoutes);
   const handleSendOpen = () => {
     if (!debug) {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.send(
+      if (WS.readyState === WebSocket.OPEN) {
+        WS.send(
           JSON.stringify({
             type: "updateRoute",
             region: maskRoutes.region,
@@ -53,16 +47,12 @@ export const SendSocketUpdateRoute = (
   handleSendOpen();
 };
 
-export const SendSocketDeleteRoute = (
-  debug: boolean,
-  ws: WebSocket,
-  maskRoutes: any
-) => {
+export const SendSocketDeleteRoute = (maskRoutes: any) => {
   console.log("DeleteRoute:", maskRoutes);
   const handleSendOpen = () => {
     if (!debug) {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.send(
+      if (WS.readyState === WebSocket.OPEN) {
+        WS.send(
           JSON.stringify({
             type: "deleteRoute",
             region: maskRoutes.region,
@@ -80,16 +70,14 @@ export const SendSocketDeleteRoute = (
 };
 //=== GsToDoMode ===================================
 export const SendSocketRoute = (
-  debug: boolean,
-  ws: WebSocket,
   devicesProps: Array<number>,
   turnOnProps: boolean
 ) => {
   console.log("Route:", devicesProps, turnOnProps);
   const handleSendOpen = () => {
     if (!debug) {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.send(
+      if (WS.readyState === WebSocket.OPEN) {
+        WS.send(
           JSON.stringify({
             type: "route",
             devices: devicesProps,
@@ -107,18 +95,15 @@ export const SendSocketRoute = (
 };
 
 export const SendSocketDispatch = (
-  debug: boolean,
-  ws: WebSocket,
   idevice: number,
   cmdd: number,
   faza: number
 ) => {
-  console.log("Dispatch:", cmdd, faza);
-
+  //console.log("Dispatch:", cmdd, faza);
   const handleSendOpen = () => {
     if (!debug) {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.send(
+      if (WS.readyState === WebSocket.OPEN) {
+        WS.send(
           JSON.stringify({
             type: "dispatch",
             id: idevice,
@@ -137,16 +122,15 @@ export const SendSocketDispatch = (
 };
 //=== SendSocket ===================================
 export const SendSocketGetPhases = (
-  debugging: boolean,
-  ws: WebSocket,
   region: string,
   area: string,
   id: number
 ) => {
+  //console.log("SendGetPhases:", id);
   const handleSendOpen = () => {
-    if (!debugging) {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.send(
+    if (!debug) {
+      if (WS.readyState === WebSocket.OPEN) {
+        WS.send(
           JSON.stringify({
             type: "getPhases",
             pos: { region, area, id },
@@ -155,7 +139,7 @@ export const SendSocketGetPhases = (
       } else {
         setTimeout(() => {
           handleSendOpen();
-        }, 1000);
+        }, 500);
       }
     }
   };
@@ -163,15 +147,13 @@ export const SendSocketGetPhases = (
 };
 
 export const SendSocketRouteHistory = (
-  debugging: boolean,
-  ws: WebSocket,
   descr: string
 ) => {
   console.log("GetRouteHistory:", descr);
   const handleSendOpen = () => {
-    if (!debugging) {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.send(
+    if (!debug) {
+      if (WS.readyState === WebSocket.OPEN) {
+        WS.send(
           JSON.stringify({
             type: "getRouteHistory",
             description: descr,

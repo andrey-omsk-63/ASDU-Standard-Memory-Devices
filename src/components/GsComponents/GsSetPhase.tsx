@@ -54,8 +54,6 @@ const GsSetPhase = (props: {
     const { statsaveReducer } = state;
     return statsaveReducer.datestat;
   });
-  const debug = datestat.debug;
-  const ws = datestat.ws;
   const DEMO = datestat.demo;
   const dispatch = useDispatch();
   //========================================================
@@ -168,7 +166,7 @@ const GsSetPhase = (props: {
       // Сохранить как новый режим ЗУ
       map.routes.push(maskRoutes);
       dispatch(mapCreate(map));
-      !DEMO && SendSocketCreateRoute(debug, ws, maskRoutes);
+      !DEMO && SendSocketCreateRoute(maskRoutes);
       massmode.push({
         name: nameMode,
         delRec: false,
@@ -179,14 +177,14 @@ const GsSetPhase = (props: {
       // Сохранить изменения в старом ЗУ
       map.routes[props.newMode] = maskRoutes;
       massmode[props.newMode].name = nameMode; // изменение пункта меню режимов ЗУ
-      !DEMO && SendSocketUpdateRoute(debug, ws, map.routes[props.newMode]);
+      !DEMO && SendSocketUpdateRoute(map.routes[props.newMode]);
     }
     dispatch(massmodeCreate(massmode));
     dispatch(mapCreate(map));
-
+    handleCloseSetEnd(); 
     chFaz = chName = 0;
     massFaz = [];
-    handleCloseSetEnd();
+    
   };
 
   const SaveRec = (mode: number) => {
@@ -231,7 +229,7 @@ const GsSetPhase = (props: {
         }
         map.routes.push(maskRoutes);
         dispatch(mapCreate(map));
-        !DEMO && SendSocketCreateRoute(debug, ws, maskRoutes);
+        !DEMO && SendSocketCreateRoute(maskRoutes);
         massmode.push({
           name: nameMode,
           delRec: false,

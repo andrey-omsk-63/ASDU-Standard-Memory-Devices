@@ -23,7 +23,7 @@ import { StrokaMenuGlob, HelpAdd, YandexServices } from "./MapServiceFunctions";
 import { StrokaMenuDop } from "./MapServiceFunctions";
 
 import { SendSocketUpdateRoute } from "./MapSocketFunctions";
-import { SendSocketDispatch } from "./MapSocketFunctions";
+import { SendSocketDispatch, SendSocketGetPhases } from "./MapSocketFunctions";
 
 import { YMapsModul, MyYandexKey } from "./MapConst";
 
@@ -77,8 +77,6 @@ const MainMapGs = (props: {
     return statsaveReducer.datestat;
   });
   const typeRoute = datestat.typeRoute; // тип отображаемых связей
-  const debug = datestat.debug;
-  const ws = datestat.ws;
   const dispatch = useDispatch();
   const DEMO = datestat.demo;
   //===========================================================
@@ -132,8 +130,16 @@ const MainMapGs = (props: {
         if (!massErrRec.includes(i))
           massRabMap.push(map.routes[mode].listTL[i]);
       map.routes[mode].listTL = massRabMap;
-      SendSocketUpdateRoute(debug, ws, map.routes[mode]);
+      SendSocketUpdateRoute(map.routes[mode]);
       dispatch(mapCreate(map));
+    }
+    // запросы на получение изображений фаз
+    for (let i = 0; i < massMem.length; i++) {
+      if (!massdk[massMem[i]].readIt) {
+        let region = massdk[massMem[i]].region.toString();
+        let area = massdk[massMem[i]].area.toString();
+        SendSocketGetPhases(region, area, massdk[massMem[i]].ID);
+      }
     }
     newMode = mode;
     ymaps && addRoute(ymaps, true); // перерисовка связей
@@ -454,12 +460,10 @@ const MainMapGs = (props: {
       pointCenter = CenterCoordBegin(map); // начальные координаты центра отоброжаемой карты
     } else pointCenter = [Number(point0), Number(point1)];
     zoom = Number(window.localStorage.ZoomDU); // начальный zoom Yandex-карты ДУ
-
     // helper = false; // это для выхода на выбор существующих режимов
     // datestat.create = false;
-    //dispatch(statsaveCreate(datestat));
-    //setSelectMD(true);
-
+    // dispatch(statsaveCreate(datestat));
+    // setSelectMD(true);
     flagOpen = true;
   }
   //========================================================
@@ -515,7 +519,7 @@ const MainMapGs = (props: {
   const Closing = () => {
     for (let i = 0; i < massfaz.length; i++) {
       if (massfaz[i].runRec === 2)
-        !DEMO && SendSocketDispatch(debug, ws, massfaz[i].idevice, 9, 9);
+        !DEMO && SendSocketDispatch(massfaz[i].idevice, 9, 9);
     }
   };
 

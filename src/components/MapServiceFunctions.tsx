@@ -18,6 +18,8 @@ import { FullscreenControl, GeolocationControl } from "react-yandex-maps";
 import { RulerControl, SearchControl } from "react-yandex-maps";
 import { TrafficControl, TypeSelector, ZoomControl } from "react-yandex-maps";
 
+import { SendSocketGetPhases } from "./MapSocketFunctions";
+
 import { styleModalEnd } from "./MainMapStyle";
 import { searchControl, styleSetPK04 } from "./MainMapStyle";
 
@@ -84,19 +86,19 @@ export const FooterContent = (SaveForm: Function) => {
 
 export const MasskPoint = (debug: boolean, rec: any, imgFaza: string) => {
   let masskPoint: Pointer = {
-    ID: -1,
+    ID: rec.ID,
     coordinates: [],
     nameCoordinates: rec.description,
     region: Number(rec.region.num),
     area: Number(rec.area.num),
     phases: rec.phases.length ? rec.phases : [1, 2],
     phSvg: [],
+    readIt: false,
   };
-  let img: any = debug ? imgFaza : null;
-  masskPoint.ID = rec.ID;
   masskPoint.coordinates[0] = rec.points.Y;
   masskPoint.coordinates[1] = rec.points.X;
-  for (let i = 0; i < rec.phases.length; i++) masskPoint.phSvg.push(img);
+  for (let i = 0; i < rec.phases.length; i++)
+    masskPoint.phSvg.push(debug ? imgFaza : null);
   return masskPoint;
 };
 
@@ -316,7 +318,17 @@ export const MakeMaskFaz = (
     maskFaz.starRec = true; // было изменение координат
   if (!maskFaz.phases.length) {
     maskFaz.img = [null, null, null];
-  } else maskFaz.img = massdk[maskFaz.idx].phSvg;
+  } else {
+    if (massdk[maskFaz.idx].readIt) {
+      // картинки фаз были прочтены ранее
+      maskFaz.img = massdk[maskFaz.idx].phSvg;
+    } else {
+      // запрос на получение изображения фазы
+      let region = massdk[maskFaz.idx].region.toString();
+      let area = massdk[maskFaz.idx].area.toString();
+      SendSocketGetPhases(region, area, maskFaz.id);
+    }
+  }
   return maskFaz;
 };
 

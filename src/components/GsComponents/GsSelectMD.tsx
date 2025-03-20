@@ -48,7 +48,6 @@ const GsSelectMD = (props: {
     return statsaveReducer.datestat;
   });
   const debug = datestat.debug;
-  const ws = datestat.ws;
   const DEMO = datestat.demo;
   const dispatch = useDispatch();
   //===========================================================
@@ -97,7 +96,7 @@ const GsSelectMD = (props: {
   };
 
   const ClickKnop2 = (idx: number) => {
-    SendSocketRouteHistory(debug, ws, massmode[idx].name);
+    SendSocketRouteHistory(massmode[idx].name);
     //========================================================
     if (debug) {
       history = datestat.hist; // для отладки
@@ -119,7 +118,7 @@ const GsSelectMD = (props: {
       if (!massmode[i].delRec) {
         massRab.push(massmode[i]);
         massRoute.push(map.routes[i]);
-      } else SendSocketDeleteRoute(debug, ws, map.routes[i]);
+      } else SendSocketDeleteRoute(map.routes[i]);
     }
     massmode = massRab;
     map.routes = massRoute;
@@ -236,10 +235,10 @@ const GsSelectMD = (props: {
           </Grid>
 
           <Grid item xs sx={{ border: 0, textAlign: "center" }}>
-          {!DEMO ? (
-            <Button sx={illum} onClick={() => ClickKnop3(i)}>
-              {knop2}
-            </Button>
+            {!DEMO ? (
+              <Button sx={illum} onClick={() => ClickKnop3(i)}>
+                {knop2}
+              </Button>
             ) : (
               <Box sx={styleBut021}>удалить</Box>
             )}
