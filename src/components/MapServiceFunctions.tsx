@@ -48,7 +48,7 @@ export const YandexServices = () => {
 
 export const ExitCross = (func: any) => {
   return (
-    <Button sx={styleModalEnd} onClick={() => func()}>
+    <Button sx={styleModalEnd} onClick={() => func(true)}>
       <b>&#10006;</b>
     </Button>
   );

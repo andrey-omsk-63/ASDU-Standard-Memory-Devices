@@ -97,6 +97,14 @@ const MainMapGs = (props: {
   const [demoSost, setDemoSost] = React.useState(-1);
   const mapp = React.useRef<any>(null);
 
+  // const SendImg = (idx: number) => {
+  //   if (!massdk[idx].readIt) {
+  //     let region = massdk[idx].region.toString();
+  //     let area = massdk[idx].area.toString();
+  //     SendSocketGetPhases(region, area, massdk[idx].ID);
+  //   }
+  // }
+
   const ReceiveIdxGs = (mode: number) => {
     let massErrRec = [];
     massMem = [];
@@ -221,6 +229,7 @@ const MainMapGs = (props: {
           masscoord[0] = map.tflight[index].points.Y;
           masscoord[1] = map.tflight[index].points.X;
           massCoord.push(masscoord);
+          //====================================================
         } else {
           massMem.splice(nomInMass, 1);
           massCoord.splice(nomInMass, 1);
@@ -371,6 +380,15 @@ const MainMapGs = (props: {
       StatusQuo();
     }
     setFlagPusk(!flagPusk);
+  };
+
+  const SetSetPhase = (mode: boolean) => {
+    if (!mode) {
+      soobErr =
+        "⚠️Предупреждение. Произошло изменение названия ЗУ, поэтому пропадёт история изменения параметров.";
+      setOpenSoobErr(true);
+    }
+    setSetPhase(false);
   };
 
   const SetHelper = (mod: boolean) => {
@@ -584,7 +602,7 @@ const MainMapGs = (props: {
                   )}
                   {setPhase && (
                     <GsSetPhase
-                      setOpen={setSetPhase}
+                      setOpen={SetSetPhase}
                       newMode={newMode}
                       massMem={massMem}
                       massCoord={massCoord}

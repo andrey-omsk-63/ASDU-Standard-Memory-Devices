@@ -11,7 +11,7 @@ import GsLookFaza from "./GsLookFaza";
 
 import { styleModalEnd } from "../MainMapStyle";
 import { styleSetHist, styleButLook } from "./GsComponentsStyle";
-import { styleGridLook, styletSelectTitle } from "./GsComponentsStyle";
+import { styleGridLook, styletSelectTit } from "./GsComponentsStyle";
 import { styletSelect01 } from "./GsComponentsStyle";
 
 let history: any = null;
@@ -86,7 +86,7 @@ const GsLookHistory = (props: {
 
         {history !== null && (
           <>
-            <Typography variant="h6" sx={styletSelectTitle}>
+            <Typography variant="h6" sx={styletSelectTit}>
               {history[0].description}
             </Typography>
             <Box sx={styletSelect01}>{StrokaTabl()}</Box>

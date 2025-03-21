@@ -15,6 +15,7 @@ import { ChangeFaza } from "../MapServiceFunctions";
 
 import { SendSocketCreateRoute } from "../MapSocketFunctions";
 import { SendSocketUpdateRoute } from "../MapSocketFunctions";
+import { SendSocketDeleteRoute } from "../MapSocketFunctions";
 
 import { styleSetInf, styletFaza01 } from "./GsComponentsStyle";
 import { styleSaveRed } from "./GsComponentsStyle";
@@ -24,6 +25,7 @@ import { StyleSetFaza, StyleSetFazaNull } from "./GsComponentsStyle";
 let newInput = true;
 let massFaz: any = []; // инфа о режиме
 let nameMode = "";
+let nameModeStart = "";
 
 let soobErr = "";
 let chFaz = 0;
@@ -58,6 +60,7 @@ const GsSetPhase = (props: {
   const dispatch = useDispatch();
   //========================================================
   const [openSoobErr, setOpenSoobErr] = React.useState(false);
+  //const [openSoobEnd, setOpenSoobEnd] = React.useState(false);
   const [trigger, setTrigger] = React.useState(true);
   const [chDel, setChDel] = React.useState(0);
 
@@ -88,6 +91,8 @@ const GsSetPhase = (props: {
     return maskFaz;
   };
 
+  console.log('###:',props.newMode,newInput)
+
   if (props.newMode >= 0) {
     if (newInput) {
       massFaz = []; // существующий режим
@@ -98,12 +103,16 @@ const GsSetPhase = (props: {
       nameMode = JSON.parse(
         JSON.stringify(map.routes[props.newMode].description)
       );
+      nameModeStart = JSON.parse(
+        JSON.stringify(map.routes[props.newMode].description)
+      );
     }
   } else {
     if (newInput) {
       massFaz = []; // новый режим
       chFaz = chName = 0;
       nameMode = "Режим ЗУ" + NameMode();
+      nameModeStart = JSON.parse(JSON.stringify(nameMode));
       for (let i = 0; i < props.massMem.length; i++)
         massFaz.push(MakeMaskFaz(i));
       newInput = false;
@@ -127,10 +136,10 @@ const GsSetPhase = (props: {
   //========================================================
   const [valuen, setValuen] = React.useState(nameMode);
 
-  const handleCloseSetEnd = () => {
+  const handleCloseSetEnd = (mode: boolean) => {
     if (chDel) DelRec();
     props.func(massFaz);
-    props.setOpen(false);
+    props.setOpen(mode);
     newInput = true;
     datestat.working = false;
     dispatch(statsaveCreate(datestat));
@@ -158,7 +167,9 @@ const GsSetPhase = (props: {
   };
 
   const SaveFaz = (mode: number) => {
+    let end = true;
     let maskRoutes = JSON.parse(JSON.stringify(map.routes[props.newMode]));
+    let maskRoutesOld = JSON.parse(JSON.stringify(map.routes[props.newMode]));
     for (let i = 0; i < massFaz.length; i++)
       maskRoutes.listTL[i].phase = massFaz[i].faza; // перезапись фаз
     maskRoutes.description = nameMode; // перезапись названия ЗУ
@@ -172,19 +183,25 @@ const GsSetPhase = (props: {
         delRec: false,
         kolOpen: 0,
       });
-      dispatch(massmodeCreate(massmode));
     } else {
       // Сохранить изменения в старом ЗУ
       map.routes[props.newMode] = maskRoutes;
-      massmode[props.newMode].name = nameMode; // изменение пункта меню режимов ЗУ
-      !DEMO && SendSocketUpdateRoute(map.routes[props.newMode]);
+      if (nameMode === nameModeStart) {
+        // было тоько изменение фаз
+        !DEMO && SendSocketUpdateRoute(maskRoutes);
+      } else {
+        massmode[props.newMode].name = nameMode;
+        !DEMO && SendSocketDeleteRoute(maskRoutesOld); // удаление ЗУ со старым названием
+        !DEMO && SendSocketCreateRoute(maskRoutes); // создание ЗУ с новым названием
+        end = false;
+      }
     }
     dispatch(massmodeCreate(massmode));
     dispatch(mapCreate(map));
-    handleCloseSetEnd(); 
+    dispatch(massmodeCreate(massmode));
+    handleCloseSetEnd(end);
     chFaz = chName = 0;
     massFaz = [];
-    
   };
 
   const SaveRec = (mode: number) => {
@@ -237,18 +254,19 @@ const GsSetPhase = (props: {
         });
         dispatch(massmodeCreate(massmode));
         massFaz = [];
-        handleCloseSetEnd();
+        handleCloseSetEnd(true);
       }
     } else {
       if (mode === 1) massFaz = []; // очистить таблицу
-      handleCloseSetEnd();
+      handleCloseSetEnd(true);
     }
   };
 
   const handleChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value) {
-      setValuen(event.target.value.trimStart()); // удаление пробелов в начале строки
-      nameMode = event.target.value.trimStart();
+    let eventTargeValue = event.target.value.trimStart(); // удаление пробелов в начале строки
+    if (eventTargeValue && nameMode !== eventTargeValue) {
+      nameMode = eventTargeValue;
+      setValuen(nameMode);
       chName++;
     }
   };
@@ -347,9 +365,11 @@ const GsSetPhase = (props: {
           </Box>
         ) : (
           <>
-            {!!chFaz || !!chName ? (
+            {!!chFaz || (!!chName && nameModeStart !== nameMode.trimEnd()) ? (
               <Box sx={{ marginTop: 0.5, textAlign: "center" }}>
-                {!!chName && <>{StrokaFooter(SaveFaz, 1, soob)}</>}
+                {!!chName && nameModeStart !== nameMode.trimEnd() && (
+                  <>{StrokaFooter(SaveFaz, 1, soob)}</>
+                )}
                 {StrokaFooter(SaveFaz, 0, "Сохранить изменения")}
               </Box>
             ) : (

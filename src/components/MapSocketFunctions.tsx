@@ -2,7 +2,7 @@ import { debug, WS } from "./../App";
 
 //=== GsSetPhase ===================================
 export const SendSocketCreateRoute = (maskRoutes: any) => {
-  console.log("CreateRoute:", maskRoutes);
+  //console.log("CreateRoute:", maskRoutes);
   const handleSendOpen = () => {
     if (!debug) {
       if (WS.readyState === WebSocket.OPEN) {
@@ -48,7 +48,7 @@ export const SendSocketUpdateRoute = (maskRoutes: any) => {
 };
 
 export const SendSocketDeleteRoute = (maskRoutes: any) => {
-  console.log("DeleteRoute:", maskRoutes);
+  //console.log("DeleteRoute:", maskRoutes);
   const handleSendOpen = () => {
     if (!debug) {
       if (WS.readyState === WebSocket.OPEN) {
