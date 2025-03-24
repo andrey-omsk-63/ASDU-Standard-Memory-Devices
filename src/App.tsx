@@ -41,6 +41,7 @@ export interface Stater {
   counterId: Array<any>; // счётчик длительности фаз
   timerId: Array<any>; // массив времени отправки команд на счётчики
   massInt: any[][]; // массив интервалов отправки команд на счётчики
+  nomIllum: number; // номер нажатого светофора в таблице
 }
 
 export let dateStat: Stater = {
@@ -62,6 +63,7 @@ export let dateStat: Stater = {
   counterId: [], // счётчик длительности фаз
   timerId: [], // массив времени отправки команд на счётчики
   massInt: [], // массив интервалов отправки команд на счётчики
+  nomIllum: -1, // номер нажатого светофора в таблице
 };
 
 export interface Pointer {

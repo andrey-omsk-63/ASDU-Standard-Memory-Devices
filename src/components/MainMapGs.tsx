@@ -210,6 +210,7 @@ const MainMapGs = (props: {
   };
 
   const OnPlacemarkClickPoint = (index: number) => {
+    datestat.nomIllum = -1
     if (!datestat.working) {
       let nomInMass = massMem.indexOf(index);
       let masscoord: any = [];
@@ -227,8 +228,11 @@ const MainMapGs = (props: {
         ymaps && addRoute(ymaps, false); // перерисовка связей
         setFlagPusk(!flagPusk);
       } else {
+        console.log('###:',index)
+
         // работа с существующем режимом
         if (nomInMass >= 0 && nomInMass < massMem.length) {
+          datestat.nomIllum = nomInMass
           if (nomInMass + 1 < massMem.length) {
             masscoord[0] = map.tflight[massMem[nomInMass + 1]].points.Y;
             masscoord[1] = map.tflight[massMem[nomInMass + 1]].points.X;
@@ -243,6 +247,7 @@ const MainMapGs = (props: {
         }
       }
     }
+    dispatch(statsaveCreate(datestat));
   };
   //=== вывод светофоров ===================================
   const PlacemarkDo = () => {
@@ -468,10 +473,11 @@ const MainMapGs = (props: {
       pointCenter = CenterCoordBegin(map); // начальные координаты центра отоброжаемой карты
     } else pointCenter = [Number(point0), Number(point1)];
     zoom = Number(window.localStorage.ZoomDU); // начальный zoom Yandex-карты ДУ
-    // helper = false; // это для выхода на выбор существующих режимов
-    // datestat.create = false;
-    // dispatch(statsaveCreate(datestat));
-    // setSelectMD(true);
+
+    helper = false; // это для выхода на выбор существующих режимов
+    datestat.create = false;
+    dispatch(statsaveCreate(datestat));
+    setSelectMD(true);
     flagOpen = true;
   }
   //=== Закрытие или перезапуск вкладки ====================

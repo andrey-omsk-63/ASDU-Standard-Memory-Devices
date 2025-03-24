@@ -222,7 +222,10 @@ const GsToDoMode = (props: {
     init = false;
     dispatch(massfazCreate(massfaz));
     dispatch(statsaveCreate(datestat));
-  } 
+  }
+
+  console.log("init:", datestat.nomIllum);
+
   if (props.start >= 0) {
     StartVertex(props.start); // запустить светофор
     props.funcStart(-1);
@@ -370,7 +373,8 @@ const GsToDoMode = (props: {
         {HeadingTabl(DEMO, map, newMode)}
         <Box sx={styleStrokaTabl10}>
           {HeaderTabl()}
-          <Box sx={{ overflowX: "auto", height: "83.0vh" }}>{StrokaTabl()}</Box>
+          {/* <Box sx={{ overflowX: "auto", height: "82.5vh" }}>{StrokaTabl()}</Box> */}
+          <Box sx={{ overflowX: "auto", height: "32.5vh" }}>{StrokaTabl()}</Box>
         </Box>
         {FooterContentToDo(toDoMode, ToDoMode)}
       </Box>
