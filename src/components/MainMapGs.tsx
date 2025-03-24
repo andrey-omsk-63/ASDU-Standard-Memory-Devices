@@ -19,8 +19,7 @@ import GsFragments from "./GsComponents/GsFragments";
 import { getMultiRouteOptions, StrokaHelp } from "./MapServiceFunctions";
 import { CenterCoordBegin, PutItInAFrame } from "./MapServiceFunctions";
 import { ErrorHaveVertex, Distance, SaveZoom } from "./MapServiceFunctions";
-import { StrokaMenuGlob, HelpAdd, YandexServices } from "./MapServiceFunctions";
-import { StrokaMenuDop } from "./MapServiceFunctions";
+import { MenuGl, YandexServices } from "./MapServiceFunctions";
 
 import { SendSocketUpdateRoute } from "./MapSocketFunctions";
 import { SendSocketDispatch, SendSocketGetPhases } from "./MapSocketFunctions";
@@ -29,16 +28,15 @@ import { YMapsModul, MyYandexKey } from "./MapConst";
 
 import { styleServisTable } from "./MainMapStyle";
 
+export let DEMO = false;
 let flagOpen = false;
 let zoom = 0;
 let pointCenter: any = 0;
-
 let massMem: Array<number> = [];
 let massCoord: any = [];
 let newMode = -1;
 let soobErr = "";
 let helper = true;
-
 let xsMap = 11.99;
 let widthMap = "99.9%";
 let modeToDo = 0;
@@ -78,7 +76,7 @@ const MainMapGs = (props: {
   });
   const typeRoute = datestat.typeRoute; // тип отображаемых связей
   const dispatch = useDispatch();
-  const DEMO = datestat.demo;
+  DEMO = datestat.demo;
   //===========================================================
   const [flagPusk, setFlagPusk] = React.useState(false);
   const [needSetup, setNeedSetup] = React.useState(false);
@@ -97,13 +95,14 @@ const MainMapGs = (props: {
   const [demoSost, setDemoSost] = React.useState(-1);
   const mapp = React.useRef<any>(null);
 
-  // const SendImg = (idx: number) => {
-  //   if (!massdk[idx].readIt) {
-  //     let region = massdk[idx].region.toString();
-  //     let area = massdk[idx].area.toString();
-  //     SendSocketGetPhases(region, area, massdk[idx].ID);
-  //   }
-  // }
+  const InsertInMassMem = (idx: number) => {
+    if (!massdk[idx].readIt) {
+      let region = massdk[idx].region.toString();
+      let area = massdk[idx].area.toString();
+      SendSocketGetPhases(region, area, massdk[idx].ID);
+    }
+    massMem.push(idx);
+  };
 
   const ReceiveIdxGs = (mode: number) => {
     let massErrRec = [];
@@ -128,7 +127,7 @@ const MainMapGs = (props: {
         let masscoord: any = [];
         masscoord[0] = map.routes[mode].listTL[i].point.Y;
         masscoord[1] = map.routes[mode].listTL[i].point.X;
-        massMem.push(idx);
+        InsertInMassMem(idx);
         massCoord.push(masscoord);
       }
     }
@@ -140,14 +139,6 @@ const MainMapGs = (props: {
       map.routes[mode].listTL = massRabMap;
       SendSocketUpdateRoute(map.routes[mode]);
       dispatch(mapCreate(map));
-    }
-    // запросы на получение изображений фаз
-    for (let i = 0; i < massMem.length; i++) {
-      if (!massdk[massMem[i]].readIt) {
-        let region = massdk[massMem[i]].region.toString();
-        let area = massdk[massMem[i]].area.toString();
-        SendSocketGetPhases(region, area, massdk[massMem[i]].ID);
-      }
     }
     newMode = mode;
     ymaps && addRoute(ymaps, true); // перерисовка связей
@@ -208,7 +199,7 @@ const MainMapGs = (props: {
       massMem = [];
       let masRab = [];
       for (let i = 0; i < mass.length; i++) {
-        massMem.push(mass[i].idx);
+        InsertInMassMem(mass[i].idx);
         masRab.push(massdk[mass[i].idx].coordinates);
       }
       massCoord = [];
@@ -225,11 +216,10 @@ const MainMapGs = (props: {
       if (newMode < 0) {
         // создание нового режима
         if (nomInMass < 0) {
-          massMem.push(index);
+          InsertInMassMem(index);
           masscoord[0] = map.tflight[index].points.Y;
           masscoord[1] = map.tflight[index].points.X;
           massCoord.push(masscoord);
-          //====================================================
         } else {
           massMem.splice(nomInMass, 1);
           massCoord.splice(nomInMass, 1);
@@ -297,7 +287,7 @@ const MainMapGs = (props: {
           soobErr += map.tflight[nomInMap].idevice + "] уже используется";
           setOpenSoobErr(true);
         } else {
-          massMem.push(nomInMap);
+          InsertInMassMem(nomInMap);
           massCoord.push(coord);
           setRisovka(true);
         }
@@ -484,51 +474,6 @@ const MainMapGs = (props: {
     // setSelectMD(true);
     flagOpen = true;
   }
-  //========================================================
-  const MenuGl = () => {
-    let soobHelp = "Выберите перекрёстки для создания нового маршрута";
-    let soobHelpFiest = "Добавьте/удалите перекрёстки для создания маршрута [";
-    soobHelpFiest += massMem.length;
-    let soobInfo = "Подготовка к выпонению режима";
-    modeToDo === 2 && (soobInfo = "Происходит выполнение режима");
-    let punkt = "Редактировать имя и фазы";
-
-    return (
-      <Box sx={{ display: "flex" }}>
-        {modeToDo > 0 && <>{StrokaHelp(soobInfo, 0)}</>}
-        {modeToDo === 0 && (
-          <>
-            {massMem.length === 0 &&
-              StrokaMenuGlob(PressButton, massMem.length, helper)}
-            {massMem.length < 1 && helper && StrokaHelp(soobHelp, 0)}
-            {massMem.length === 1 && helper && HelpAdd(soobHelpFiest)}
-            {massMem.length > 1 && (
-              <>
-                {newMode < 0 && (
-                  <>
-                    {StrokaMenuDop("Закрыть режим", PressButton, 43)}
-                    {StrokaMenuDop("Обработка режима", PressButton, 44)}
-                  </>
-                )}
-                {newMode < 0 && <>{HelpAdd(soobHelpFiest)}</>}
-                {newMode >= 0 && (
-                  <>
-                    {StrokaMenuDop("Выполнить режим", PressButton, 45)}
-                    {!DEMO && <>{StrokaMenuDop(punkt, PressButton, 44)}</>}
-                    {StrokaMenuDop("Закрыть режим", PressButton, 43)}
-                    {!DEMO && (
-                      <>{StrokaMenuDop("Удалить режим", PressButton, 41)}</>
-                    )}
-                    {StrokaHelp(" ", 0)}
-                  </>
-                )}
-              </>
-            )}
-          </>
-        )}
-      </Box>
-    );
-  };
   //=== Закрытие или перезапуск вкладки ====================
   function removePlayerFromGame() {
     throw new Error("Функция не реализована");
@@ -570,8 +515,9 @@ const MainMapGs = (props: {
   return (
     <Grid container sx={{ height: "99.9vh" }}>
       <Grid item xs>
-        {!datestat.working && <>{MenuGl()}</>}
-        {datestat.working && (
+        {!datestat.working ? (
+          <>{MenuGl(massMem, modeToDo, PressButton, helper, newMode)}</>
+        ) : (
           <>{StrokaHelp("Происходит обработка режима", 0)}</>
         )}
         <Grid container sx={{ border: 0, height: "96.9vh" }}>

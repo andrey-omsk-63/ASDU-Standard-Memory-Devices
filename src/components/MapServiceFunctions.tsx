@@ -13,6 +13,7 @@ import { MdOpenWith } from "react-icons/md";
 import { YMapsApi } from "react-yandex-maps";
 
 import { Pointer, Fazer, debug } from "./../App";
+import { DEMO } from "./MainMapGs";
 
 import { FullscreenControl, GeolocationControl } from "react-yandex-maps";
 import { RulerControl, SearchControl } from "react-yandex-maps";
@@ -710,15 +711,55 @@ export const StrokaHelp = (soobInfo: string, mode: number) => {
   );
 };
 
-export const StrokaHelpPusto = () => {
-  const styleInfoSoob = {
-    maxWidth: "1px",
-    minWidth: "1px",
-    maxHeight: "26px",
-    minHeight: "26px",
-    backgroundColor: "#E9F5D8",
-  };
-  return <Button sx={styleInfoSoob}> </Button>;
+export const MenuGl = (
+  massMem: Array<number>,
+  modeToDo: number,
+  PressButton: any,
+  helper: boolean,
+  newMode: number
+) => {
+  let soobHelp = "Выберите перекрёстки для создания нового маршрута";
+  let soobHelpFiest = "Добавьте/удалите перекрёстки для создания маршрута [";
+  soobHelpFiest += massMem.length;
+  let soobInfo = "Подготовка к выпонению режима";
+  modeToDo === 2 && (soobInfo = "Происходит выполнение режима");
+  let punkt = "Редактировать имя и фазы";
+
+  return (
+    <Box sx={{ display: "flex" }}>
+      {modeToDo > 0 && <>{StrokaHelp(soobInfo, 0)}</>}
+      {modeToDo === 0 && (
+        <>
+          {massMem.length === 0 &&
+            StrokaMenuGlob(PressButton, massMem.length, helper)}
+          {massMem.length < 1 && helper && StrokaHelp(soobHelp, 0)}
+          {massMem.length === 1 && helper && HelpAdd(soobHelpFiest)}
+          {massMem.length > 1 && (
+            <>
+              {newMode < 0 && (
+                <>
+                  {StrokaMenuDop("Закрыть режим", PressButton, 43)}
+                  {StrokaMenuDop("Обработка режима", PressButton, 44)}
+                </>
+              )}
+              {newMode < 0 && <>{HelpAdd(soobHelpFiest)}</>}
+              {newMode >= 0 && (
+                <>
+                  {StrokaMenuDop("Выполнить режим", PressButton, 45)}
+                  {!DEMO && <>{StrokaMenuDop(punkt, PressButton, 44)}</>}
+                  {StrokaMenuDop("Закрыть режим", PressButton, 43)}
+                  {!DEMO && (
+                    <>{StrokaMenuDop("Удалить режим", PressButton, 41)}</>
+                  )}
+                  {StrokaHelp(" ", 0)}
+                </>
+              )}
+            </>
+          )}
+        </>
+      )}
+    </Box>
+  );
 };
 //=== GsSetup ======================================
 export const BadExit = (badExit: boolean, handleCloseEnd: Function) => {

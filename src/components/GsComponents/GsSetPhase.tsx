@@ -91,8 +91,6 @@ const GsSetPhase = (props: {
     return maskFaz;
   };
 
-  console.log('###:',props.newMode,newInput)
-
   if (props.newMode >= 0) {
     if (newInput) {
       massFaz = []; // существующий режим
