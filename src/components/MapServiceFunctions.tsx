@@ -575,7 +575,7 @@ export const InputDirect = (props: { func: any; rec: boolean }) => {
   //let rec = 0; // выход на заголовок
 
   //const [currency, setCurrency] = React.useState(rec);
-  const [currency, setCurrency] = React.useState(1);
+  const [currency, setCurrency] = React.useState(0);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCurrency(Number(event.target.value));
@@ -589,19 +589,19 @@ export const InputDirect = (props: { func: any; rec: boolean }) => {
         break;
       case 2: // выбор режима ЗУ
         props.func(42);
-        setCurrency(1);
+        setCurrency(0);
         break;
       case 3: // Настройки
         props.func(46);
-        setCurrency(1);
+        setCurrency(0);
         break;
       case 4: // режим Demo
         props.func(47);
-        setCurrency(1);
+        setCurrency(0);
         break;
       case 5: // Фрагменты
         props.func(48);
-        setCurrency(1);
+        setCurrency(0);
     }
   };
 

@@ -210,7 +210,7 @@ const MainMapGs = (props: {
   };
 
   const OnPlacemarkClickPoint = (index: number) => {
-    datestat.nomIllum = -1
+    datestat.nomIllum = -1;
     if (!datestat.working) {
       let nomInMass = massMem.indexOf(index);
       let masscoord: any = [];
@@ -228,11 +228,9 @@ const MainMapGs = (props: {
         ymaps && addRoute(ymaps, false); // перерисовка связей
         setFlagPusk(!flagPusk);
       } else {
-        console.log('###:',index)
-
         // работа с существующем режимом
         if (nomInMass >= 0 && nomInMass < massMem.length) {
-          datestat.nomIllum = nomInMass
+          datestat.nomIllum = nomInMass;
           if (nomInMass + 1 < massMem.length) {
             masscoord[0] = map.tflight[massMem[nomInMass + 1]].points.Y;
             masscoord[1] = map.tflight[massMem[nomInMass + 1]].points.X;
@@ -242,8 +240,8 @@ const MainMapGs = (props: {
             massfaz[nomInMass].runRec = datestat.demo ? 4 : 2; // включить исполнение
             dispatch(massfazCreate(massfaz));
             setStartCount(nomInMass); // запрос на запуск отправки фазы
-            setChangeFaz(!changeFaz);
           }
+          setChangeFaz(!changeFaz);
         }
       }
     }
@@ -317,6 +315,8 @@ const MainMapGs = (props: {
         }
       }
       if (nomInMap >= 0) {
+        datestat.nomIllum = nomInMap;
+        dispatch(statsaveCreate(datestat));
         setStopCount(nomInMap); // запрос на остановку отправки фазы
         setChangeFaz(!changeFaz);
         setRisovka(true);
@@ -464,7 +464,6 @@ const MainMapGs = (props: {
         }
     }
   };
-
   //=== инициализация ======================================
   if (!flagOpen && Object.keys(map.tflight).length) {
     let point0 = window.localStorage.PointCenterDU0;

@@ -297,7 +297,7 @@ const GsDoPlacemarkDo = (props: {
     };
   };
 
-  //if (mappp.ID === 61) console.log('###:',datestat.toDoMode,massfaz)
+  //if (mappp.ID === 138) console.log('###:',datestat.toDoMode,massfaz,fazaImg)
 
   const MemoPlacemarkDo = React.useMemo(
     () => (

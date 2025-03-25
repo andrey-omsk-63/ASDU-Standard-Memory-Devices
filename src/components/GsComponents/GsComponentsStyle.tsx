@@ -152,12 +152,29 @@ export const styleStrokaTabl03 = {
 };
 
 export const styleStrokaTabl04 = {
-  position: "absolute",
-  left: "12px",
-  marginTop: "-1px",
+  marginLeft: "-95px",
+  width: "120px",
+  // position: "absolute",
+  // left: "12px",
+  // marginTop: "-1px",
   fontSize: 12.0,
   color: "#8D9194", // серый
   textShadow: "0px 0px 0px rgba(0,0,0,0.3)",
+};
+
+export const styleStrokaTabl05 = {
+  marginTop: "10px",
+  marginLeft: "-41px",
+  width: "120px",
+  fontSize: 12.5,
+  color: "#E67641", // оранж
+  textShadow: "0px 0px 0px rgba(0,0,0,0.3)",
+};
+
+export const styleStrokaTabl06 = {
+  fontSize: 12,
+  color: "#7620A2",
+  padding: "6px 0 0 0",
 };
 
 export const styleStrTablImg01 = {

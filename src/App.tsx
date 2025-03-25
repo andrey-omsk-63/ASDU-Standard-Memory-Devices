@@ -17,7 +17,7 @@ import { dataMap } from "./otladkaMaps";
 import { imgFaza } from "./otladkaRoutes";
 import { dataHistory } from "./otladkaHistory"; // для отладки
 
-import { zoomStart } from "./components/MapConst";
+import { zoomStart, CLINCH, BadCODE } from "./components/MapConst";
 
 export let dateMapGl: any;
 export let dateRouteGl: any;
@@ -132,6 +132,10 @@ let flagChange = false;
 
 const App = () => {
   //== Piece of Redux ======================================
+  // const map = useSelector((state: any) => {
+  //   const { mapReducer } = state;
+  //   return mapReducer.map.dateMap;
+  // });
   let massdk = useSelector((state: any) => {
     const { massdkReducer } = state;
     return massdkReducer.massdk;
@@ -281,9 +285,14 @@ const App = () => {
           for (let i = 0; i < data.phases.length; i++) {
             for (let j = 0; j < massfaz.length; j++) {
               if (massfaz[j].idevice === data.phases[i].device) {
-                if (massfaz[j].fazaSist !== data.phases[i].phase) {
-                  massfaz[j].fazaSist = data.phases[i].phase;
-                  flagChange = true;
+                let statusVertex = dateMapGl.tflight[massfaz[j].id].tlsost.num;
+                let clinch = CLINCH.indexOf(statusVertex) < 0 ? false : true;
+                let badCode = BadCODE.indexOf(statusVertex) < 0 ? false : true;
+                if (!clinch && !badCode) {
+                  if (massfaz[j].fazaSist !== data.phases[i].phase) {
+                    massfaz[j].fazaSist = data.phases[i].phase;
+                    flagChange = true;
+                  }
                 }
               }
             }

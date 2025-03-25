@@ -72,6 +72,15 @@ const GsToDoMode = (props: {
   //========================================================
   const [trigger, setTrigger] = React.useState(true);
   const [flagPusk, setFlagPusk] = React.useState(false);
+  const scRef: any = React.useRef(null);
+  const divRef: any = React.useRef(null);
+
+  // const Scrooler = (divRef: any) => {
+  //   setTimeout(() => {
+  //     // 👇️ scroll to bottom every time messages change
+  //     divRef.current && divRef.current.scrollIntoView();
+  //   }, 150);
+  // };
 
   const StopSendFaza = (idx: number) => {
     for (let i = 0; i < massInt[idx].length; i++) {
@@ -145,6 +154,7 @@ const GsToDoMode = (props: {
       setFlagPusk(!flagPusk);
     }
   };
+  //fazaSist
 
   const DoTimerId = (mode: number) => {
     let fazer = massfaz[mode];
@@ -224,7 +234,11 @@ const GsToDoMode = (props: {
     dispatch(statsaveCreate(datestat));
   }
 
-  console.log("init:", datestat.nomIllum);
+  //console.log('Init:',datestat.nomIllum)
+  if (datestat.nomIllum >= 0) {
+    nomIllum = datestat.nomIllum;
+    scRef.current && scRef.current.scrollTo(0, nomIllum * 40);
+  }
 
   if (props.start >= 0) {
     StartVertex(props.start); // запустить светофор
@@ -249,9 +263,9 @@ const GsToDoMode = (props: {
     toDoMode = false;
     datestat.toDoMode = false;
     datestat.working = false;
-    dispatch(statsaveCreate(datestat));
     massfaz = [];
     dispatch(massfazCreate(massfaz));
+    dispatch(statsaveCreate(datestat));
     init = true;
   };
 
@@ -291,6 +305,7 @@ const GsToDoMode = (props: {
 
   const ClickKnop = (mode: number) => {
     nomIllum = mode;
+    //dispatch(statsaveCreate(datestat));
     let coor = map.routes[newMode].listTL[mode].point;
     let coord = [coor.Y, coor.X];
     props.funcCenter(coord);
@@ -318,6 +333,8 @@ const GsToDoMode = (props: {
     };
 
     let resStr = [];
+    datestat.nomIllum = -1
+    dispatch(statsaveCreate(datestat));
     for (let i = 0; i < massfaz.length; i++) {
       let runREC = JSON.parse(JSON.stringify(massfaz[i].runRec));
       let bull = runREC === 2 || runREC === 4 ? " •" : " ";
@@ -373,8 +390,10 @@ const GsToDoMode = (props: {
         {HeadingTabl(DEMO, map, newMode)}
         <Box sx={styleStrokaTabl10}>
           {HeaderTabl()}
-          {/* <Box sx={{ overflowX: "auto", height: "82.5vh" }}>{StrokaTabl()}</Box> */}
-          <Box sx={{ overflowX: "auto", height: "32.5vh" }}>{StrokaTabl()}</Box>
+          <Box ref={scRef} sx={{ overflowX: "auto", height: "82.5vh" }}>
+            {StrokaTabl()}
+            <div ref={divRef} />
+          </Box>
         </Box>
         {FooterContentToDo(toDoMode, ToDoMode)}
       </Box>
