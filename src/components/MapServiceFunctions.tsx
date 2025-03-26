@@ -161,6 +161,29 @@ export const CenterCoordBegin = (map: any) => {
   // );
 };
 
+export const Zoomer = (zoom: number) => {
+    switch (zoom) {
+      case 12:
+        return 600;
+      case 13:
+        return 300;
+      case 14:
+        return 180;
+      case 15:
+        return 150;
+      case 16:
+        return 60;
+      case 17:
+        return 40;
+      case 18:
+        return 30;
+      case 19:
+        return 25;
+      default:
+        return 1200;
+    }
+  };
+
 export const SaveZoom = (zoom: number, pointCenter: Array<number>) => {
   window.localStorage.ZoomDU = zoom;
   window.localStorage.PointCenterDU0 = pointCenter[0];
@@ -584,12 +607,12 @@ export const InputDirect = (props: { func: any; rec: boolean }) => {
         props.func(43);
         setCurrency(1);
         break;
-      case 1: // созданию нового режима
-        props.func(43);
-        break;
-      case 2: // выбор режима ЗУ
+      case 1: // выбор режима ЗУ
         props.func(42);
         setCurrency(0);
+        break;
+      case 2: // созданию нового режима
+        props.func(43);
         break;
       case 3: // Настройки
         props.func(46);
@@ -607,8 +630,8 @@ export const InputDirect = (props: { func: any; rec: boolean }) => {
 
   let dat = [
     "Режимы работы:",
-    "● Создание новой ЗУ",
     "● Существующие ЗУ",
+    "● Создание новой ЗУ",
     "● Настройки",
     "● Режим Демо",
     "● Фрагменты",

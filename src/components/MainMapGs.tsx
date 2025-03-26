@@ -19,7 +19,7 @@ import GsFragments from "./GsComponents/GsFragments";
 import { getMultiRouteOptions, StrokaHelp } from "./MapServiceFunctions";
 import { CenterCoordBegin, PutItInAFrame } from "./MapServiceFunctions";
 import { ErrorHaveVertex, Distance, SaveZoom } from "./MapServiceFunctions";
-import { MenuGl, YandexServices } from "./MapServiceFunctions";
+import { MenuGl, YandexServices, Zoomer } from "./MapServiceFunctions";
 
 import { SendSocketUpdateRoute } from "./MapSocketFunctions";
 import { SendSocketDispatch, SendSocketGetPhases } from "./MapSocketFunctions";
@@ -145,6 +145,23 @@ const MainMapGs = (props: {
     setFlagPusk(!flagPusk);
   };
 
+  const DrawCircle = (ymaps: any, zoom: number, massCoord: any) => {
+    let myCircle = new ymaps.Circle(
+      [
+        massCoord, // Координаты центра круга
+        Zoomer(zoom), // Радиус круга в метрах
+      ],
+      {},
+      {
+        fillColor: "#9B59DA33", // Цвет заливки  Последний байт (77) определяет прозрачность.
+        strokeColor: "#9B59DA", // Цвет обводки
+        strokeOpacity: 0.5, // Ширина обводки в пикселях
+        strokeWidth: 1, // Ширина обводки в пикселях
+      }
+    );
+    mapp.current.geoObjects.add(myCircle);
+  };
+
   const addRoute = (ymaps: any, bound: boolean) => {
     mapp.current.geoObjects.removeAll(); // удаление старой коллекции связей
     let massMultiPath: any = []; // исходящие связи
@@ -170,9 +187,15 @@ const MainMapGs = (props: {
           );
           mapp.current.geoObjects.add(massMultiPath[i]);
         }
+        console.log("1###:", zoom);
       }
       bound && PutItInAFrame(ymaps, mapp, massCoord);
+      for (let i = 0; i < massCoord.length; i++) {
+        if (!i || i === massCoord.length - 1)
+          DrawCircle(ymaps, zoom, massCoord[i]);
+      }
     }
+    
   };
 
   const StatusQuo = () => {

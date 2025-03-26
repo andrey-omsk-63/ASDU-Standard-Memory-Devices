@@ -233,13 +233,13 @@ const GsToDoMode = (props: {
     dispatch(massfazCreate(massfaz));
     dispatch(statsaveCreate(datestat));
   }
-
-  //console.log('Init:',datestat.nomIllum)
+  // это для подсветки эл-та и скролла в таблице StrokaTabl
   if (datestat.nomIllum >= 0) {
     nomIllum = datestat.nomIllum;
-    scRef.current && scRef.current.scrollTo(0, nomIllum * 40);
+    datestat.nomIllum > 5 &&
+      scRef.current &&
+      scRef.current.scrollTo(0, nomIllum * 56);
   }
-
   if (props.start >= 0) {
     StartVertex(props.start); // запустить светофор
     props.funcStart(-1);
@@ -333,7 +333,7 @@ const GsToDoMode = (props: {
     };
 
     let resStr = [];
-    datestat.nomIllum = -1
+    datestat.nomIllum = -1;
     dispatch(statsaveCreate(datestat));
     for (let i = 0; i < massfaz.length; i++) {
       let runREC = JSON.parse(JSON.stringify(massfaz[i].runRec));
