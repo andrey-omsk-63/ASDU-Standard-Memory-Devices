@@ -146,6 +146,8 @@ const MainMapGs = (props: {
   };
 
   const DrawCircle = (ymaps: any, zoom: number, massCoord: any) => {
+    console.log('!!!:',mapp.current.getZoom(),zoom)
+    
     let myCircle = new ymaps.Circle(
       [
         massCoord, // Координаты центра круга
