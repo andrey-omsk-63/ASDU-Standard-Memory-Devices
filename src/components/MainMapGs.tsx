@@ -19,7 +19,7 @@ import GsFragments from "./GsComponents/GsFragments";
 import { getMultiRouteOptions, StrokaHelp } from "./MapServiceFunctions";
 import { CenterCoordBegin, PutItInAFrame } from "./MapServiceFunctions";
 import { ErrorHaveVertex, Distance, SaveZoom } from "./MapServiceFunctions";
-import { MenuGl, YandexServices, Zoomer } from "./MapServiceFunctions";
+import { MenuGl, YandexServices, DrawCircle } from "./MapServiceFunctions";
 
 import { SendSocketUpdateRoute } from "./MapSocketFunctions";
 import { SendSocketDispatch, SendSocketGetPhases } from "./MapSocketFunctions";
@@ -43,6 +43,7 @@ let modeToDo = 0;
 let newCenter: any = [];
 let funcContex: any = null;
 let funcBound: any = null;
+let needDrawCircle = false; // нужно перерисовать окружности вокруг светофора
 
 const MainMapGs = (props: {
   trigger: boolean;
@@ -145,25 +146,6 @@ const MainMapGs = (props: {
     setFlagPusk(!flagPusk);
   };
 
-  const DrawCircle = (ymaps: any, zoom: number, massCoord: any) => {
-    console.log('!!!:',mapp.current.getZoom(),zoom)
-    
-    let myCircle = new ymaps.Circle(
-      [
-        massCoord, // Координаты центра круга
-        Zoomer(zoom), // Радиус круга в метрах
-      ],
-      {},
-      {
-        fillColor: "#9B59DA33", // Цвет заливки  Последний байт (77) определяет прозрачность.
-        strokeColor: "#9B59DA", // Цвет обводки
-        strokeOpacity: 0.5, // Ширина обводки в пикселях
-        strokeWidth: 1, // Ширина обводки в пикселях
-      }
-    );
-    mapp.current.geoObjects.add(myCircle);
-  };
-
   const addRoute = (ymaps: any, bound: boolean) => {
     mapp.current.geoObjects.removeAll(); // удаление старой коллекции связей
     let massMultiPath: any = []; // исходящие связи
@@ -189,15 +171,10 @@ const MainMapGs = (props: {
           );
           mapp.current.geoObjects.add(massMultiPath[i]);
         }
-        console.log("1###:", zoom);
       }
-      bound && PutItInAFrame(ymaps, mapp, massCoord);
-      for (let i = 0; i < massCoord.length; i++) {
-        if (!i || i === massCoord.length - 1)
-          DrawCircle(ymaps, zoom, massCoord[i]);
-      }
+      bound && PutItInAFrame(ymaps, mapp, massCoord); // перерисовка маршрута в границах экрана
+      DrawCircle(ymaps, mapp, massCoord); // нарисовать окружности в начале/конце маршрута
     }
-    
   };
 
   const StatusQuo = () => {
@@ -369,6 +346,11 @@ const MainMapGs = (props: {
       funcBound = function () {
         pointCenter = mapp.current.getCenter();
         zoom = mapp.current.getZoom(); // покрутили колёсико мыши
+        if (massCoord.length) {
+          //console.log("InstanceRefDo", zoom);
+          needDrawCircle = true;
+          setFlagPusk(!flagPusk);
+        }
         SaveZoom(zoom, pointCenter);
       };
       mapp.current.events.add("boundschange", funcBound);
@@ -541,6 +523,11 @@ const MainMapGs = (props: {
   };
 
   const ChangeDemoSost = (mode: number) => setDemoSost(mode + demoSost); // костыль
+
+  if (massCoord.length > 1 && needDrawCircle) {
+    needDrawCircle = false;
+    addRoute(ymaps, false);
+  }
 
   return (
     <Grid container sx={{ height: "99.9vh" }}>

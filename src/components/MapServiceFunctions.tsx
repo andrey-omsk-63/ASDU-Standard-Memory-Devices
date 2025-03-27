@@ -152,37 +152,54 @@ export const CenterCoordBegin = (map: any) => {
     mapp[nomMax].points.Y,
     mapp[nomMax].points.X
   );
-
-  // return CenterCoord(
-  //   map.dateMap.boxPoint.point0.Y,
-  //   map.dateMap.boxPoint.point0.X,
-  //   map.dateMap.boxPoint.point1.Y,
-  //   map.dateMap.boxPoint.point1.X
-  // );
 };
 
 export const Zoomer = (zoom: number) => {
-    switch (zoom) {
-      case 12:
-        return 600;
-      case 13:
-        return 300;
-      case 14:
-        return 180;
-      case 15:
-        return 150;
-      case 16:
-        return 60;
-      case 17:
-        return 40;
-      case 18:
-        return 30;
-      case 19:
-        return 25;
-      default:
-        return 1200;
-    }
+  switch (zoom) {
+    case 11:
+      return 1200;
+    case 12:
+      return 600;
+    case 13:
+      return 300;
+    case 14:
+      return 180;
+    case 15:
+      return 120;
+    case 16:
+      return 60;
+    case 17:
+      return 40;
+    case 18:
+      return 30;
+    case 19:
+      return 25;
+    default:
+      return 1800;
+  }
+};
+
+export const DrawCircle = (ymaps: any, mapp: any, massCoord: any) => {
+  const CircleDrawer = (massCoord: any) => {
+    let myCircle = new ymaps.Circle(
+      [
+        massCoord, // Координаты центра круга
+        Zoomer(mapp.current.getZoom()), // Радиус круга в метрах
+      ],
+      {},
+      {
+        fillColor: "#9B59DA33", // Цвет заливки  Последний байт (77) определяет прозрачность.
+        strokeColor: "#9B59DA", // Цвет обводки
+        strokeOpacity: 0.5, // Ширина обводки в пикселях
+        strokeWidth: 1, // Ширина обводки в пикселях
+      }
+    );
+    mapp.current.geoObjects.add(myCircle);
   };
+
+  for (let i = 0; i < massCoord.length; i++)
+    if (!i || i === massCoord.length - 1) CircleDrawer(massCoord[i]);
+};
 
 export const SaveZoom = (zoom: number, pointCenter: Array<number>) => {
   window.localStorage.ZoomDU = zoom;
