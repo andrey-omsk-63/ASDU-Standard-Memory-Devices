@@ -183,7 +183,9 @@ export const Zoomer = (zoom: number) => {
 };
 
 export const DrawCircle = (ymaps: any, mapp: any, massCoord: any) => {
-  const CircleDrawer = (massCoord: any) => {
+  let circles: any = [null, null];
+
+  const CircleDrawer = (massCoord: any, i: number) => {
     let myCircle = new ymaps.Circle(
       [
         massCoord, // Координаты центра круга
@@ -198,10 +200,13 @@ export const DrawCircle = (ymaps: any, mapp: any, massCoord: any) => {
       }
     );
     mapp.current.geoObjects.add(myCircle);
+    circles[!i ? 0 : 1] = myCircle;
   };
 
-  for (let i = 0; i < massCoord.length; i++)
-    if (!i || i === massCoord.length - 1) CircleDrawer(massCoord[i]);
+  for (let i = 0; i < massCoord.length; i++) {
+    if (!i || i === massCoord.length - 1) CircleDrawer(massCoord[i], i);
+  }
+  return circles;
 };
 
 export const SaveZoom = (zoom: number, pointCenter: Array<number>) => {

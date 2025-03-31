@@ -31,6 +31,7 @@ import { styleServisTable } from "./MainMapStyle";
 export let DEMO = false;
 let flagOpen = false;
 let zoom = 0;
+let zoomOld = 0;
 let pointCenter: any = 0;
 let massMem: Array<number> = [];
 let massCoord: any = [];
@@ -44,6 +45,7 @@ let newCenter: any = [];
 let funcContex: any = null;
 let funcBound: any = null;
 let needDrawCircle = false; // нужно перерисовать окружности вокруг светофора
+let circls: any = [null, null];
 
 const MainMapGs = (props: {
   trigger: boolean;
@@ -173,7 +175,7 @@ const MainMapGs = (props: {
         }
       }
       bound && PutItInAFrame(ymaps, mapp, massCoord); // перерисовка маршрута в границах экрана
-      DrawCircle(ymaps, mapp, massCoord); // нарисовать окружности в начале/конце маршрута
+      circls = DrawCircle(ymaps, mapp, massCoord); // нарисовать окружности в начале/конце маршрута
     }
   };
 
@@ -346,9 +348,10 @@ const MainMapGs = (props: {
       funcBound = function () {
         pointCenter = mapp.current.getCenter();
         zoom = mapp.current.getZoom(); // покрутили колёсико мыши
-        if (massCoord.length) {
+        if (zoomOld !== zoom) {
           //console.log("InstanceRefDo", zoom);
           needDrawCircle = true;
+          zoomOld = zoom;
           setFlagPusk(!flagPusk);
         }
         SaveZoom(zoom, pointCenter);
@@ -526,7 +529,9 @@ const MainMapGs = (props: {
 
   if (massCoord.length > 1 && needDrawCircle) {
     needDrawCircle = false;
-    addRoute(ymaps, false);
+    circls[0] && mapp.current.geoObjects.remove(circls[0]); // стереть первую окружность
+    circls[1] && mapp.current.geoObjects.remove(circls[1]); // стереть вторую окружность
+    circls = DrawCircle(ymaps, mapp, massCoord); // нарисовать окружности в начале/конце маршрута
   }
 
   return (
