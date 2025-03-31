@@ -155,7 +155,10 @@ export const CenterCoordBegin = (map: any) => {
 };
 
 export const Zoomer = (zoom: number) => {
+  //console.log("Zoomer:", zoom);
   switch (zoom) {
+    case 10:
+      return 2000;
     case 11:
       return 1200;
     case 12:
@@ -165,17 +168,17 @@ export const Zoomer = (zoom: number) => {
     case 14:
       return 180;
     case 15:
-      return 120;
+      return 90;
     case 16:
       return 60;
     case 17:
-      return 40;
+      return 35;
     case 18:
-      return 30;
+      return 20;
     case 19:
-      return 25;
+      return 10;
     default:
-      return 1800;
+      return 3000;
   }
 };
 
@@ -190,7 +193,7 @@ export const DrawCircle = (ymaps: any, mapp: any, massCoord: any) => {
       {
         fillColor: "#9B59DA33", // Цвет заливки  Последний байт (77) определяет прозрачность.
         strokeColor: "#9B59DA", // Цвет обводки
-        strokeOpacity: 0.5, // Ширина обводки в пикселях
+        strokeOpacity: 0.5, // Прозрачность обводки
         strokeWidth: 1, // Ширина обводки в пикселях
       }
     );
