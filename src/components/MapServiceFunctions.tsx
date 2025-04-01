@@ -209,6 +209,32 @@ export const DrawCircle = (ymaps: any, mapp: any, massCoord: any) => {
   return circles;
 };
 
+export const InformalRoutes = (ymaps: any, mapp: any, massCoord: any) => {
+  let multiRoute: any = [];
+  let between = [];
+  for (let i = 1; i < massCoord.length - 1; i++) between.push(i);
+  multiRoute = new ymaps.multiRouter.MultiRoute(
+    {
+      referencePoints: massCoord,
+      params: { viaIndexes: between },
+    },
+    getMultiRouteOptions()
+  );
+  mapp.current.geoObjects.add(multiRoute);
+};
+
+export const FormalRoutes = (ymaps: any, mapp: any, massCoord: any) => {
+  let massMultiPath: any = []; // исходящие связи
+  for (let i = 0; i < massCoord.length - 1; i++) {
+    massMultiPath[i] = new ymaps.Polyline( // формальные связи
+      [massCoord[i], massCoord[i + 1]],
+      {},
+      getMultiRouteOptions()
+    );
+    mapp.current.geoObjects.add(massMultiPath[i]);
+  }
+};
+
 export const SaveZoom = (zoom: number, pointCenter: Array<number>) => {
   window.localStorage.ZoomDU = zoom;
   window.localStorage.PointCenterDU0 = pointCenter[0];
@@ -245,11 +271,12 @@ export const Сrossroad = () => {
   );
 };
 
-export const HelpAdd = (soobHelpFiest: string) => {
+export const HelpAdd = (soobHelpFiest: string, lng: number) => {
   return (
     <>
       {StrokaHelp(soobHelpFiest, 0)}
       {Сrossroad()}
+      {lng === 1 && <>{StrokaHelp(" <Esc> - прерывание ввода", 0)}</>}
     </>
   );
 };
@@ -781,7 +808,9 @@ export const MenuGl = (
           {massMem.length === 0 &&
             StrokaMenuGlob(PressButton, massMem.length, helper)}
           {massMem.length < 1 && helper && StrokaHelp(soobHelp, 0)}
-          {massMem.length === 1 && helper && HelpAdd(soobHelpFiest)}
+          {massMem.length === 1 &&
+            helper &&
+            HelpAdd(soobHelpFiest, massMem.length)}
           {massMem.length > 1 && (
             <>
               {newMode < 0 && (
@@ -790,7 +819,7 @@ export const MenuGl = (
                   {StrokaMenuDop("Обработка режима", PressButton, 44)}
                 </>
               )}
-              {newMode < 0 && <>{HelpAdd(soobHelpFiest)}</>}
+              {newMode < 0 && <>{HelpAdd(soobHelpFiest, 0)}</>}
               {newMode >= 0 && (
                 <>
                   {StrokaMenuDop("Выполнить режим", PressButton, 45)}

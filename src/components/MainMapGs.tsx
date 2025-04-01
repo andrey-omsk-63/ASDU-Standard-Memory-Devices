@@ -16,10 +16,11 @@ import GsDoPlacemarkDo from "./GsComponents/GsDoPlacemarkDo";
 import GsSetup from "./GsComponents/GsSetup";
 import GsFragments from "./GsComponents/GsFragments";
 
-import { getMultiRouteOptions, StrokaHelp } from "./MapServiceFunctions";
+import { StrokaHelp } from "./MapServiceFunctions";
 import { CenterCoordBegin, PutItInAFrame } from "./MapServiceFunctions";
 import { ErrorHaveVertex, Distance, SaveZoom } from "./MapServiceFunctions";
 import { MenuGl, YandexServices, DrawCircle } from "./MapServiceFunctions";
+import { InformalRoutes, FormalRoutes } from "./MapServiceFunctions";
 
 import { SendSocketUpdateRoute } from "./MapSocketFunctions";
 import { SendSocketDispatch, SendSocketGetPhases } from "./MapSocketFunctions";
@@ -38,8 +39,6 @@ let massCoord: any = [];
 let newMode = -1;
 let soobErr = "";
 let helper = true;
-let xsMap = 11.99;
-let widthMap = "99.9%";
 let modeToDo = 0;
 let newCenter: any = [];
 let funcContex: any = null;
@@ -107,6 +106,19 @@ const MainMapGs = (props: {
     massMem.push(idx);
   };
 
+  const addRoute = React.useCallback(
+    (ymaps: any, bound: boolean) => {
+      mapp.current.geoObjects.removeAll(); // удаление старой коллекции связей
+      if (massCoord.length > 1) {
+        typeRoute && InformalRoutes(ymaps, mapp, massCoord);
+        !typeRoute && FormalRoutes(ymaps, mapp, massCoord);
+        bound && PutItInAFrame(ymaps, mapp, massCoord); // перерисовка маршрута в границах экрана
+        circls = DrawCircle(ymaps, mapp, massCoord); // нарисовать окружности в начале/конце маршрута
+      }
+    },
+    [typeRoute]
+  );
+
   const ReceiveIdxGs = (mode: number) => {
     let massErrRec = [];
     massMem = [];
@@ -148,52 +160,21 @@ const MainMapGs = (props: {
     setFlagPusk(!flagPusk);
   };
 
-  const addRoute = (ymaps: any, bound: boolean) => {
-    mapp.current.geoObjects.removeAll(); // удаление старой коллекции связей
-    let massMultiPath: any = []; // исходящие связи
-    if (massCoord.length > 1) {
-      let multiRoute: any = [];
-      if (typeRoute) {
-        let between = [];
-        for (let i = 1; i < massCoord.length - 1; i++) between.push(i);
-        multiRoute = new ymaps.multiRouter.MultiRoute(
-          {
-            referencePoints: massCoord,
-            params: { viaIndexes: between },
-          },
-          getMultiRouteOptions()
-        );
-        mapp.current.geoObjects.add(multiRoute);
-      } else {
-        for (let i = 0; i < massCoord.length - 1; i++) {
-          massMultiPath[i] = new ymaps.Polyline( // формальные связи
-            [massCoord[i], massCoord[i + 1]],
-            {},
-            getMultiRouteOptions()
-          );
-          mapp.current.geoObjects.add(massMultiPath[i]);
-        }
-      }
-      bound && PutItInAFrame(ymaps, mapp, massCoord); // перерисовка маршрута в границах экрана
-      circls = DrawCircle(ymaps, mapp, massCoord); // нарисовать окружности в начале/конце маршрута
-    }
-  };
-
-  const StatusQuo = () => {
+  const StatusQuo = React.useCallback(() => {
     massMem = [];
     massCoord = [];
     newMode = -1;
     datestat.create = true;
-    datestat.demo = false;
+    //datestat.demo = false;
+    ymaps && addRoute(ymaps,  datestat.demo = false); // перерисовка связей
     dispatch(statsaveCreate(datestat));
-    ymaps && addRoute(ymaps, false); // перерисовка связей
     setTrigger(!trigger);
-  };
+  }, [datestat, dispatch, trigger, ymaps, addRoute]);
 
   const SetFragments = (idx: number) => {
     if (idx >= 0 && ymaps) {
       mapp.current.geoObjects.removeAll(); // удаление старой коллекции связей
-      PutItInAFrame(ymaps, mapp, massCoord); // расположить фрагмент в границах экрана
+      PutItInAFrame(ymaps, mapp, map.fragments[idx].bounds); // расположить фрагмент в границах экрана
     }
     setFragments(false);
   };
@@ -271,6 +252,7 @@ const MainMapGs = (props: {
   };
   //=== обработка instanceRef ==============================
   const FindNearVertex = (coord: Array<number>) => {
+    
     let nomInMap = -1;
     let minDist = 999999;
     if (!datestat.toDoMode) {
@@ -349,7 +331,6 @@ const MainMapGs = (props: {
         pointCenter = mapp.current.getCenter();
         zoom = mapp.current.getZoom(); // покрутили колёсико мыши
         if (zoomOld !== zoom) {
-          //console.log("InstanceRefDo", zoom);
           needDrawCircle = true;
           zoomOld = zoom;
           setFlagPusk(!flagPusk);
@@ -370,12 +351,9 @@ const MainMapGs = (props: {
     setFlagCenter(true);
   };
 
-  const OldSizeWind = (size: number) => {
-    xsMap = size;
-    widthMap = "99.9%";
+  const OldSizeWind = () => {
     modeToDo = 0;
     setToDoMode(false);
-    setFlagPusk(!flagPusk);
   };
 
   const ModeToDo = (mod: number) => {
@@ -416,8 +394,7 @@ const MainMapGs = (props: {
           ymaps && addRoute(ymaps, true); // перерисовка связей
           setFlagPusk(!flagPusk);
         }
-        helper = false;
-        datestat.create = false;
+        datestat.create = helper = false;
         dispatch(statsaveCreate(datestat));
         setSelectMD(true);
         break;
@@ -435,30 +412,24 @@ const MainMapGs = (props: {
           soobErr = "Данный режим помечен к удалению";
           setOpenSoobErr(true);
         } else {
-          xsMap = 7.7;
-          widthMap = "99.9%";
           modeToDo = 1;
           setToDoMode(true);
           setFlagPusk(!flagPusk);
         }
         break;
       case 46: // Настройки
-        helper = true;
         StatusQuo();
-        setNeedSetup(true);
+        setNeedSetup((helper = true));
         break;
       case 47: // режим Demo
         StatusQuo();
-        datestat.finish = false;
-        datestat.demo = true;
         if (massMem.length) {
           ymaps && addRoute(ymaps, true); // перерисовка связей
           setFlagPusk(!flagPusk);
         }
-        helper = false;
-        datestat.create = false;
+        datestat.create = helper = datestat.finish = false;
+        setSelectMD((datestat.demo = true));
         dispatch(statsaveCreate(datestat));
-        setSelectMD(true);
         break;
       case 48: // Фрагменты
         soobErr =
@@ -467,9 +438,8 @@ const MainMapGs = (props: {
           setOpenSoobErr(true);
         } else {
           if (map.fragments.length) {
-            helper = true;
             StatusQuo();
-            setFragments(true);
+            setFragments((helper = true));
           } else setOpenSoobErr(true);
         }
     }
@@ -482,13 +452,24 @@ const MainMapGs = (props: {
       pointCenter = CenterCoordBegin(map); // начальные координаты центра отоброжаемой карты
     } else pointCenter = [Number(point0), Number(point1)];
     zoom = Number(window.localStorage.ZoomDU); // начальный zoom Yandex-карты ДУ
-
+    //============
     helper = false; // это для выхода на выбор существующих режимов
     datestat.create = false;
     dispatch(statsaveCreate(datestat));
-    setSelectMD(true);
-    flagOpen = true;
+    setSelectMD((flagOpen = true));
   }
+  //=== обработка Esc ======================================
+  const escFunction = React.useCallback(
+    (event) => {
+      if (event.keyCode === 27 && helper && massCoord.length === 1) StatusQuo();
+    },
+    [StatusQuo]
+  );
+
+  React.useEffect(() => {
+    document.addEventListener("keydown", escFunction);
+    return () => document.removeEventListener("keydown", escFunction);
+  }, [escFunction]);
   //=== Закрытие или перезапуск вкладки ====================
   function removePlayerFromGame() {
     throw new Error("Функция не реализована");
@@ -506,9 +487,7 @@ const MainMapGs = (props: {
     removePlayerFromGame();
   };
 
-  const alertUser = (event: any) => {
-    Closing();
-  };
+  const alertUser = (event: any) => Closing();
 
   React.useEffect(() => {
     window.addEventListener("beforeunload", alertUser);
@@ -542,49 +521,47 @@ const MainMapGs = (props: {
         ) : (
           <>{StrokaHelp("Происходит обработка режима", 0)}</>
         )}
-        <Grid container sx={{ border: 0, height: "96.9vh" }}>
-          <Grid item xs={xsMap} sx={{ border: 0 }}>
-            {Object.keys(map.tflight).length && (
-              <YMaps query={{ apikey: MyYandexKey, lang: "ru_RU" }}>
-                <Map
-                  modules={YMapsModul}
-                  state={mapState}
-                  instanceRef={(ref) => InstanceRefDo(ref)} // обработка действий с правой кнопкой и колёсиком мыши
-                  onLoad={(ref) => {
-                    ref && setYmaps(ref);
-                  }}
-                  width={widthMap}
-                  height={"99.9%"}
-                >
-                  {YandexServices()}
-                  {Pererisovka()}
-                  <PlacemarkDo />
-                  {selectMD && (
-                    <GsSelectMD
-                      setOpen={setSelectMD}
-                      receive={ReceiveIdxGs}
-                      history={props.history}
-                      trHist={props.trHist}
-                      funcHelper={SetHelper}
-                    />
-                  )}
-                  {setPhase && (
-                    <GsSetPhase
-                      setOpen={SetSetPhase}
-                      newMode={newMode}
-                      massMem={massMem}
-                      massCoord={massCoord}
-                      func={MakeNewMassMem}
-                    />
-                  )}
-                  {fragments && <GsFragments close={SetFragments} />}
-                  {openSoobErr && (
-                    <GsErrorMessage setOpen={setOpenSoobErr} sErr={soobErr} />
-                  )}
-                </Map>
-              </YMaps>
-            )}
-          </Grid>
+        <Grid container sx={{ height: "96.9vh" }}>
+          {Object.keys(map.tflight).length && (
+            <YMaps query={{ apikey: MyYandexKey, lang: "ru_RU" }}>
+              <Map
+                modules={YMapsModul}
+                state={mapState}
+                instanceRef={(ref) => InstanceRefDo(ref)} // обработка действий с правой кнопкой и колёсиком мыши
+                onLoad={(ref) => {
+                  ref && setYmaps(ref);
+                }}
+                width={"99.9%"}
+                height={"99.9%"}
+              >
+                {YandexServices()}
+                {Pererisovka()}
+                <PlacemarkDo />
+                {selectMD && (
+                  <GsSelectMD
+                    setOpen={setSelectMD}
+                    receive={ReceiveIdxGs}
+                    history={props.history}
+                    trHist={props.trHist}
+                    funcHelper={SetHelper}
+                  />
+                )}
+                {setPhase && (
+                  <GsSetPhase
+                    setOpen={SetSetPhase}
+                    newMode={newMode}
+                    massMem={massMem}
+                    massCoord={massCoord}
+                    func={MakeNewMassMem}
+                  />
+                )}
+                {fragments && <GsFragments close={SetFragments} />}
+                {openSoobErr && (
+                  <GsErrorMessage setOpen={setOpenSoobErr} sErr={soobErr} />
+                )}
+              </Map>
+            </YMaps>
+          )}
         </Grid>
         {toDoMode && (
           <Box sx={styleServisTable}>

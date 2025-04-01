@@ -75,13 +75,6 @@ const GsToDoMode = (props: {
   const scRef: any = React.useRef(null);
   const divRef: any = React.useRef(null);
 
-  // const Scrooler = (divRef: any) => {
-  //   setTimeout(() => {
-  //     // 👇️ scroll to bottom every time messages change
-  //     divRef.current && divRef.current.scrollIntoView();
-  //   }, 150);
-  // };
-
   const StopSendFaza = (idx: number) => {
     for (let i = 0; i < massInt[idx].length; i++) {
       if (massInt[idx][i]) {
@@ -103,18 +96,17 @@ const GsToDoMode = (props: {
   };
 
   const CloseVertex = (idx: number) => {
+    StopSendFaza(idx);
     if (!DEMO) {
       SendSocketDispatch(massfaz[idx].idevice, 9, 9); // КУ
       SendSocketDispatch(massfaz[idx].idevice, 4, 0); // закрытие id
     }
-    StopSendFaza(idx);
     massfaz[idx].runRec = DEMO ? 5 : 1;
     massfaz[idx].fazaSist = massfaz[idx].fazaSistOld = -1;
     datestat.counterId[idx] = -1;
     dispatch(statsaveCreate(datestat));
     dispatch(massfazCreate(massfaz));
-
-    console.log(idx + 1 + "-й светофор закрыт!!!", datestat.counterId);
+    console.log(idx + 1 + "-й светофор закрыт!!!", massfaz[idx].id);
   };
 
   const DoTimerCount = (mode: number) => {
@@ -142,7 +134,7 @@ const GsToDoMode = (props: {
       }
       if (datestat.counterId[mode] <= 0) {
         // остановка и очистка счётчика
-        console.log("Прекращена отправка с", mode + 1, datestat.counterId);
+        //console.log("Прекращена отправка с", mode + 1, datestat.counterId);
         StopCounter(mode);
         if (!datestat.counterId[mode]) {
           CloseVertex(mode); // закрыть светофор при достижении сч-ка 0
@@ -154,7 +146,6 @@ const GsToDoMode = (props: {
       setFlagPusk(!flagPusk);
     }
   };
-  //fazaSist
 
   const DoTimerId = (mode: number) => {
     let fazer = massfaz[mode];
@@ -171,9 +162,7 @@ const GsToDoMode = (props: {
       dispatch(massfazCreate(massfaz));
       props.changeDemo(mode);
     }
-
-    console.log("Отправка с " + String(mode + 1) + "-го", massfaz);
-
+    //console.log("Отправка с " + String(mode + 1) + "-го", massfaz);
     for (let i = 0; i < massInt[mode].length - 1; i++) {
       if (massInt[mode][i]) {
         clearInterval(massInt[mode][i]);
@@ -205,7 +194,7 @@ const GsToDoMode = (props: {
       datestat.counterId[mode] = intervalFaza; // длительность фазы ДУ
       dispatch(statsaveCreate(datestat));
     }
-    console.log(mode + 1 + "-й светофор пошёл", datestat.counterId);
+    //console.log(mode + 1 + "-й светофор пошёл", datestat.counterId);
   };
   //=== инициализация ======================================
   if (init) {
@@ -236,9 +225,12 @@ const GsToDoMode = (props: {
   // это для подсветки эл-та и скролла в таблице StrokaTabl
   if (datestat.nomIllum >= 0) {
     nomIllum = datestat.nomIllum;
-    datestat.nomIllum > 5 &&
-      scRef.current &&
-      scRef.current.scrollTo(0, nomIllum * 56);
+    if (datestat.nomIllum > 5) {
+      scRef.current && scRef.current.scrollTo(0, nomIllum * 56);
+    } else{ 
+      if (props.stop < 6)
+        scRef.current && scRef.current.scrollTo(0, nomIllum * 56);
+    }
   }
   if (props.start >= 0) {
     StartVertex(props.start); // запустить светофор
@@ -259,7 +251,7 @@ const GsToDoMode = (props: {
   };
 
   const handleCloseSetEnd = () => {
-    props.funcSize(11.99);
+    props.funcSize();
     toDoMode = false;
     datestat.toDoMode = false;
     datestat.working = false;
@@ -305,7 +297,8 @@ const GsToDoMode = (props: {
 
   const ClickKnop = (mode: number) => {
     nomIllum = mode;
-    //dispatch(statsaveCreate(datestat));
+    datestat.nomIllum = mode;
+    dispatch(statsaveCreate(datestat));
     let coor = map.routes[newMode].listTL[mode].point;
     let coord = [coor.Y, coor.X];
     props.funcCenter(coord);
@@ -339,7 +332,6 @@ const GsToDoMode = (props: {
       let runREC = JSON.parse(JSON.stringify(massfaz[i].runRec));
       let bull = runREC === 2 || runREC === 4 ? " •" : " ";
       let takt: number | string = massfaz[i].faza;
-      let pad = 1.2;
       let fazaImg: null | string = null;
       massfaz[i].img.length >= massfaz[i].faza &&
         (fazaImg = massfaz[i].img[massfaz[i].faza - 1]);
@@ -366,7 +358,7 @@ const GsToDoMode = (props: {
           <Grid item xs={1.0} sx={styleToDo01}>
             {takt}
           </Grid>
-          <Grid item xs={2} sx={{ paddingTop: pad, textAlign: "center" }}>
+          <Grid item xs={2} sx={{ paddingTop: 1.2, textAlign: "center" }}>
             {OutputFazaImg(fazaImg, massfaz[i].faza)}
           </Grid>
           <Grid item xs sx={{ fontSize: 14 }}>
