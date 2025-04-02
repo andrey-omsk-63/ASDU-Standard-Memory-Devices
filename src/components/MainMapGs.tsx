@@ -252,7 +252,7 @@ const MainMapGs = (props: {
   };
   //=== обработка instanceRef ==============================
   const FindNearVertex = (coord: Array<number>) => {
-    
+
     let nomInMap = -1;
     let minDist = 999999;
     if (!datestat.toDoMode) {
@@ -475,7 +475,7 @@ const MainMapGs = (props: {
     throw new Error("Функция не реализована");
   }
 
-  const Closing = () => {
+  const ClosingInlay = () => {
     for (let i = 0; i < massfaz.length; i++) {
       if (massfaz[i].runRec === 2)
         !DEMO && SendSocketDispatch(massfaz[i].idevice, 9, 9);
@@ -483,16 +483,15 @@ const MainMapGs = (props: {
   };
 
   const handleTabClosing = () => {
-    Closing();
+    ClosingInlay();
     removePlayerFromGame();
   };
 
-  const alertUser = (event: any) => Closing();
+  const alertUser = (event: any) => ClosingInlay();
 
   React.useEffect(() => {
     window.addEventListener("beforeunload", alertUser);
     window.addEventListener("unload", handleTabClosing);
-
     return () => {
       window.removeEventListener("beforeunload", alertUser);
       window.removeEventListener("unload", handleTabClosing);
