@@ -166,7 +166,7 @@ const MainMapGs = (props: {
     newMode = -1;
     datestat.create = true;
     //datestat.demo = false;
-    ymaps && addRoute(ymaps,  datestat.demo = false); // перерисовка связей
+    ymaps && addRoute(ymaps, (datestat.demo = false)); // перерисовка связей
     dispatch(statsaveCreate(datestat));
     setTrigger(!trigger);
   }, [datestat, dispatch, trigger, ymaps, addRoute]);
@@ -252,7 +252,6 @@ const MainMapGs = (props: {
   };
   //=== обработка instanceRef ==============================
   const FindNearVertex = (coord: Array<number>) => {
-
     let nomInMap = -1;
     let minDist = 999999;
     if (!datestat.toDoMode) {
