@@ -14,6 +14,7 @@ import { YMapsApi } from "react-yandex-maps";
 
 import { Pointer, Fazer, debug } from "./../App";
 import { DEMO } from "./MainMapGs";
+import { GoodCODE } from "./MapConst";
 
 import { FullscreenControl, GeolocationControl } from "react-yandex-maps";
 import { RulerControl, SearchControl } from "react-yandex-maps";
@@ -381,6 +382,7 @@ export const MakeMaskFaz = (
     name: massdk[iDx].nameCoordinates,
     starRec: false,
     img: [],
+    busy: false, // светофор занят/не занят другим пользователем
   };
   if (debug) maskFaz.fazaSist = 1;
   if (DEMO) maskFaz.fazaSist = maskFaz.faza;
@@ -404,6 +406,13 @@ export const MakeMaskFaz = (
       let area = massdk[maskFaz.idx].area.toString();
       SendSocketGetPhases(region, area, maskFaz.id);
     }
+  }
+  if (!DEMO) {
+    // светофор занят или нет другим пользователем?
+    let statusVertex = map.tflight[iDx].tlsost.num;
+    maskFaz.busy = GoodCODE.indexOf(statusVertex) < 0 ? false : true; // светофор занят другим пользователем?
+
+    maskFaz.busy && console.log("ID занят:", maskFaz.id);
   }
   return maskFaz;
 };

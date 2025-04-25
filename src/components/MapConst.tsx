@@ -9,6 +9,13 @@ export const MyYandexKey = "65162f5f-2d15-41d1-a881-6c1acf34cfa1"; // ключ
 
 export const zoomStart = 12; // начальный zoom Yandex-карты
 
+export const GoodCODE: Array<number> = [
+  // список "хороших" кодов
+  2, // Диспетчерское управление
+  7, // ДУ ЖМ - жёлтое мигание ро расписанию
+  12, // ДУ ОС - отключение светофора заданное из центра (АРМа)
+];
+
 export const CLINCH: Array<number> = [
   // список аварийных кодов
   3, // Перекресток работает в Ручном режиме

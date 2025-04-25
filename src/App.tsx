@@ -92,6 +92,7 @@ export interface Fazer {
   name: string;
   starRec: boolean;
   img: Array<string | null>;
+  busy: boolean; // светофор занят/не занят другим пользователем
 }
 export let massFaz: Fazer[] = [];
 
@@ -109,6 +110,7 @@ let maskFaz: Fazer = {
   name: "",
   starRec: false,
   img: [],
+  busy: false, // светофор занят/не занят другим пользователем
 };
 
 export interface NameMode {
@@ -177,12 +179,6 @@ const App = () => {
     dispatch(massfazCreate(massfaz));
     dispatch(coordinatesCreate(coordinates));
     dispatch(massmodeCreate(massmode));
-    // запросы на получение изображения фаз
-    // for (let i = 0; i < massdk.length; i++) {
-    //   let reg = massdk[i].region.toString();
-    //   let area = massdk[i].area.toString();
-    //   SendSocketGetPhases(debug, WS, reg, area, massdk[i].ID);
-    // }
   };
 
   // достать тип отображаемых связей из LocalStorage

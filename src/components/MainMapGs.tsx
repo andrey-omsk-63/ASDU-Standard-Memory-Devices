@@ -25,7 +25,7 @@ import { InformalRoutes, FormalRoutes } from "./MapServiceFunctions";
 import { SendSocketUpdateRoute } from "./MapSocketFunctions";
 import { SendSocketDispatch, SendSocketGetPhases } from "./MapSocketFunctions";
 
-import { YMapsModul, MyYandexKey } from "./MapConst";
+import { YMapsModul, MyYandexKey, GoodCODE } from "./MapConst";
 
 import { styleServisTable } from "./MainMapStyle";
 
@@ -127,8 +127,8 @@ const MainMapGs = (props: {
       let idx = -1;
       for (let j = 0; j < map.tflight.length; j++) {
         if (
-          map.routes[mode].listTL[i].pos.region === map.tflight[j].region.num &&
-          map.routes[mode].listTL[i].pos.area === map.tflight[j].area.num &&
+          //map.routes[mode].listTL[i].pos.region === map.tflight[j].region.num &&
+          //map.routes[mode].listTL[i].pos.area === map.tflight[j].area.num &&
           map.routes[mode].listTL[i].pos.id === map.tflight[j].ID
         ) {
           idx = j;
@@ -148,13 +148,46 @@ const MainMapGs = (props: {
     }
     if (massErrRec.length) {
       let massRabMap = []; // редактируем у себя map
-      for (let i = 0; i < map.routes[mode].listTL.length; i++)
-        if (!massErrRec.includes(i))
+      for (let i = 0; i < map.routes[mode].listTL.length; i++) {
+        if (!massErrRec.includes(i)) {
           massRabMap.push(map.routes[mode].listTL[i]);
+        }
+      }
       map.routes[mode].listTL = massRabMap;
       SendSocketUpdateRoute(map.routes[mode]);
       dispatch(mapCreate(map));
     }
+
+    let massBusy = [];
+    let soob = "";
+    soobErr = "";
+    for (let i = 0; i < map.routes[mode].listTL.length; i++) {
+      for (let j = 0; j < map.tflight.length; j++) {
+        if (map.routes[mode].listTL[i].pos.id === map.tflight[j].ID) {
+          let statusVertex = map.tflight[j].tlsost.num;
+          let goodCode = GoodCODE.indexOf(statusVertex) < 0 ? false : true; // светофор занят другим пользователем?
+          if (goodCode) {
+            soob = soob + ", " + map.tflight[j].ID;
+            massBusy.push(map.tflight[j].ID);
+          }
+        }
+      }
+    }
+    if (soob) {
+      soob = soob.slice(2);
+      soobErr =
+        "⚠️Предупреждение\xa0\xa0\xa0" +
+        (massBusy.length === 1 ? "Перекрёсток ID " : "Перекрёстки ID ") +
+        soob +
+        (massBusy.length === 1 ? " управляется" : " управляются") +
+        " другим пользователем и " +
+        (massBusy.length === 1
+          ? "начнёт работать как только освободится"
+          : "начнут работать как только освободятся");
+      setOpenSoobErr(true);
+    }
+    console.log("massBusy:", massBusy, soobErr);
+
     newMode = mode;
     ymaps && addRoute(ymaps, true); // перерисовка связей
     setFlagPusk(!flagPusk);
