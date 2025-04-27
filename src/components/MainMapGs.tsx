@@ -16,7 +16,7 @@ import GsDoPlacemarkDo from "./GsComponents/GsDoPlacemarkDo";
 import GsSetup from "./GsComponents/GsSetup";
 import GsFragments from "./GsComponents/GsFragments";
 
-import { StrokaHelp } from "./MapServiceFunctions";
+import { StrokaHelp, СheckBusy } from "./MapServiceFunctions";
 import { CenterCoordBegin, PutItInAFrame } from "./MapServiceFunctions";
 import { ErrorHaveVertex, Distance, SaveZoom } from "./MapServiceFunctions";
 import { MenuGl, YandexServices, DrawCircle } from "./MapServiceFunctions";
@@ -25,7 +25,7 @@ import { InformalRoutes, FormalRoutes } from "./MapServiceFunctions";
 import { SendSocketUpdateRoute } from "./MapSocketFunctions";
 import { SendSocketDispatch, SendSocketGetPhases } from "./MapSocketFunctions";
 
-import { YMapsModul, MyYandexKey, GoodCODE } from "./MapConst";
+import { YMapsModul, MyYandexKey } from "./MapConst";
 
 import { styleServisTable } from "./MainMapStyle";
 
@@ -158,35 +158,36 @@ const MainMapGs = (props: {
       dispatch(mapCreate(map));
     }
 
-    let massBusy = [];
-    let soob = "";
-    soobErr = "";
-    for (let i = 0; i < map.routes[mode].listTL.length; i++) {
-      for (let j = 0; j < map.tflight.length; j++) {
-        if (map.routes[mode].listTL[i].pos.id === map.tflight[j].ID) {
-          let statusVertex = map.tflight[j].tlsost.num;
-          let goodCode = GoodCODE.indexOf(statusVertex) < 0 ? false : true; // светофор занят другим пользователем?
-          if (goodCode) {
-            soob = soob + ", " + map.tflight[j].ID;
-            massBusy.push(map.tflight[j].ID);
-          }
-        }
-      }
-    }
-    if (soob) {
-      soob = soob.slice(2);
-      soobErr =
-        "⚠️Предупреждение\xa0\xa0\xa0" +
-        (massBusy.length === 1 ? "Перекрёсток ID " : "Перекрёстки ID ") +
-        soob +
-        (massBusy.length === 1 ? " управляется" : " управляются") +
-        " другим пользователем и " +
-        (massBusy.length === 1
-          ? "начнёт работать как только освободится"
-          : "начнут работать как только освободятся");
-      setOpenSoobErr(true);
-    }
-    console.log("massBusy:", massBusy, soobErr);
+    // let massBusy = [];
+    // let soob = "";
+    // soobErr = "";
+    // for (let i = 0; i < map.routes[mode].listTL.length; i++) {
+    //   for (let j = 0; j < map.tflight.length; j++) {
+    //     if (map.routes[mode].listTL[i].pos.id === map.tflight[j].ID) {
+    //       let statusVertex = map.tflight[j].tlsost.num;
+    //       let goodCode = GoodCODE.indexOf(statusVertex) < 0 ? false : true; // светофор занят другим пользователем?
+    //       if (goodCode) {
+    //         soob = soob + ", " + map.tflight[j].ID;
+    //         massBusy.push(map.tflight[j].ID);
+    //       }
+    //     }
+    //   }
+    // }
+    // if (soob) {
+    //   soob = soob.slice(2);
+    //   soobErr =
+    //     "⚠️Предупреждение\xa0\xa0\xa0" +
+    //     (massBusy.length === 1 ? "Перекрёсток ID " : "Перекрёстки ID ") +
+    //     soob +
+    //     (massBusy.length === 1 ? " управляется" : " управляются") +
+    //     " другим пользователем и " +
+    //     (massBusy.length === 1
+    //       ? "начнёт работать как только освободится"
+    //       : "начнут работать как только освободятся");
+    //   setOpenSoobErr(true);
+    // }
+    if ((soobErr = СheckBusy(map, mode))) setOpenSoobErr(true);
+    console.log("massBusy:", soobErr);
 
     newMode = mode;
     ymaps && addRoute(ymaps, true); // перерисовка связей

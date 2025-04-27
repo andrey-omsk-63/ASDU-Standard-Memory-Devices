@@ -281,6 +281,38 @@ export const HelpAdd = (soobHelpFiest: string, lng: number) => {
     </>
   );
 };
+
+export const СheckBusy = (map: any, mode: number) => {
+  let massBusy = [];
+  let soob = "";
+  let soobErr = "";
+  for (let i = 0; i < map.routes[mode].listTL.length; i++) {
+    for (let j = 0; j < map.tflight.length; j++) {
+      if (map.routes[mode].listTL[i].pos.id === map.tflight[j].ID) {
+        let statusVertex = map.tflight[j].tlsost.num;
+        let goodCode = GoodCODE.indexOf(statusVertex) < 0 ? false : true; // светофор занят другим пользователем?
+        if (goodCode) {
+          soob = soob + ", " + map.tflight[j].ID;
+          massBusy.push(map.tflight[j].ID);
+          break;
+        }
+      }
+    }
+  }
+  if (soob) {
+    soob = soob.slice(2);
+    soobErr =
+      "⚠️Предупреждение\xa0\xa0\xa0" +
+      (massBusy.length === 1 ? "Перекрёсток ID " : "Перекрёстки ID ") +
+      soob +
+      (massBusy.length === 1 ? " управляется" : " управляются") +
+      " другим пользователем и " +
+      (massBusy.length === 1
+        ? "начнёт работать как только освободится..."
+        : "начнут работать как только освободятся...");
+  }
+  return soobErr;
+};
 //=== Placemark =====================================
 export const GetPointData = (
   index: number,
