@@ -11,13 +11,13 @@ import AppSocketError from "./AppSocketError";
 
 import { MasskPoint } from "./components/MapServiceFunctions";
 
-//import { SendSocketGetPhases } from "./components/MapSocketFunctions";
+import { SendSocketDispatch } from "./components/MapSocketFunctions";
 
 import { dataMap } from "./otladkaMaps";
 import { imgFaza } from "./otladkaRoutes";
 import { dataHistory } from "./otladkaHistory"; // для отладки
 
-import { zoomStart, CLINCH, BadCODE } from "./components/MapConst";
+import { zoomStart, CLINCH, BadCODE, GoodCODE } from "./components/MapConst";
 
 export let dateMapGl: any;
 export let dateRouteGl: any;
@@ -134,10 +134,6 @@ let flagChange = false;
 
 const App = () => {
   //== Piece of Redux ======================================
-  // const map = useSelector((state: any) => {
-  //   const { mapReducer } = state;
-  //   return mapReducer.map.dateMap;
-  // });
   let massdk = useSelector((state: any) => {
     const { massdkReducer } = state;
     return massdkReducer.massdk;
@@ -260,6 +256,42 @@ const App = () => {
       console.log("WS.current.onerror:", event);
     };
 
+    const ActionOnTflight = (data: any) => {
+      let flagChange = false;
+      for (let i = 0; i < data.tflight.length; i++) {
+        for (let j = 0; j < dateMapGl.tflight.length; j++) {
+          if (dateMapGl.tflight[j].idevice === data.tflight[i].idevice) {
+            dateMapGl.tflight[j].tlsost = data.tflight[i].tlsost;
+            flagChange = true;
+            // проверка на то, что занятый другим пользователем светофор освободился
+            let statusVertex = dateMapGl.tflight[j].tlsost.num;
+            let clinch = CLINCH.indexOf(statusVertex) < 0 ? false : true;
+            let badCode = BadCODE.indexOf(statusVertex) < 0 ? false : true;
+            let goodCode = GoodCODE.indexOf(statusVertex) < 0 ? false : true;
+            if (!clinch && !badCode && !goodCode && !dateStat.demo) {
+              for (let jj = 0; jj < massfaz.length; jj++) {
+                let fz = massfaz[jj];
+                if (dateMapGl.tflight[j].idevice === fz.idevice) {
+                  if (fz.busy || !massfaz[jj].runRec) {
+                    SendSocketDispatch(fz.idevice, 4, 1); // начало работы
+                    SendSocketDispatch(fz.idevice, 9, fz.faza); // послать фазу на не занятый светофор
+                    fz.runRec = 2; // светофор активирован
+                    fz.busy = false; // светофор освобождён другим пользоватем
+                    dispatch(massfazCreate(massfaz));
+                    console.log("ID", fz.id, " светофор АКТИВИРОВАН", fz);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      if (flagChange) {
+        dispatch(mapCreate(dateMapGl));
+        setTrigger(!trigger);
+      }
+    };
+
     WS.onmessage = function (event: any) {
       let allData = JSON.parse(event.data);
       let data = allData.data;
@@ -267,26 +299,21 @@ const App = () => {
       switch (allData.type) {
         case "tflight":
           //console.log("Tflight:", data, data.tflight);
-          for (let j = 0; j < data.tflight.length; j++) {
-            for (let i = 0; i < dateMapGl.tflight.length; i++)
-              if (data.tflight[j].idevice === dateMapGl.tflight[i].idevice)
-                dateMapGl.tflight[i].tlsost = data.tflight[j].tlsost;
-          }
-          dispatch(mapCreate(dateMapGl));
-          setTrigger(!trigger);
+          ActionOnTflight(data);
           break;
         case "phases":
-          //console.log("phases:", data);
+          //console.log("phases:", data, massfaz);
           flagChange = false;
           for (let i = 0; i < data.phases.length; i++) {
             for (let j = 0; j < massfaz.length; j++) {
               if (massfaz[j].idevice === data.phases[i].device) {
-                let statusVertex = dateMapGl.tflight[massfaz[j].id].tlsost.num;
+                let dtf = data.phases[i].phase;
+                let statusVertex = dateMapGl.tflight[massfaz[j].idx].tlsost.num;
                 let clinch = CLINCH.indexOf(statusVertex) < 0 ? false : true;
                 let badCode = BadCODE.indexOf(statusVertex) < 0 ? false : true;
-                if (!clinch && !badCode) {
-                  if (massfaz[j].fazaSist !== data.phases[i].phase) {
-                    massfaz[j].fazaSist = data.phases[i].phase;
+                if (!clinch && !badCode && dateStat.toDoMode) {
+                  if (dtf && massfaz[j].fazaSist !== dtf && !massfaz[j].busy) {
+                    massfaz[j].fazaSist = dtf;
                     flagChange = true;
                   }
                 }

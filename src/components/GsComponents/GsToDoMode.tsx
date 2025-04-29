@@ -176,15 +176,24 @@ const GsToDoMode = (props: {
 
   const StartVertex = (mode: number) => {
     let fazer = massfaz[mode];
+    let statusVertex = map.tflight[fazer.idx].tlsost.num;
+    let clinch = CLINCH.indexOf(statusVertex) < 0 ? false : true;
+    let badCode = BadCODE.indexOf(statusVertex) < 0 ? false : true;
     if (!DEMO) {
-      SendSocketDispatch(fazer.idevice, 4, 1); // начало работы
-      SendSocketDispatch(fazer.idevice, 9, fazer.faza);
+      if (!fazer.busy && !clinch && !badCode) {
+        SendSocketDispatch(fazer.idevice, 4, 1); // начало работы
+        SendSocketDispatch(fazer.idevice, 9, fazer.faza);
+        fazer.runRec = 2; // активирование
+        
+        console.log('***:',JSON.parse(JSON.stringify(fazer)))
+      }
+    } else {
+      fazer.runRec = 4; // активирование
+      if (fazer.fazaSist < 0) massfaz[mode].fazaSist = massfaz[mode].faza;
+      props.changeDemo(mode);
     }
     timerId[mode] = setInterval(() => DoTimerId(mode), timer);
     massInt[mode].push(timerId[mode]);
-    fazer.runRec = DEMO ? 4 : 2; // активирование
-    if (fazer.fazaSist < 0) massfaz[mode].fazaSist = massfaz[mode].faza;
-    if (DEMO) props.changeDemo(mode);
     // запуск таймеров счётчиков длительности фаз
     if (intervalFaza) {
       datestat.timerId[mode] = setInterval(() => DoTimerCount(mode), 1000);
@@ -194,7 +203,7 @@ const GsToDoMode = (props: {
       datestat.counterId[mode] = intervalFaza; // длительность фазы ДУ
       dispatch(statsaveCreate(datestat));
     }
-    //console.log(mode + 1 + "-й светофор пошёл", datestat.counterId);
+    console.log(mode + 1 + "-й светофор пошёл", fazer.busy, fazer.id, fazer);
   };
   //=== инициализация ======================================
   if (init) {
@@ -227,7 +236,7 @@ const GsToDoMode = (props: {
     nomIllum = datestat.nomIllum;
     if (datestat.nomIllum > 5) {
       scRef.current && scRef.current.scrollTo(0, nomIllum * 56);
-    } else{ 
+    } else {
       if (props.stop < 6)
         scRef.current && scRef.current.scrollTo(0, nomIllum * 56);
     }
@@ -337,7 +346,7 @@ const GsToDoMode = (props: {
         (fazaImg = massfaz[i].img[massfaz[i].faza - 1]);
       debug && (fazaImg = datestat.phSvg[massfaz[i].faza - 1]); // для отладки
       let illum = nomIllum === i ? styleStrokaTabl01 : styleStrokaTabl02;
-      let finish = runREC === 4 || runREC === 2 ? true : false;
+      //let finish = runREC === 4 || runREC === 2 ? true : false;
 
       resStr.push(
         <Grid key={i} container sx={styleStrokaTabl03}>
@@ -347,7 +356,7 @@ const GsToDoMode = (props: {
             </Button>
           </Grid>
           <GsFieldOfMiracles
-            finish={finish}
+            //finish={finish}
             idx={i}
             func={ClickAddition}
             ClVert={ClickVertex}

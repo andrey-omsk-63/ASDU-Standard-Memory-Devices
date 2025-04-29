@@ -13,7 +13,7 @@ import { styleStrTablImg01, styleStrTablImg02 } from "./GsComponentsStyle";
 import { styleStrokaTabl06 } from "./GsComponentsStyle";
 
 const GsFieldOfMiracles = (props: {
-  finish: boolean;
+  //finish: boolean;
   idx: number;
   func: Function;
   ClVert: Function;
@@ -68,11 +68,12 @@ const GsFieldOfMiracles = (props: {
   let illumImg =
     runREC === 4 || runREC === 2 ? styleStrTablImg01 : styleStrTablImg02;
   let hinter = map.tflight[massfaz[IDX].idx].tlsost.description;
+  let finish = runREC === 4 || runREC === 2 ? true : false;
 
   return (
     <>
       <Grid item xs={1.8} sx={styleStrokaTabl06}>
-        {props.finish && massfaz[props.idx].id <= 10000 && intervalfaza > 0 && (
+        {finish && massfaz[props.idx].fazaSist && intervalfaza > 0 && (
           <Grid
             container
             sx={{ cursor: "pointer" }}
@@ -106,7 +107,7 @@ const GsFieldOfMiracles = (props: {
           onMouseEnter={() => setHintVertex(true)}
           onMouseLeave={() => setHintVertex(false)}
         >
-          {!datestat.toDoMode ? (
+          {!datestat.toDoMode || massfaz[props.idx].fazaSist < 0 ? (
             <>{OutputVertexImg(host)}</>
           ) : (
             <Button sx={illumImg} onClick={() => ClickVertex(IDX)}>

@@ -256,8 +256,8 @@ const MainMapGs = (props: {
             NewPointCenter(masscoord);
           }
           if (datestat.toDoMode) {
-            massfaz[nomInMass].runRec = datestat.demo ? 4 : 2; // включить исполнение
-            dispatch(massfazCreate(massfaz));
+            //massfaz[nomInMass].runRec = datestat.demo ? 4 : 2; // включить исполнение
+            //dispatch(massfazCreate(massfaz));
             setStartCount(nomInMass); // запрос на запуск отправки фазы
           }
           setChangeFaz(!changeFaz);
