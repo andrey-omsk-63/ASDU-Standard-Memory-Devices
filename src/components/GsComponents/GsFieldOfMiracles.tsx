@@ -107,7 +107,7 @@ const GsFieldOfMiracles = (props: {
           onMouseEnter={() => setHintVertex(true)}
           onMouseLeave={() => setHintVertex(false)}
         >
-          {!datestat.toDoMode || massfaz[props.idx].fazaSist < 0 ? (
+          {!datestat.toDoMode || massfaz[IDX].fazaSist < 0 || !finish ? (
             <>{OutputVertexImg(host)}</>
           ) : (
             <Button sx={illumImg} onClick={() => ClickVertex(IDX)}>

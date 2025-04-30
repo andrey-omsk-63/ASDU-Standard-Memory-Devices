@@ -1,7 +1,6 @@
 import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { mapCreate, massmodeCreate } from "../redux/actions";
-import { massfazCreate, statsaveCreate } from "../redux/actions";
+import { mapCreate, massmodeCreate, statsaveCreate } from "../redux/actions";
 
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";

@@ -6,6 +6,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 
+import GsErrorMessage from "./GsErrorMessage";
 import GsFieldOfMiracles from "./GsFieldOfMiracles";
 
 import { OutputFazaImg, MakeMaskFaz } from "../MapServiceFunctions";
@@ -14,7 +15,7 @@ import { FooterContentToDo } from "../MapServiceFunctions";
 
 import { SendSocketRoute, SendSocketDispatch } from "../MapSocketFunctions";
 
-import { CLINCH, BadCODE } from "./../MapConst";
+import { NoClose, CLINCH, BadCODE, GoodCODE } from "./../MapConst";
 
 import { styleToDoMode, styleStrokaTabl01 } from "./GsComponentsStyle";
 import { styleStrokaTabl03, styleStrokaTabl02 } from "./GsComponentsStyle";
@@ -25,6 +26,7 @@ let toDoMode = false;
 let init = true;
 let nomIllum = -1;
 let needRend = false;
+let soobError = "";
 
 let timerId: any[] = [];
 let massInt: any[][] = [];
@@ -72,8 +74,22 @@ const GsToDoMode = (props: {
   //========================================================
   const [trigger, setTrigger] = React.useState(true);
   const [flagPusk, setFlagPusk] = React.useState(false);
+  const [openSoobErr, setOpenSoobErr] = React.useState(false);
   const scRef: any = React.useRef(null);
   const divRef: any = React.useRef(null);
+
+  const handleCloseSetEnd = () => {
+    console.log('handleCloseSetEnd')
+
+    props.funcSize();
+    toDoMode = false;
+    datestat.toDoMode = false;
+    datestat.working = false;
+    massfaz = [];
+    dispatch(massfazCreate(massfaz));
+    dispatch(statsaveCreate(datestat));
+    init = true;
+  };
 
   const StopSendFaza = (idx: number) => {
     for (let i = 0; i < massInt[idx].length; i++) {
@@ -95,7 +111,59 @@ const GsToDoMode = (props: {
     datestat.timerId[i] = null;
   };
 
+  const ForcedClearInterval = () => {
+    // сброс таймеров отправки фаз
+    for (let i = 0; i < timerId.length; i++) if (timerId[i]) StopSendFaza(i);
+    // сброс таймеров счётчиков длительности фаз
+    for (let i = 0; i < datestat.timerId.length; i++)
+      if (datestat.timerId[i]) StopCounter(i);
+    dispatch(statsaveCreate(datestat));
+  };
+
+  const ToDoMode = (mode: number) => {
+    let massIdevice: Array<number> = [];
+    if (mode) {
+      ClickKnop(0); // ставим на первый светофор
+      for (let i = 0; i < massfaz.length; i++) {
+        massIdevice.push(massfaz[i].idevice);
+        massfaz[i].kolOpen++;
+        let statusVertex = map.tflight[massfaz[i].idx].tlsost.num;
+        massfaz[i].busy = GoodCODE.indexOf(statusVertex) < 0 ? false : true; // светофор занят другим пользователем?
+      }
+      dispatch(massfazCreate(massfaz));
+      !DEMO && SendSocketRoute(massIdevice, true); // открыть маршрут
+      toDoMode = true; // выполнение режима
+      datestat.toDoMode = true;
+      dispatch(statsaveCreate(datestat));
+      props.funcMode(mode);
+      setTrigger(!trigger);
+    } else {
+      // принудительное закрытие
+      console.log("Принудительное закрытие!!!");
+      ForcedClearInterval(); // обнуление всех интервалов и остановка всех таймеров
+      for (let i = 0; i < massfaz.length; i++) {
+        if (massfaz[i].runRec === 2) {
+          !DEMO && SendSocketDispatch(massfaz[i].idevice, 9, 9);
+          massfaz[mode].runRec = 1;
+          massIdevice.push(massfaz[i].idevice);
+        }
+      }
+      dispatch(massfazCreate(massfaz));
+      !DEMO && SendSocketRoute(massIdevice, false); // закрыть маршрут
+      props.funcMode(mode); // закончить исполнение
+      props.funcHelper(true);
+      handleCloseSetEnd();
+    }
+  };
+
   const CloseVertex = (idx: number) => {
+    if (idx) {
+      if (massfaz[idx - 1].runRec !== 1 && massfaz[idx - 1].runRec !== 5) {
+        soobError = NoClose;
+        setOpenSoobErr(true);
+        return;
+      }
+    }
     StopSendFaza(idx);
     if (!DEMO) {
       SendSocketDispatch(massfaz[idx].idevice, 9, 9); // КУ
@@ -106,7 +174,23 @@ const GsToDoMode = (props: {
     datestat.counterId[idx] = -1;
     dispatch(statsaveCreate(datestat));
     dispatch(massfazCreate(massfaz));
+
     console.log(idx + 1 + "-й светофор закрыт!!!", massfaz[idx].id);
+
+    let end = true;
+    for (let i = 0; i < massfaz.length; i++) {
+      if (
+        massfaz[i].runRec !== 0 && // 0 -начало
+        massfaz[i].runRec !== 1 && // 1 - финиш
+        massfaz[i].runRec !== 5 // 5 - финиш Демо
+      ) {
+        end = false;
+      }
+    }
+    if (end) {
+      console.log('Нужна концовка:',massfaz)
+      //ToDoMode(0);
+    }
   };
 
   const DoTimerCount = (mode: number) => {
@@ -184,8 +268,8 @@ const GsToDoMode = (props: {
         SendSocketDispatch(fazer.idevice, 4, 1); // начало работы
         SendSocketDispatch(fazer.idevice, 9, fazer.faza);
         fazer.runRec = 2; // активирование
-        
-        console.log('***:',JSON.parse(JSON.stringify(fazer)))
+
+        console.log("***:", JSON.parse(JSON.stringify(fazer)));
       }
     } else {
       fazer.runRec = 4; // активирование
@@ -250,60 +334,6 @@ const GsToDoMode = (props: {
     props.funcStop(-1);
   }
   //========================================================
-  const ForcedClearInterval = () => {
-    // сброс таймеров отправки фаз
-    for (let i = 0; i < timerId.length; i++) if (timerId[i]) StopSendFaza(i);
-    // сброс таймеров счётчиков длительности фаз
-    for (let i = 0; i < datestat.timerId.length; i++)
-      if (datestat.timerId[i]) StopCounter(i);
-    dispatch(statsaveCreate(datestat));
-  };
-
-  const handleCloseSetEnd = () => {
-    props.funcSize();
-    toDoMode = false;
-    datestat.toDoMode = false;
-    datestat.working = false;
-    massfaz = [];
-    dispatch(massfazCreate(massfaz));
-    dispatch(statsaveCreate(datestat));
-    init = true;
-  };
-
-  const ToDoMode = (mode: number) => {
-    let massIdevice: Array<number> = [];
-    if (mode) {
-      ClickKnop(0); // ставим на первый светофор
-      for (let i = 0; i < massfaz.length; i++) {
-        massIdevice.push(massfaz[i].idevice);
-        massfaz[i].kolOpen++;
-      }
-      dispatch(massfazCreate(massfaz));
-      !DEMO && SendSocketRoute(massIdevice, true); // открыть маршрут
-      toDoMode = true; // выполнение режима
-      datestat.toDoMode = true;
-      dispatch(statsaveCreate(datestat));
-      props.funcMode(mode);
-      setTrigger(!trigger);
-    } else {
-      // принудительное закрытие
-      console.log("Принудительное закрытие!!!");
-      ForcedClearInterval(); // обнуление всех интервалов и остановка всех таймеров
-      for (let i = 0; i < massfaz.length; i++) {
-        if (massfaz[i].runRec === 2) {
-          !DEMO && SendSocketDispatch(massfaz[i].idevice, 9, 9);
-          massfaz[mode].runRec = 1;
-          massIdevice.push(massfaz[i].idevice);
-        }
-      }
-      dispatch(massfazCreate(massfaz));
-      !DEMO && SendSocketRoute(massIdevice, false); // закрыть маршрут
-      props.funcMode(mode); // закончить исполнение
-      props.funcHelper(true);
-      handleCloseSetEnd();
-    }
-  };
-
   const ClickKnop = (mode: number) => {
     nomIllum = mode;
     datestat.nomIllum = mode;
@@ -398,6 +428,9 @@ const GsToDoMode = (props: {
         </Box>
         {FooterContentToDo(toDoMode, ToDoMode)}
       </Box>
+      {openSoobErr && (
+        <GsErrorMessage setOpen={setOpenSoobErr} sErr={soobError} />
+      )}
     </>
   );
 };

@@ -268,17 +268,21 @@ const App = () => {
             let clinch = CLINCH.indexOf(statusVertex) < 0 ? false : true;
             let badCode = BadCODE.indexOf(statusVertex) < 0 ? false : true;
             let goodCode = GoodCODE.indexOf(statusVertex) < 0 ? false : true;
-            if (!clinch && !badCode && !goodCode && !dateStat.demo) {
+            if (!clinch && !badCode && !dateStat.demo) {
               for (let jj = 0; jj < massfaz.length; jj++) {
                 let fz = massfaz[jj];
                 if (dateMapGl.tflight[j].idevice === fz.idevice) {
-                  if (fz.busy || !massfaz[jj].runRec) {
-                    SendSocketDispatch(fz.idevice, 4, 1); // начало работы
-                    SendSocketDispatch(fz.idevice, 9, fz.faza); // послать фазу на не занятый светофор
-                    fz.runRec = 2; // светофор активирован
-                    fz.busy = false; // светофор освобождён другим пользоватем
-                    dispatch(massfazCreate(massfaz));
-                    console.log("ID", fz.id, " светофор АКТИВИРОВАН", fz);
+                  if (!goodCode) {
+                    if (fz.busy || !fz.runRec) {
+                      fz.busy = false; // светофор освобождён другим пользоватем
+                      if (fz.kolOpen) {
+                        SendSocketDispatch(fz.idevice, 4, 1); // начало работы
+                        SendSocketDispatch(fz.idevice, 9, fz.faza); // послать фазу на не занятый светофор
+                        fz.runRec = 2; // светофор активирован
+                        console.log("ID", fz.id, " светофор АКТИВИРОВАН", fz);
+                      }
+                      dispatch(massfazCreate(massfaz));
+                    }
                   }
                 }
               }
