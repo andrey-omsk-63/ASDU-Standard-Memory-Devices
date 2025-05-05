@@ -79,8 +79,6 @@ const GsToDoMode = (props: {
   const divRef: any = React.useRef(null);
 
   const handleCloseSetEnd = () => {
-    console.log('handleCloseSetEnd')
-
     props.funcSize();
     toDoMode = false;
     datestat.toDoMode = false;
@@ -126,7 +124,7 @@ const GsToDoMode = (props: {
       ClickKnop(0); // ставим на первый светофор
       for (let i = 0; i < massfaz.length; i++) {
         massIdevice.push(massfaz[i].idevice);
-        massfaz[i].kolOpen++;
+        //massfaz[i].kolOpen++;
         let statusVertex = map.tflight[massfaz[i].idx].tlsost.num;
         massfaz[i].busy = GoodCODE.indexOf(statusVertex) < 0 ? false : true; // светофор занят другим пользователем?
       }
@@ -144,7 +142,7 @@ const GsToDoMode = (props: {
       for (let i = 0; i < massfaz.length; i++) {
         if (massfaz[i].runRec === 2) {
           !DEMO && SendSocketDispatch(massfaz[i].idevice, 9, 9);
-          massfaz[mode].runRec = 1;
+          massfaz[i].runRec = 1;
           massIdevice.push(massfaz[i].idevice);
         }
       }
@@ -157,8 +155,11 @@ const GsToDoMode = (props: {
   };
 
   const CloseVertex = (idx: number) => {
+    //console.log("CloseVertex:", idx, massfaz);
     if (idx) {
-      if (massfaz[idx - 1].runRec !== 1 && massfaz[idx - 1].runRec !== 5) {
+      let RunRec = massfaz[idx - 1].runRec;
+      if (RunRec === 2 || RunRec === 4) {
+        //console.log("!!!CloseVertex:", RunRec, massfaz);
         soobError = NoClose;
         setOpenSoobErr(true);
         return;
@@ -176,21 +177,6 @@ const GsToDoMode = (props: {
     dispatch(massfazCreate(massfaz));
 
     console.log(idx + 1 + "-й светофор закрыт!!!", massfaz[idx].id);
-
-    let end = true;
-    for (let i = 0; i < massfaz.length; i++) {
-      if (
-        massfaz[i].runRec !== 0 && // 0 -начало
-        massfaz[i].runRec !== 1 && // 1 - финиш
-        massfaz[i].runRec !== 5 // 5 - финиш Демо
-      ) {
-        end = false;
-      }
-    }
-    if (end) {
-      console.log('Нужна концовка:',massfaz)
-      //ToDoMode(0);
-    }
   };
 
   const DoTimerCount = (mode: number) => {
@@ -246,7 +232,6 @@ const GsToDoMode = (props: {
       dispatch(massfazCreate(massfaz));
       props.changeDemo(mode);
     }
-    //console.log("Отправка с " + String(mode + 1) + "-го", massfaz);
     for (let i = 0; i < massInt[mode].length - 1; i++) {
       if (massInt[mode][i]) {
         clearInterval(massInt[mode][i]);
@@ -268,14 +253,13 @@ const GsToDoMode = (props: {
         SendSocketDispatch(fazer.idevice, 4, 1); // начало работы
         SendSocketDispatch(fazer.idevice, 9, fazer.faza);
         fazer.runRec = 2; // активирование
-
-        console.log("***:", JSON.parse(JSON.stringify(fazer)));
       }
     } else {
       fazer.runRec = 4; // активирование
       if (fazer.fazaSist < 0) massfaz[mode].fazaSist = massfaz[mode].faza;
       props.changeDemo(mode);
     }
+    fazer.kolOpen++;
     timerId[mode] = setInterval(() => DoTimerId(mode), timer);
     massInt[mode].push(timerId[mode]);
     // запуск таймеров счётчиков длительности фаз
@@ -326,10 +310,11 @@ const GsToDoMode = (props: {
     }
   }
   if (props.start >= 0) {
-    StartVertex(props.start); // запустить светофор
+    !massfaz[props.start].kolOpen && StartVertex(props.start); // запустить светофор
     props.funcStart(-1);
   }
   if (props.stop >= 0) {
+    //console.log("props.stop", props.stop);
     CloseVertex(props.stop); // закрыть светофор
     props.funcStop(-1);
   }
@@ -386,7 +371,6 @@ const GsToDoMode = (props: {
             </Button>
           </Grid>
           <GsFieldOfMiracles
-            //finish={finish}
             idx={i}
             func={ClickAddition}
             ClVert={ClickVertex}

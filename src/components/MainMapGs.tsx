@@ -125,11 +125,7 @@ const MainMapGs = (props: {
     for (let i = 0; i < map.routes[mode].listTL.length; i++) {
       let idx = -1;
       for (let j = 0; j < map.tflight.length; j++) {
-        if (
-          //map.routes[mode].listTL[i].pos.region === map.tflight[j].region.num &&
-          //map.routes[mode].listTL[i].pos.area === map.tflight[j].area.num &&
-          map.routes[mode].listTL[i].pos.id === map.tflight[j].ID
-        ) {
+        if (map.routes[mode].listTL[i].pos.id === map.tflight[j].ID) {
           idx = j;
           break;
         }
@@ -148,46 +144,14 @@ const MainMapGs = (props: {
     if (massErrRec.length) {
       let massRabMap = []; // редактируем у себя map
       for (let i = 0; i < map.routes[mode].listTL.length; i++) {
-        if (!massErrRec.includes(i)) {
+        if (!massErrRec.includes(i))
           massRabMap.push(map.routes[mode].listTL[i]);
-        }
       }
       map.routes[mode].listTL = massRabMap;
       SendSocketUpdateRoute(map.routes[mode]);
       dispatch(mapCreate(map));
     }
-
-    // let massBusy = [];
-    // let soob = "";
-    // soobErr = "";
-    // for (let i = 0; i < map.routes[mode].listTL.length; i++) {
-    //   for (let j = 0; j < map.tflight.length; j++) {
-    //     if (map.routes[mode].listTL[i].pos.id === map.tflight[j].ID) {
-    //       let statusVertex = map.tflight[j].tlsost.num;
-    //       let goodCode = GoodCODE.indexOf(statusVertex) < 0 ? false : true; // светофор занят другим пользователем?
-    //       if (goodCode) {
-    //         soob = soob + ", " + map.tflight[j].ID;
-    //         massBusy.push(map.tflight[j].ID);
-    //       }
-    //     }
-    //   }
-    // }
-    // if (soob) {
-    //   soob = soob.slice(2);
-    //   soobErr =
-    //     "⚠️Предупреждение\xa0\xa0\xa0" +
-    //     (massBusy.length === 1 ? "Перекрёсток ID " : "Перекрёстки ID ") +
-    //     soob +
-    //     (massBusy.length === 1 ? " управляется" : " управляются") +
-    //     " другим пользователем и " +
-    //     (massBusy.length === 1
-    //       ? "начнёт работать как только освободится"
-    //       : "начнут работать как только освободятся");
-    //   setOpenSoobErr(true);
-    // }
-    if ((soobErr = СheckBusy(map, mode))) setOpenSoobErr(true);
-    console.log("massBusy:", soobErr);
-
+    if (!DEMO) if ((soobErr = СheckBusy(map, mode))) setOpenSoobErr(true);
     newMode = mode;
     ymaps && addRoute(ymaps, true); // перерисовка связей
     setFlagPusk(!flagPusk);
@@ -198,7 +162,6 @@ const MainMapGs = (props: {
     massCoord = [];
     newMode = -1;
     datestat.create = true;
-    //datestat.demo = false;
     ymaps && addRoute(ymaps, (datestat.demo = false)); // перерисовка связей
     dispatch(statsaveCreate(datestat));
     setTrigger(!trigger);
@@ -254,11 +217,7 @@ const MainMapGs = (props: {
             masscoord[1] = map.tflight[massMem[nomInMass + 1]].points.X;
             NewPointCenter(masscoord);
           }
-          if (datestat.toDoMode) {
-            //massfaz[nomInMass].runRec = datestat.demo ? 4 : 2; // включить исполнение
-            //dispatch(massfazCreate(massfaz));
-            setStartCount(nomInMass); // запрос на запуск отправки фазы
-          }
+          if (datestat.toDoMode) setStartCount(nomInMass); // запрос на запуск отправки фазы
           setChangeFaz(!changeFaz);
         }
       }
@@ -384,6 +343,7 @@ const MainMapGs = (props: {
   };
 
   const OldSizeWind = () => {
+    console.log("КОНЕЦ!!!");
     modeToDo = 0;
     setToDoMode(false);
   };

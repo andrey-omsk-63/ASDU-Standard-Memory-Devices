@@ -687,10 +687,6 @@ export const InputDirect = (props: { func: any; rec: boolean }) => {
     },
   };
 
-  //let rec = props.rec ? 1 : 0;
-  //let rec = 0; // выход на заголовок
-
-  //const [currency, setCurrency] = React.useState(rec);
   const [currency, setCurrency] = React.useState(0);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {

@@ -9,7 +9,6 @@ import { Placemark, YMapsApi } from "react-yandex-maps";
 import { CLINCH, BadCODE } from "./../MapConst";
 
 let FAZASIST = -1;
-//let FAZA = -1;
 let nomInMassfaz = -1;
 
 const GsDoPlacemarkDo = (props: {
@@ -62,7 +61,6 @@ const GsDoPlacemarkDo = (props: {
 
   let fazaImg: null | string = null;
   FAZASIST = -1;
-  //FAZA = -1;
   nomInMassfaz = -1;
   if (pC >= 0) {
     let idv = mappp.idevice;
@@ -81,11 +79,7 @@ const GsDoPlacemarkDo = (props: {
           } else {
             if (FAZASIST > 0 && FAZASIST < 9 && massfaz[i].img) {
               if (FAZASIST <= massfaz[i].img.length)
-                // if (!DEMO) {
                 fazaImg = massfaz[i].img[FAZASIST - 1];
-              // } else
-              //fazaImg = massfaz[i].img[FAZA - 1]; // костыль
-
               massfaz[i].fazaSistOld = FAZASIST;
               dispatch(massfazCreate(massfaz));
             }
@@ -134,8 +128,6 @@ const GsDoPlacemarkDo = (props: {
       host = debug
         ? hostt + FAZASIST + ".svg"
         : "/file/static/img/buttons/" + FAZASIST + ".svg";
-      //   hostt + FAZA + ".svg"
-      // : "/file/static/img/buttons/" + FAZA + ".svg"; // костыль
     }
 
     return host;
@@ -296,8 +288,6 @@ const GsDoPlacemarkDo = (props: {
       hintContent: cont1 + cont3 + cont2 + "<br/>" + textBalloon,
     };
   };
-
-  //if (mappp.ID === 138) console.log('###:',datestat.toDoMode,massfaz,fazaImg)
 
   const MemoPlacemarkDo = React.useMemo(
     () => (
