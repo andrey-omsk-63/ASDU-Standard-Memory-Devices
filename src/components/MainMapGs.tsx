@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { mapCreate, massmodeCreate, statsaveCreate } from "../redux/actions";
+//import { massfazCreate } from "../redux/actions";
 
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -160,10 +161,12 @@ const MainMapGs = (props: {
   const StatusQuo = React.useCallback(() => {
     massMem = [];
     massCoord = [];
+    //massfaz = []
     newMode = -1;
     datestat.create = true;
     ymaps && addRoute(ymaps, (datestat.demo = false)); // перерисовка связей
     dispatch(statsaveCreate(datestat));
+    //dispatch(massfazCreate(massfaz));
     setTrigger(!trigger);
   }, [datestat, dispatch, trigger, ymaps, addRoute]);
 
@@ -343,14 +346,18 @@ const MainMapGs = (props: {
   };
 
   const OldSizeWind = () => {
-    console.log("КОНЕЦ!!!");
     modeToDo = 0;
     setToDoMode(false);
+    //console.log("OldSizeWind!!!");
+    //StatusQuo();
+    //setFlagPusk(!flagPusk);
   };
 
   const ModeToDo = (mod: number) => {
     modeToDo = mod;
     if (!modeToDo) {
+      //console.log("ModeToDo!!!");
+
       helper = true;
       StatusQuo();
     }
@@ -503,6 +510,8 @@ const MainMapGs = (props: {
     circls[1] && mapp.current.geoObjects.remove(circls[1]); // стереть вторую окружность
     circls = DrawCircle(ymaps, mapp, massCoord); // нарисовать окружности в начале/конце маршрута
   }
+
+  console.log("toDoMode:", toDoMode,massMem,massfaz);
 
   return (
     <Grid container sx={{ height: "99.9vh" }}>

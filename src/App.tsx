@@ -278,7 +278,7 @@ const App = () => {
         dispatch(massfazCreate(massfaz));
         setTrigger(!trigger);
       }
-    }
+    };
 
     const ActionOnTflight = (data: any) => {
       let flagChange = false;
