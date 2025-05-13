@@ -257,26 +257,28 @@ const App = () => {
     };
 
     const ActionOnPhases = (data: any) => {
-      flagChange = false;
-      for (let i = 0; i < data.phases.length; i++) {
-        for (let j = 0; j < massfaz.length; j++) {
-          if (massfaz[j].idevice === data.phases[i].device) {
-            let dtf = data.phases[i].phase;
-            let statusVertex = dateMapGl.tflight[massfaz[j].idx].tlsost.num;
-            let clinch = CLINCH.indexOf(statusVertex) < 0 ? false : true;
-            let badCode = BadCODE.indexOf(statusVertex) < 0 ? false : true;
-            if (!clinch && !badCode && dateStat.toDoMode) {
-              if (dtf && massfaz[j].fazaSist !== dtf && !massfaz[j].busy) {
-                massfaz[j].fazaSist = dtf;
-                flagChange = true;
+      if (!dateStat.demo) {
+        flagChange = false;
+        for (let i = 0; i < data.phases.length; i++) {
+          for (let j = 0; j < massfaz.length; j++) {
+            if (massfaz[j].idevice === data.phases[i].device) {
+              let dtf = data.phases[i].phase;
+              let statusVertex = dateMapGl.tflight[massfaz[j].idx].tlsost.num;
+              let clinch = CLINCH.indexOf(statusVertex) < 0 ? false : true;
+              let badCode = BadCODE.indexOf(statusVertex) < 0 ? false : true;
+              if (!clinch && !badCode && dateStat.toDoMode) {
+                if (dtf && massfaz[j].fazaSist !== dtf && !massfaz[j].busy) {
+                  massfaz[j].fazaSist = dtf;
+                  flagChange = true;
+                }
               }
             }
           }
         }
-      }
-      if (flagChange) {
-        dispatch(massfazCreate(massfaz));
-        setTrigger(!trigger);
+        if (flagChange) {
+          dispatch(massfazCreate(massfaz));
+          !dateStat.demo && setTrigger(!trigger);
+        }
       }
     };
 

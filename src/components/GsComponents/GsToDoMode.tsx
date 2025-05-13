@@ -48,6 +48,8 @@ const GsToDoMode = (props: {
   funcStop: Function; // функция возврата остановки светофора
   changeDemo: Function;
 }) => {
+  props.stop >= 0 && console.log("PROPS:", props.stop, init, toDoMode, props);
+
   //== Piece of Redux ======================================
   const map = useSelector((state: any) => {
     const { mapReducer } = state;
@@ -104,9 +106,9 @@ const GsToDoMode = (props: {
     // сброс таймеров отправки фаз
     for (let i = 0; i < timerId.length; i++) if (timerId[i]) StopSendFaza(i);
     // сброс таймеров счётчиков длительности фаз
-    for (let i = 0; i < datestat.timerId.length; i++)
-      if (datestat.timerId[i]) StopCounter(i);
-    dispatch(statsaveCreate(datestat));
+    // for (let i = 0; i < datestat.timerId.length; i++)
+    //   if (datestat.timerId[i]) StopCounter(i);
+    // dispatch(statsaveCreate(datestat));
   };
 
   const handleCloseSetEnd = () => {
@@ -146,16 +148,17 @@ const GsToDoMode = (props: {
       ForcedClearInterval(); // обнуление всех интервалов и остановка всех таймеров
       for (let i = 0; i < massfaz.length; i++) {
         if (massfaz[i].runRec === 2) {
-          !DEMO && SendSocketDispatch(massfaz[i].idevice, 9, 9);
+          if (!DEMO) {
+            SendSocketDispatch(massfaz[i].idevice, 9, 9); // КУ
+            SendSocketDispatch(massfaz[i].idevice, 4, 0); // закрытие id
+          }
           massfaz[i].runRec = 1;
-          massIdevice.push(massfaz[i].idevice);
+          //massIdevice.push(massfaz[i].idevice);
         }
       }
       dispatch(massfazCreate(massfaz));
-      !DEMO && SendSocketRoute(massIdevice, false); // закрыть маршрут
-      //props.funcMode(mode); // закончить исполнение
-      //props.funcHelper(true);
-      handleCloseSetEnd();
+      //!DEMO && SendSocketRoute(massIdevice, false); // закрыть маршрут
+      handleCloseSetEnd(); // закончить исполнение
     }
   };
 
@@ -187,11 +190,7 @@ const GsToDoMode = (props: {
       for (let i = 0; i < massfaz.length; i++)
         if (massfaz[i].runRec === 2 || massfaz[i].runRec === 4) ch++;
     }
-    if (!ch) {
-      // закончить исполнение
-      //props.funcHelper(true);
-      handleCloseSetEnd();
-    }
+    if (!ch) handleCloseSetEnd(); // закончить исполнение
   };
 
   const DoTimerCount = (mode: number) => {
@@ -292,7 +291,7 @@ const GsToDoMode = (props: {
   //console.log("###:", init, toDoMode,endSeans, props.massMem, massfaz);
 
   if (endSeans) {
-    //console.log('endSeans!!!')
+    console.log("endSeans!!!");
     endSeans = false;
   } else {
     if (init && !toDoMode) {
@@ -382,7 +381,6 @@ const GsToDoMode = (props: {
         (fazaImg = massfaz[i].img[massfaz[i].faza - 1]);
       debug && (fazaImg = datestat.phSvg[massfaz[i].faza - 1]); // для отладки
       let illum = nomIllum === i ? styleStrokaTabl01 : styleStrokaTabl02;
-      //let finish = runREC === 4 || runREC === 2 ? true : false;
 
       resStr.push(
         <Grid key={i} container sx={styleStrokaTabl03}>

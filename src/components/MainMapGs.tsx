@@ -161,12 +161,10 @@ const MainMapGs = (props: {
   const StatusQuo = React.useCallback(() => {
     massMem = [];
     massCoord = [];
-    //massfaz = []
     newMode = -1;
     datestat.create = true;
     ymaps && addRoute(ymaps, (datestat.demo = false)); // перерисовка связей
     dispatch(statsaveCreate(datestat));
-    //dispatch(massfazCreate(massfaz));
     setTrigger(!trigger);
   }, [datestat, dispatch, trigger, ymaps, addRoute]);
 
@@ -276,30 +274,38 @@ const MainMapGs = (props: {
         }
       }
     } else {
-      for (let i = 0; i < massMem.length; i++) {
-        let corFromMap = [massfaz[i].coordinates[0], massfaz[i].coordinates[1]];
-        let dister = Distance(coord, corFromMap);
-        if (dister < 200 && minDist > dister) {
-          minDist = dister; // нажали правой кнопкой на светофор
-          nomInMap = i;
-        }
-      }
-      if (nomInMap < 0) {
+      // for (let i = 0; i < massMem.length; i++) {
+      //   let corFromMap = [massfaz[i].coordinates[0], massfaz[i].coordinates[1]];
+      //   let dister = Distance(coord, corFromMap);
+      //   if (dister < 200 && minDist > dister) {
+      //     minDist = dister; // нажали правой кнопкой на светофор
+      //     nomInMap = i;
+      //     console.log("1000:", nomInMap,JSON.parse(JSON.stringify(massfaz)));
+      //   }
+      // }
+      // if (nomInMap < 0) {
         // нажали правой кнопкой в чистое поле
         // нужно найти первый запущенный светофор на маршруте
         for (let i = 0; i < massMem.length; i++) {
           if (massfaz[i].runRec === 2 || massfaz[i].runRec === 4) {
             nomInMap = i;
+            console.log("2000:", nomInMap,JSON.parse(JSON.stringify(massfaz)));
             break;
           }
         }
-      }
+      //}
       if (nomInMap >= 0) {
         datestat.nomIllum = nomInMap;
         dispatch(statsaveCreate(datestat));
-        setStopCount(nomInMap); // запрос на остановку отправки фазы
-        setChangeFaz(!changeFaz);
         setRisovka(true);
+
+        console.log("111:", nomInMap,JSON.parse(JSON.stringify(massfaz)));
+
+        setStopCount(nomInMap); // запрос на остановку отправки фазы
+
+        console.log("222:", nomInMap,JSON.parse(JSON.stringify(massfaz)));
+
+        //DEMO && setChangeFaz(!changeFaz);
       }
     }
   };
@@ -348,16 +354,11 @@ const MainMapGs = (props: {
   const OldSizeWind = () => {
     modeToDo = 0;
     setToDoMode(false);
-    //console.log("OldSizeWind!!!");
-    //StatusQuo();
-    //setFlagPusk(!flagPusk);
   };
 
   const ModeToDo = (mod: number) => {
     modeToDo = mod;
     if (!modeToDo) {
-      //console.log("ModeToDo!!!");
-
       helper = true;
       StatusQuo();
     }
@@ -511,7 +512,7 @@ const MainMapGs = (props: {
     circls = DrawCircle(ymaps, mapp, massCoord); // нарисовать окружности в начале/конце маршрута
   }
 
-  console.log("toDoMode:", toDoMode,massMem,massfaz);
+  console.log("toDoMode:", toDoMode,massMem, massfaz);
 
   return (
     <Grid container sx={{ height: "99.9vh" }}>
