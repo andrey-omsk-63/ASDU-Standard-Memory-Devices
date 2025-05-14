@@ -277,7 +277,7 @@ const App = () => {
         }
         if (flagChange) {
           dispatch(massfazCreate(massfaz));
-          !dateStat.demo && setTrigger(!trigger);
+          setTrigger(!trigger);
         }
       }
     };
@@ -301,13 +301,17 @@ const App = () => {
                   if (!goodCode) {
                     if (fz.busy || !fz.runRec) {
                       fz.busy = false; // светофор освобождён другим пользоватем
+                      console.log("Cветофор освободили ID", fz.id);
                       if (fz.kolOpen) {
                         SendSocketDispatch(fz.idevice, 4, 1); // начало работы
                         SendSocketDispatch(fz.idevice, 9, fz.faza); // послать фазу на не занятый светофор
                         fz.runRec = 2; // светофор активирован
-                        console.log("ID", fz.id, " светофор АКТИВИРОВАН", fz);
                       }
-                      dispatch(massfazCreate(massfaz));
+                    }
+                  } else {
+                    if (!fz.busy && !fz.runRec) {
+                      console.log("Cветофор заняли ID", fz.id);
+                      fz.busy = true; // светофор занят другим пользоватем
                     }
                   }
                 }
@@ -318,7 +322,8 @@ const App = () => {
       }
       if (flagChange) {
         dispatch(mapCreate(dateMapGl));
-        setTrigger(!trigger);
+        dispatch(massfazCreate(massfaz));
+        !dateStat.demo && setTrigger(!trigger);
       }
     };
 
@@ -360,13 +365,6 @@ const App = () => {
                 }
                 break;
               }
-              // else {
-              //   massdk[i].phSvg[0] = imgFaza; // костыль
-              //   massdk[i].phSvg[1] = null;
-              //   massdk[i].phSvg[2] = imgFaza;
-              //   massdk[i].phSvg[3] = null;
-              //   massdk[i].phSvg[4] = imgFaza;
-              // }
             }
           }
           break;

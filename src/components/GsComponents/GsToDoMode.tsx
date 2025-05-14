@@ -31,8 +31,6 @@ let soobError = "";
 let timerId: any[] = [];
 let massInt: any[][] = [];
 
-let endSeans = false;
-
 const GsToDoMode = (props: {
   newMode: number;
   massMem: Array<number>;
@@ -48,8 +46,6 @@ const GsToDoMode = (props: {
   funcStop: Function; // функция возврата остановки светофора
   changeDemo: Function;
 }) => {
-  props.stop >= 0 && console.log("PROPS:", props.stop, init, toDoMode, props);
-
   //== Piece of Redux ======================================
   const map = useSelector((state: any) => {
     const { mapReducer } = state;
@@ -103,27 +99,23 @@ const GsToDoMode = (props: {
   };
 
   const ForcedClearInterval = () => {
-    // сброс таймеров отправки фаз
-    for (let i = 0; i < timerId.length; i++) if (timerId[i]) StopSendFaza(i);
-    // сброс таймеров счётчиков длительности фаз
-    // for (let i = 0; i < datestat.timerId.length; i++)
-    //   if (datestat.timerId[i]) StopCounter(i);
-    // dispatch(statsaveCreate(datestat));
+    for (let i = 0; i < timerId.length; i++) if (timerId[i]) StopSendFaza(i); // сброс таймеров отправки фаз
+    for (let i = 0; i < datestat.timerId.length; i++)
+      if (datestat.timerId[i]) StopCounter(i); // сброс таймеров счётчиков длительности фаз
+    dispatch(statsaveCreate(datestat));
   };
 
   const handleCloseSetEnd = () => {
     ForcedClearInterval(); // обнуление всех интервалов и остановка всех таймеров
-    props.funcMode(0);
     props.funcSize();
+    props.funcMode(0);
     props.funcHelper(true);
-    toDoMode = false; // флаг выполнение режима
-    //datestat.toDoMode = false;
+    toDoMode = datestat.toDoMode = false; // флаг выполнение режима
     datestat.working = false;
     massfaz = [];
     dispatch(massfazCreate(massfaz));
     dispatch(statsaveCreate(datestat));
     init = true;
-    endSeans = true;
   };
 
   const ToDoMode = (mode: number) => {
@@ -137,8 +129,7 @@ const GsToDoMode = (props: {
       }
       dispatch(massfazCreate(massfaz));
       !DEMO && SendSocketRoute(massIdevice, true); // открыть маршрут
-      toDoMode = true; // флаг выполнение режима
-      datestat.toDoMode = true;
+      toDoMode = datestat.toDoMode = true; // флаг выполнение режима
       dispatch(statsaveCreate(datestat));
       props.funcMode(mode);
       setTrigger(!trigger);
@@ -153,17 +144,14 @@ const GsToDoMode = (props: {
             SendSocketDispatch(massfaz[i].idevice, 4, 0); // закрытие id
           }
           massfaz[i].runRec = 1;
-          //massIdevice.push(massfaz[i].idevice);
         }
       }
       dispatch(massfazCreate(massfaz));
-      //!DEMO && SendSocketRoute(massIdevice, false); // закрыть маршрут
       handleCloseSetEnd(); // закончить исполнение
     }
   };
 
   const CloseVertex = (idx: number) => {
-    //console.log("CloseVertex:", idx, massfaz);
     if (idx) {
       let RunRec = massfaz[idx - 1].runRec;
       if (RunRec === 2 || RunRec === 4) {
@@ -183,8 +171,7 @@ const GsToDoMode = (props: {
     dispatch(statsaveCreate(datestat));
     dispatch(massfazCreate(massfaz));
 
-    console.log(idx + 1 + "-й светофор закрыт!!!", massfaz[idx].id);
-
+    console.log(idx + 1 + "-й светофор закрыт! ID=", massfaz[idx].id);
     let ch = 0;
     if (massfaz.length > 2) {
       for (let i = 0; i < massfaz.length; i++)
@@ -217,8 +204,7 @@ const GsToDoMode = (props: {
         } else if (!clinch && !badCode) datestat.counterId[mode]--; // счётчик
       }
       if (datestat.counterId[mode] <= 0) {
-        // остановка и очистка счётчика
-        //console.log("Прекращена отправка с", mode + 1, datestat.counterId);
+        // остановка и очистка счётчика "Прекращена отправка с", mode + 1
         StopCounter(mode);
         if (!datestat.counterId[mode]) {
           CloseVertex(mode); // закрыть светофор при достижении сч-ка 0
@@ -285,60 +271,9 @@ const GsToDoMode = (props: {
       datestat.counterId[mode] = intervalFaza; // длительность фазы ДУ
       dispatch(statsaveCreate(datestat));
     }
-    console.log(mode + 1 + "-й светофор пошёл", fazer.busy, fazer.id, fazer);
+    console.log(mode + 1 + "-й светофор пошёл", fazer.busy, fazer.id);
   };
-  //=== инициализация ======================================
-  //console.log("###:", init, toDoMode,endSeans, props.massMem, massfaz);
 
-  if (endSeans) {
-    console.log("endSeans!!!");
-    endSeans = false;
-  } else {
-    if (init && !toDoMode) {
-      massfaz = [];
-      timerId = [];
-      datestat.massPath = []; // точки рабочего маршрута
-      datestat.counterId = []; // счётчик длительности фаз
-      datestat.timerId = []; // массив времени отправки команд на счётчики
-      datestat.massInt = []; // массив интервалов отправки команд на счётчики
-      nomIllum = -1;
-
-      for (let i = 0; i < props.massMem.length; i++) {
-        massfaz.push(
-          MakeMaskFaz(i, props.massMem[i], map, massdk, newMode, DEMO)
-        );
-        timerId.push(null);
-        datestat.counterId.push(intervalFaza); // длительность фазы ДУ
-        datestat.timerId.push(null); // массив времени отправки команд
-      }
-      for (let i = 0; i < props.massMem.length; i++) {
-        massInt.push(JSON.parse(JSON.stringify(timerId)));
-        datestat.massInt.push(JSON.parse(JSON.stringify(datestat.timerId)));
-      }
-      init = false;
-      dispatch(massfazCreate(massfaz));
-      dispatch(statsaveCreate(datestat));
-    }
-    // это для подсветки эл-та и скролла в таблице StrokaTabl
-    if (datestat.nomIllum >= 0) {
-      nomIllum = datestat.nomIllum;
-      if (datestat.nomIllum > 5) {
-        scRef.current && scRef.current.scrollTo(0, nomIllum * 56);
-      } else {
-        if (props.stop < 6)
-          scRef.current && scRef.current.scrollTo(0, nomIllum * 56);
-      }
-    }
-    if (props.start >= 0) {
-      !massfaz[props.start].kolOpen && StartVertex(props.start); // запустить светофор
-      props.funcStart(-1);
-    }
-    if (props.stop >= 0 && toDoMode) {
-      CloseVertex(props.stop); // закрыть светофор
-      props.funcStop(-1);
-    }
-  }
-  //========================================================
   const ClickKnop = (mode: number) => {
     nomIllum = mode;
     datestat.nomIllum = mode;
@@ -348,7 +283,48 @@ const GsToDoMode = (props: {
     props.funcCenter(coord);
     setTrigger(!trigger);
   };
-
+  //=== инициализация ======================================
+  if (init && !toDoMode) {
+    massfaz = [];
+    timerId = [];
+    datestat.massPath = []; // точки рабочего маршрута
+    datestat.counterId = []; // счётчик длительности фаз
+    datestat.timerId = []; // массив времени отправки команд на счётчики
+    datestat.massInt = []; // массив интервалов отправки команд на счётчики
+    for (let i = 0; i < props.massMem.length; i++) {
+      massfaz.push(
+        MakeMaskFaz(i, props.massMem[i], map, massdk, newMode, DEMO)
+      );
+      timerId.push(null);
+      datestat.counterId.push(intervalFaza); // длительность фазы ДУ
+      datestat.timerId.push(null); // массив времени отправки команд
+    }
+    for (let i = 0; i < props.massMem.length; i++) {
+      massInt.push(JSON.parse(JSON.stringify(timerId)));
+      datestat.massInt.push(JSON.parse(JSON.stringify(datestat.timerId)));
+    }
+    init = false;
+    dispatch(massfazCreate(massfaz));
+    dispatch(statsaveCreate(datestat));
+    ClickKnop(0); // ставим на первый светофор
+  }
+  // это для подсветки эл-та и скролла в таблице StrokaTabl
+  if (datestat.nomIllum >= 0) {
+    nomIllum = datestat.nomIllum;
+    if (datestat.nomIllum > 5) {
+      scRef.current && scRef.current.scrollTo(0, nomIllum * 56);
+    } else if (props.stop < 6)
+      scRef.current && scRef.current.scrollTo(0, nomIllum * 56);
+  }
+  if (props.start >= 0) {
+    !massfaz[props.start].kolOpen && toDoMode && StartVertex(props.start); // запустить светофор
+    props.funcStart(-1);
+  }
+  if (props.stop >= 0 && toDoMode) {
+    CloseVertex(props.stop); // закрыть светофор
+    props.funcStop(-1);
+  }
+  //========================================================
   const StrokaTabl = () => {
     const ClickVertex = (mode: number) => {
       if (

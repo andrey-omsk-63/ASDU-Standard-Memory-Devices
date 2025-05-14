@@ -1,7 +1,6 @@
 import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { mapCreate, massmodeCreate, statsaveCreate } from "../redux/actions";
-//import { massfazCreate } from "../redux/actions";
 
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -144,10 +143,9 @@ const MainMapGs = (props: {
     }
     if (massErrRec.length) {
       let massRabMap = []; // редактируем у себя map
-      for (let i = 0; i < map.routes[mode].listTL.length; i++) {
+      for (let i = 0; i < map.routes[mode].listTL.length; i++)
         if (!massErrRec.includes(i))
           massRabMap.push(map.routes[mode].listTL[i]);
-      }
       map.routes[mode].listTL = massRabMap;
       SendSocketUpdateRoute(map.routes[mode]);
       dispatch(mapCreate(map));
@@ -274,38 +272,18 @@ const MainMapGs = (props: {
         }
       }
     } else {
-      // for (let i = 0; i < massMem.length; i++) {
-      //   let corFromMap = [massfaz[i].coordinates[0], massfaz[i].coordinates[1]];
-      //   let dister = Distance(coord, corFromMap);
-      //   if (dister < 200 && minDist > dister) {
-      //     minDist = dister; // нажали правой кнопкой на светофор
-      //     nomInMap = i;
-      //     console.log("1000:", nomInMap,JSON.parse(JSON.stringify(massfaz)));
-      //   }
-      // }
-      // if (nomInMap < 0) {
-        // нажали правой кнопкой в чистое поле
-        // нужно найти первый запущенный светофор на маршруте
-        for (let i = 0; i < massMem.length; i++) {
-          if (massfaz[i].runRec === 2 || massfaz[i].runRec === 4) {
-            nomInMap = i;
-            console.log("2000:", nomInMap,JSON.parse(JSON.stringify(massfaz)));
-            break;
-          }
+      // нажали правой кнопкой в чистое поле - нужно найти первый запущенный светофор на маршруте
+      for (let i = 0; i < massMem.length; i++) {
+        if (massfaz[i].runRec === 2 || massfaz[i].runRec === 4) {
+          nomInMap = i;
+          break;
         }
-      //}
+      }
       if (nomInMap >= 0) {
         datestat.nomIllum = nomInMap;
         dispatch(statsaveCreate(datestat));
         setRisovka(true);
-
-        console.log("111:", nomInMap,JSON.parse(JSON.stringify(massfaz)));
-
         setStopCount(nomInMap); // запрос на остановку отправки фазы
-
-        console.log("222:", nomInMap,JSON.parse(JSON.stringify(massfaz)));
-
-        //DEMO && setChangeFaz(!changeFaz);
       }
     }
   };
@@ -452,7 +430,6 @@ const MainMapGs = (props: {
       pointCenter = CenterCoordBegin(map); // начальные координаты центра отоброжаемой карты
     } else pointCenter = [Number(point0), Number(point1)];
     zoom = Number(window.localStorage.ZoomDU); // начальный zoom Yandex-карты ДУ
-    //============
     helper = false; // это для выхода на выбор существующих режимов
     datestat.create = false;
     dispatch(statsaveCreate(datestat));
@@ -511,8 +488,6 @@ const MainMapGs = (props: {
     circls[1] && mapp.current.geoObjects.remove(circls[1]); // стереть вторую окружность
     circls = DrawCircle(ymaps, mapp, massCoord); // нарисовать окружности в начале/конце маршрута
   }
-
-  console.log("toDoMode:", toDoMode,massMem, massfaz);
 
   return (
     <Grid container sx={{ height: "99.9vh" }}>
