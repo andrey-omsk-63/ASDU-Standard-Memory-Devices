@@ -44,6 +44,7 @@ let funcContex: any = null;
 let funcBound: any = null;
 let needDrawCircle = false; // нужно перерисовать окружности вокруг светофора
 let circls: any = [null, null];
+let begin = false;
 
 const MainMapGs = (props: {
   trigger: boolean;
@@ -357,6 +358,10 @@ const MainMapGs = (props: {
     setFlagPusk(!flagPusk);
   };
 
+  const SetBegin = () => {
+    begin = false;
+  };
+
   const PressButton = (mode: number) => {
     switch (mode) {
       case 41: // удалить режим
@@ -392,6 +397,7 @@ const MainMapGs = (props: {
         } else {
           modeToDo = 1;
           setToDoMode(true);
+          begin = true;
           setFlagPusk(!flagPusk);
         }
         break;
@@ -554,6 +560,8 @@ const MainMapGs = (props: {
               funcStart={setStartCount}
               stop={stopCount}
               funcStop={setStopCount}
+              begin={begin}
+              funcBegin={SetBegin}
               changeDemo={ChangeDemoSost}
             />
           </Box>

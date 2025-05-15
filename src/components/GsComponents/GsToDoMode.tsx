@@ -27,7 +27,6 @@ let init = true;
 let nomIllum = -1;
 let needRend = false;
 let soobError = "";
-
 let timerId: any[] = [];
 let massInt: any[][] = [];
 
@@ -44,6 +43,8 @@ const GsToDoMode = (props: {
   funcStart: Function; // функция возврата запуска светофора
   stop: number; // номер останавливаемого светофора в massfaz
   funcStop: Function; // функция возврата остановки светофора
+  begin: boolean; // первый вход в режим
+  funcBegin: Function; // функция возврата признака первого входа
   changeDemo: Function;
 }) => {
   //== Piece of Redux ======================================
@@ -110,8 +111,7 @@ const GsToDoMode = (props: {
     props.funcSize();
     props.funcMode(0);
     props.funcHelper(true);
-    toDoMode = datestat.toDoMode = false; // флаг выполнение режима
-    datestat.working = false;
+    toDoMode = datestat.working = datestat.toDoMode = false; // флаг выполнение режима
     massfaz = [];
     dispatch(massfazCreate(massfaz));
     dispatch(statsaveCreate(datestat));
@@ -143,7 +143,6 @@ const GsToDoMode = (props: {
             SendSocketDispatch(massfaz[i].idevice, 9, 9); // КУ
             SendSocketDispatch(massfaz[i].idevice, 4, 0); // закрытие id
           }
-          massfaz[i].runRec = 1;
         }
       }
       dispatch(massfazCreate(massfaz));
@@ -193,11 +192,9 @@ const GsToDoMode = (props: {
       ) {
         return el !== null;
       });
-
       let statusVertex = map.tflight[massfaz[mode].idx].tlsost.num;
       let clinch = CLINCH.indexOf(statusVertex) < 0 ? false : true;
       let badCode = BadCODE.indexOf(statusVertex) < 0 ? false : true;
-
       if (massfaz[mode].runRec !== 5 && massfaz[mode].runRec !== 1) {
         if (DEMO) {
           datestat.counterId[mode]--; // счётчик
@@ -284,7 +281,7 @@ const GsToDoMode = (props: {
     setTrigger(!trigger);
   };
   //=== инициализация ======================================
-  if (init && !toDoMode) {
+  if (init && !toDoMode && props.begin) {
     massfaz = [];
     timerId = [];
     datestat.massPath = []; // точки рабочего маршрута
@@ -304,6 +301,7 @@ const GsToDoMode = (props: {
       datestat.massInt.push(JSON.parse(JSON.stringify(datestat.timerId)));
     }
     init = false;
+    props.funcBegin(); // сброс признака первого входа из MainMapGs для этого режима
     dispatch(massfazCreate(massfaz));
     dispatch(statsaveCreate(datestat));
     ClickKnop(0); // ставим на первый светофор
