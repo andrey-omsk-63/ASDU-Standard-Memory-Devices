@@ -34,7 +34,6 @@ const GsToDoMode = (props: {
   newMode: number;
   massMem: Array<number>;
   funcMode: any;
-  funcSize: any;
   funcCenter: any;
   funcHelper: any;
   trigger: boolean;
@@ -44,7 +43,7 @@ const GsToDoMode = (props: {
   stop: number; // номер останавливаемого светофора в massfaz
   funcStop: Function; // функция возврата остановки светофора
   begin: boolean; // первый вход в режим
-  funcBegin: Function; // функция возврата признака первого входа
+  funcBegin: Function; // функция сброса признака первого входа
   changeDemo: Function;
 }) => {
   //== Piece of Redux ======================================
@@ -108,14 +107,13 @@ const GsToDoMode = (props: {
 
   const handleCloseSetEnd = () => {
     ForcedClearInterval(); // обнуление всех интервалов и остановка всех таймеров
-    props.funcSize();
     props.funcMode(0);
     props.funcHelper(true);
     toDoMode = datestat.working = datestat.toDoMode = false; // флаг выполнение режима
     massfaz = [];
+    init = true;
     dispatch(massfazCreate(massfaz));
     dispatch(statsaveCreate(datestat));
-    init = true;
   };
 
   const ToDoMode = (mode: number) => {
@@ -169,7 +167,6 @@ const GsToDoMode = (props: {
     datestat.counterId[idx] = -1;
     dispatch(statsaveCreate(datestat));
     dispatch(massfazCreate(massfaz));
-
     console.log(idx + 1 + "-й светофор закрыт! ID=", massfaz[idx].id);
     let ch = 0;
     if (massfaz.length > 2) {

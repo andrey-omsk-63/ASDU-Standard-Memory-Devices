@@ -330,14 +330,10 @@ const MainMapGs = (props: {
     setFlagCenter(true);
   };
 
-  const OldSizeWind = () => {
-    modeToDo = 0;
-    setToDoMode(false);
-  };
-
   const ModeToDo = (mod: number) => {
     modeToDo = mod;
     if (!modeToDo) {
+      setToDoMode(false);
       helper = true;
       StatusQuo();
     }
@@ -551,7 +547,6 @@ const MainMapGs = (props: {
               newMode={newMode}
               massMem={massMem}
               funcMode={ModeToDo}
-              funcSize={OldSizeWind}
               funcCenter={NewPointCenter}
               funcHelper={SetHelper}
               trigger={props.trigger}
