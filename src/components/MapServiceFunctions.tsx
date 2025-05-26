@@ -350,10 +350,7 @@ export const ErrorHaveVertex = (rec: any) => {
 //=== addRoute =====================================
 export const getMultiRouteOptions = () => {
   return {
-    // routeActiveStrokeWidth: 4,
-    // //routeActiveStrokeColor: "#224E1F",
-    // routeStrokeWidth: 0,
-    // wayPointVisible: false,
+    // routeActiveStrokeColor: "#224E1F",
     routeActiveStrokeWidth: 3, // толщина линии
     routeStrokeWidth: 0, // толщина линии альтернативного маршрута
     wayPointVisible: false, // отметки "начало - конец"
@@ -430,8 +427,7 @@ export const MakeMaskFaz = (
     maskFaz.img = [null, null, null];
   } else {
     if (massdk[maskFaz.idx].readIt) {
-      // картинки фаз были прочтены ранее
-      maskFaz.img = massdk[maskFaz.idx].phSvg;
+      maskFaz.img = massdk[maskFaz.idx].phSvg; // картинки фаз были прочтены ранее
     } else {
       // запрос на получение изображения фазы
       let region = massdk[maskFaz.idx].region.toString();
@@ -443,7 +439,6 @@ export const MakeMaskFaz = (
     // светофор занят или нет другим пользователем?
     let statusVertex = map.tflight[iDx].tlsost.num;
     maskFaz.busy = GoodCODE.indexOf(statusVertex) < 0 ? false : true; // светофор занят другим пользователем?
-
     maskFaz.busy && console.log("ID занят:", maskFaz.id);
   }
   return maskFaz;
@@ -807,7 +802,7 @@ export const StrokaHelp = (soobInfo: string, mode: number) => {
   let dl = mode ? 20 : 490;
 
   const styleInfoSoob = {
-    width: dl, // 530
+    width: dl,
     maxHeight: "26px",
     minHeight: "26px",
     color: "#E6761B", // оранж

@@ -152,11 +152,9 @@ export const styleStrokaTabl03 = {
 };
 
 export const styleStrokaTabl04 = {
+  marginTop: "-4px",
   marginLeft: "-95px",
   width: "120px",
-  // position: "absolute",
-  // left: "12px",
-  // marginTop: "-1px",
   fontSize: 12.0,
   color: "#8D9194", // серый
   textShadow: "0px 0px 0px rgba(0,0,0,0.3)",

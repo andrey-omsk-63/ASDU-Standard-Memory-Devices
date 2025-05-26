@@ -6,7 +6,6 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
-//import Typography from "@mui/material/Typography";
 
 import GsErrorMessage from "./GsErrorMessage";
 import GsLookHistory from "./GsLookHistory";

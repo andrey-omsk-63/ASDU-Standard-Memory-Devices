@@ -67,7 +67,6 @@ const GsDoPlacemarkDo = (props: {
     for (let i = 0; i < massfaz.length; i++) {
       if (idv === massfaz[i].idevice) {
         FAZASIST = massfaz[i].fazaSist;
-        //FAZA = massfaz[i].faza;
         nomInMassfaz = i;
         if (FAZASIST === 11 || FAZASIST === 15) {
           nomSvg = 12; // ОС

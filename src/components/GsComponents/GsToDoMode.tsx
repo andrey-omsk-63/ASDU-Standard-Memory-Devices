@@ -167,7 +167,7 @@ const GsToDoMode = (props: {
     datestat.counterId[idx] = -1;
     dispatch(statsaveCreate(datestat));
     dispatch(massfazCreate(massfaz));
-    console.log(idx + 1 + "-й светофор закрыт! ID=", massfaz[idx].id);
+    console.log(idx + 1 + "-й светофор закрыт! ID", massfaz[idx].id);
     let ch = 0;
     if (massfaz.length > 2) {
       for (let i = 0; i < massfaz.length; i++)

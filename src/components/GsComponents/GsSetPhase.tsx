@@ -60,7 +60,6 @@ const GsSetPhase = (props: {
   const dispatch = useDispatch();
   //========================================================
   const [openSoobErr, setOpenSoobErr] = React.useState(false);
-  //const [openSoobEnd, setOpenSoobEnd] = React.useState(false);
   const [trigger, setTrigger] = React.useState(true);
   const [chDel, setChDel] = React.useState(0);
 

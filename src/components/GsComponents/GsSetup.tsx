@@ -75,10 +75,7 @@ const GsSetup = (props: { close: Function }) => {
       typeRoute = massForm.typeRoute ? 1 : 0;
       datestat.typeRoute = massForm.typeRoute;
       window.localStorage.typeRoute = typeRoute; // тип отображаемых связей
-
-      // window.localStorage.typeVert = typeVert; // тип отображаемых CO на карте
-      // window.localStorage.intervalFaza = intervalFaza; // задаваемая длительность фазы ДУ (сек)
-      // window.localStorage.intervalFazaDop = intervalFazaDop; // увеличениение длительности фазы ДУ (сек)
+      
       window.localStorage.typeVert = datestat.typeVert = typeVert; // тип отображаемых CO на карте
       window.localStorage.counterFazaD = counterFaza ? 1 : 0; // наличие счётчика длительность фазы ДУ
       datestat.counterFaza = counterFaza;
