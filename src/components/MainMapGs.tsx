@@ -439,7 +439,7 @@ const MainMapGs = (props: {
   //=== обработка Esc ======================================
   const escFunction = React.useCallback(
     (event) => {
-      if (event.keyCode === 27 && helper && massCoord.length === 1) StatusQuo();
+      if (event.keyCode === 27 && helper && massCoord.length >= 1) StatusQuo();
     },
     [StatusQuo]
   );

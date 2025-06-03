@@ -277,7 +277,7 @@ export const HelpAdd = (soobHelpFiest: string, lng: number) => {
     <>
       {StrokaHelp(soobHelpFiest, 0)}
       {Сrossroad()}
-      {lng === 1 && <>{StrokaHelp(" <Esc> - прерывание ввода", 0)}</>}
+      {lng >= 1 && <>{StrokaHelp(" <Esc> - прерывание ввода", 2)}</>}
     </>
   );
 };
@@ -799,12 +799,12 @@ export const StrokaMenuGlob = (
 
 export const StrokaHelp = (soobInfo: string, mode: number) => {
   let moder = mode ? "left" : "right";
-  let dl = mode ? 20 : 490;
+  let dl = mode ? (mode === 2 ? 280 : 20) : 490;
 
   const styleInfoSoob = {
     width: dl,
-    maxHeight: "26px",
-    minHeight: "26px",
+    maxHeight: "18px",
+    minHeight: "18px",
     color: "#E6761B", // оранж
     textAlign: moder,
     textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
@@ -851,7 +851,7 @@ export const MenuGl = (
                   {StrokaMenuDop("Обработка режима", PressButton, 44)}
                 </>
               )}
-              {newMode < 0 && <>{HelpAdd(soobHelpFiest, 0)}</>}
+              {newMode < 0 && <>{HelpAdd(soobHelpFiest, 2)}</>}
               {newMode >= 0 && (
                 <>
                   {StrokaMenuDop("Выполнить режим", PressButton, 45)}
