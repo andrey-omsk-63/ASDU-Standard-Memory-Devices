@@ -217,7 +217,7 @@ const MainMapGs = (props: {
             masscoord[1] = map.tflight[massMem[nomInMass + 1]].points.X;
             NewPointCenter(masscoord);
           }
-          if (datestat.toDoMode) setStartCount(nomInMass); // запрос на запуск отправки фазы
+          datestat.toDoMode && setStartCount(nomInMass); // запрос на запуск отправки фазы
           setChangeFaz(!changeFaz);
         }
       }
