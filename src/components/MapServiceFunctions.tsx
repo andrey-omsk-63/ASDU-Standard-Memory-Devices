@@ -803,8 +803,7 @@ export const StrokaHelp = (soobInfo: string, mode: number) => {
 
   const styleInfoSoob = {
     width: dl,
-    maxHeight: "18px",
-    minHeight: "18px",
+    height: "27px",
     color: "#E6761B", // оранж
     textAlign: moder,
     textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
@@ -833,7 +832,7 @@ export const MenuGl = (
   let punkt = "Редактировать имя и фазы";
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex", height: "27px" }}>
       {modeToDo > 0 && <>{StrokaHelp(soobInfo, 0)}</>}
       {modeToDo === 0 && (
         <>

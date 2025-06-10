@@ -392,7 +392,7 @@ const MainMapGs = (props: {
           setOpenSoobErr(true);
         } else {
           modeToDo = 1;
-          setToDoMode(begin = true);
+          setToDoMode((begin = true));
           setFlagPusk(!flagPusk);
         }
         break;
