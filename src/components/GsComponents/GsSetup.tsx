@@ -16,7 +16,6 @@ import { styleSetPK01, styleSetPK02 } from "./../MainMapStyle";
 let massForm: any = null;
 let flagInput = true;
 let HAVE = 0;
-
 let counterFaza = true; // наличие счётчика длительность фазы ДУ
 let typeRoute = 0; // тип отображаемых связей 1 - mаршрутизированные  0 - неформальные
 let typeVert = 0; // тип отображаемых CO на карте 0 - значки СО 1 - номер фаз 2 - картинка фаз
