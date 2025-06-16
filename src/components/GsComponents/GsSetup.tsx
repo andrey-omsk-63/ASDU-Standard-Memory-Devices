@@ -16,7 +16,7 @@ import { styleSetPK01, styleSetPK02 } from "./../MainMapStyle";
 let massForm: any = null;
 let flagInput = true;
 let HAVE = 0;
-let counterFaza = true; // наличие счётчика длительность фазы ДУ
+ let counterFaza = true; // наличие счётчика длительность фазы ДУ
 let typeRoute = 0; // тип отображаемых связей 1 - mаршрутизированные  0 - неформальные
 let typeVert = 0; // тип отображаемых CO на карте 0 - значки СО 1 - номер фаз 2 - картинка фаз
 let intervalFaza = 0; // Задаваемая длительность фазы ДУ (сек)
@@ -60,7 +60,7 @@ const GsSetup = (props: { close: Function }) => {
   };
 
   const CloseEnd = (event: any, reason: string) => {
-    if (reason === "escapeKeyDown") handleCloseBad();
+    reason === "escapeKeyDown" && handleCloseBad();
   };
 
   const handleCloseBadExit = (mode: boolean) => {

@@ -25,7 +25,7 @@ const GsFragments = (props: { close: Function }) => {
   };
 
   const CloseEnd = (event: any, reason: string) => {
-    if (reason === "escapeKeyDown") handleClose(-1);
+    reason === "escapeKeyDown" && handleClose(-1);
   };
 
   const FragmentContent = () => {
