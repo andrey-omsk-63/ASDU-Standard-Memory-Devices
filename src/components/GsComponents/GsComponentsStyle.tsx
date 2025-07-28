@@ -10,6 +10,7 @@ export const styleSetInf = {
   borderRadius: 1,
   boxShadow: 24,
   p: 1,
+  cursor: "default",
 };
 
 export const styleModalMenu = {
@@ -101,6 +102,7 @@ export const styleToDoMode = {
   borderRadius: 1,
   boxShadow: 24,
   padding: "2px 9px 10px 10px",
+  cursor: "default",
 };
 
 export const styleStrokaTabl00 = {

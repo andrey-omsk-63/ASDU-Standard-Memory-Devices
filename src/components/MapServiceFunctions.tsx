@@ -808,6 +808,7 @@ export const StrokaHelp = (soobInfo: string, mode: number) => {
     textAlign: moder,
     textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
     fontWeight: 500,
+    cursor: "default",
   };
 
   return (
